@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="CvsVision.Caliper.Controls.EdgeDetectToolEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CvsVision.Caliper.Controls"
+             xmlns:caliper="clr-namespace:CvsVision.Caliper"
+             xmlns:z="clr-namespace:ZoomPanCon"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" Name="uc"
+             d:DesignHeight="500" d:DesignWidth="800"
+             MinWidth="600" MinHeight="500">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+        <ObjectDataProvider x:Key="DirectionFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="caliper:EDirection"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+    <Grid Background="White" DataContext="{Binding ElementName=uc}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer x:Name="scrollViewer" DataContext="{Binding ElementName=uc, Path=DataContext}" 
+                      CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+            <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
+                                          MouseWheel="ZoomAndPanControl_MouseWheel"
+                                          MouseDown="ZoomAndPanControl_MouseDown"
+                                          MouseMove="ZoomAndPanControl_MouseMove"
+                                          MouseUp="ZoomAndPanControl_MouseUp">
+                <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
+                    <Image Name="Origin_Image" Source="{Binding OriginSource}"/>
+                    <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
+                    <local:EdgeSettingGraphic Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}}" Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}}" Visibility="{Binding IsEditing,Converter={StaticResource VisibilityConverter}}"/>
+                </Canvas>
+            </z:ZoomAndPanControl>
+        </ScrollViewer>
+
+        <Grid Grid.Column="1">
+            <StackPanel>
+                <Button Content="Load Image" Margin="20,10" Padding="5" Click="LoadImageBtn_Click"/>
+                <Button Content="Load Tool" Margin="20,10" Padding="5" Click="LoadToolBtn_Click"/>
+                <Button Content="Save Tool" Margin="20,10" Padding="5" Click="SaveToolBtn_Click"/>
+                <ToggleButton Content="Edit Mode" Margin="20,10" Padding="5" IsChecked="{Binding IsEditing}"/>
+            </StackPanel>
+            <UniformGrid Margin="20,190,20,0" Columns="2" Rows="5" VerticalAlignment="Top" Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}">
+                <TextBlock Text="Origin&#10;X / Y" VerticalAlignment="Center" Margin="5"/>
+                <UniformGrid Rows="1">
+                    <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}" Margin="0,0,2,0"/>
+                    <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}" Margin="2,0,0,0"/>
+                </UniformGrid>
+                <TextBlock Text="Projection&#10;Length" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
+                <TextBlock Text="Search&#10;Length" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
+                <TextBlock Text="Contrast&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
+                <TextBlock Text="Half Size&#10;Pixel Count" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding HalfPixelCount}"/>
+                <TextBlock Text="Edge&#10;Direction" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox VerticalAlignment="Center" ItemsSource="{Binding Source={StaticResource DirectionFromEnum}}" SelectedIndex="{Binding SelectedEdgeDirection}"/>
+            </UniformGrid>
+            <Button Content="RUN" VerticalAlignment="Bottom" Margin="20,10" Padding="5" Click="RunBtn_Click"/>
+        </Grid>
+    </Grid>
+</UserControl>

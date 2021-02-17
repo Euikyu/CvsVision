@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="CvsVision.Controls.CvsDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CvsVision.Controls"
+             xmlns:z="clr-namespace:ZoomPanCon"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+        <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
+                                          MouseWheel="ZoomAndPanControl_MouseWheel"
+                                          MouseDown="ZoomAndPanControl_MouseDown"
+                                          MouseMove="ZoomAndPanControl_MouseMove"
+                                          MouseUp="ZoomAndPanControl_MouseUp">
+            <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
+                <Image Name="Origin_Image" Source="{Binding OriginSource}"/>
+                <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
+                
+            </Canvas>
+        </z:ZoomAndPanControl>
+    </ScrollViewer>
+</UserControl>
