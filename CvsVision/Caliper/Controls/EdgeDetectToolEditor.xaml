@@ -19,13 +19,12 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
-    <Grid Background="White" DataContext="{Binding ElementName=uc}">
+    <Grid Background="White" DataContext="{Binding ElementName=uc, Path=DataContext}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer x:Name="scrollViewer" DataContext="{Binding ElementName=uc, Path=DataContext}" 
-                      CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+        <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
             <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
                                           MouseWheel="ZoomAndPanControl_MouseWheel"
                                           MouseDown="ZoomAndPanControl_MouseDown"
@@ -49,13 +48,13 @@
             <UniformGrid Margin="20,190,20,0" Columns="2" Rows="5" VerticalAlignment="Top" Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}">
                 <TextBlock Text="Origin&#10;X / Y" VerticalAlignment="Center" Margin="5"/>
                 <UniformGrid Rows="1">
-                    <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}" Margin="0,0,2,0"/>
-                    <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}" Margin="2,0,0,0"/>
+                    <TextBox VerticalAlignment="Center" Text="{Binding OriginX}" Margin="0,0,2,0"/>
+                    <TextBox VerticalAlignment="Center" Text="{Binding OriginY}" Margin="2,0,0,0"/>
                 </UniformGrid>
                 <TextBlock Text="Projection&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ProjectionLength}"/>
                 <TextBlock Text="Search&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding SearchLength}"/>
                 <TextBlock Text="Contrast&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
                 <TextBlock Text="Half Size&#10;Pixel Count" VerticalAlignment="Center" Margin="5"/>
