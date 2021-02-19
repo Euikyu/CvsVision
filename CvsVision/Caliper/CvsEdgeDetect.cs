@@ -189,6 +189,7 @@ namespace CvsVision.Caliper
         /// </summary>
         public void Detect()
         {
+            //현재 에지 탐색 로직은 불완전함, 추후에 보완할 예정
             //에지 넓이 = 최고점 높이 * 같은 부호 길이 / 2
 
             //이전 서브픽셀 값
@@ -290,6 +291,9 @@ namespace CvsVision.Caliper
             this.ScoringAndSortEdgeList();
         }
         
+        /// <summary>
+        /// 에지 점수 비교하여 정렬하는 함수.
+        /// </summary>
         private void ScoringAndSortEdgeList()
         {
             //현재는 대비값 1개로만 스코어링하지만 추후에는 좀 더 기능을 추가할 예정

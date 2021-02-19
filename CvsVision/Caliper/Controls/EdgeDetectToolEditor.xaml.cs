@@ -45,7 +45,7 @@ namespace CvsVision.Caliper.Controls
             get { return m_IsEditing; }
             set
             {
-                if (m_Tool != null)
+                if (m_Tool != null && m_OriginSource != null)
                 {
                     m_IsEditing = value;
                     this.RaisePropertyChanged(nameof(IsEditing));
@@ -119,6 +119,36 @@ namespace CvsVision.Caliper.Controls
                     (m_Tool.Region as CvsRectangleAffine).OriginY = value;
                     this.RaisePropertyChanged(nameof(OriginY));
                 }
+            }
+        }
+
+        public double Radian
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Region != null) return (m_Tool.Region as CvsRectangleAffine).Radian;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Region != null)
+                {
+                    (m_Tool.Region as CvsRectangleAffine).Radian = value;
+                    this.RaisePropertyChanged(nameof(Radian));
+                    this.RaisePropertyChanged(nameof(Rotation));
+                }
+            }
+        }
+        public double Rotation
+        {
+            get
+            {
+                return Radian * 180 / Math.PI;
+            }
+            set
+            {
+                Radian = value * Math.PI / 180;
+
             }
         }
 
@@ -224,57 +254,6 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Methods
-
-
-        #region Events
-        private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog d = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Bitmap Image Files (*.bmp)|*.bmp"
-            };
-            if ((bool)d.ShowDialog())
-            {
-                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(d.FileName);
-                if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
-                {
-                    MessageBox.Show("It support only Format8bppIndexed.");
-                }
-                else
-                {
-                    m_CurrentBitmap = bmp;
-                    var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-                    OriginSource = BitmapSource.Create(data.Width, data.Height, bmp.HorizontalResolution, bmp.VerticalResolution, PixelFormats.Gray8, null, data.Scan0, data.Stride * data.Height, data.Stride);
-                    OriginSource.Freeze();
-                    bmp.UnlockBits(data);
-                    if (SubjectTool.InputImage != null) SubjectTool.InputImage.Dispose();
-                    SubjectTool.InputImage = m_CurrentBitmap;
-                }
-            }
-        }
-        private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //Tool 불러오는 과정 실행해야함
-            SubjectTool.Load("<Input the loading file path>", typeof(CvsEdgeDetectTool));
-        }
-        private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //Tool 저장
-            SubjectTool.Save("<Input the saving file path>");
-        }
-        private void RunBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SubjectTool.Run();
-            var overlayImg = new DrawingImage(SubjectTool.Overlay);
-            overlayImg.Freeze();
-            OverlaySource = overlayImg;
-
-            IsEditing = false;
-        }
-        #endregion
-
-        #endregion
 
         #region - Zoompan Control
         /*
@@ -468,5 +447,57 @@ namespace CvsVision.Caliper.Controls
             }*/
         }
         #endregion
+
+        #region Events
+        private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog d = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Bitmap Image Files (*.bmp)|*.bmp"
+            };
+            if ((bool)d.ShowDialog())
+            {
+                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(d.FileName);
+                if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+                {
+                    MessageBox.Show("It support only Format8bppIndexed.");
+                }
+                else
+                {
+                    m_CurrentBitmap = bmp;
+                    var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+
+                    OriginSource = BitmapSource.Create(data.Width, data.Height, bmp.HorizontalResolution, bmp.VerticalResolution, PixelFormats.Gray8, null, data.Scan0, data.Stride * data.Height, data.Stride);
+                    OriginSource.Freeze();
+                    bmp.UnlockBits(data);
+                    if (m_Tool.InputImage != null) m_Tool.InputImage.Dispose();
+                    m_Tool.InputImage = m_CurrentBitmap;
+                }
+            }
+        }
+        private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //Tool 불러오는 과정 실행해야함
+            m_Tool.Load("<Input the loading file path>", typeof(CvsEdgeDetectTool));
+        }
+        private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //Tool 저장
+            SubjectTool = m_Tool;
+            SubjectTool.Save("<Input the saving file path>");
+        }
+        private void RunBtn_Click(object sender, RoutedEventArgs e)
+        {
+            m_Tool.Run();
+            var overlayImg = new DrawingImage(m_Tool.Overlay);
+            overlayImg.Freeze();
+            OverlaySource = overlayImg;
+
+            IsEditing = false;
+        }
+        #endregion
+
+        #endregion
+
     }
 }

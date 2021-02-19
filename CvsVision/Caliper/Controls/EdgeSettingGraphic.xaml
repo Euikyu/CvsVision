@@ -9,7 +9,6 @@
              MinWidth="20" MinHeight="20" Loaded="ResizableRectangle_Loaded">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Rect_Stroke_Color" Color="#FF3A88C7"/>
-        <FrameworkElement x:Key="Rotate_Cursor" Cursor="pack://application:,,,/Resources/refresh.cur"/>
         <Style x:Key="Polygon_Visibility_Style" TargetType="Polygon">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsGrouped}" Value="True">

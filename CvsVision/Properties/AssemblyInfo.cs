@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
+using System.Windows;
 
 // 어셈블리에 대한 일반 정보는 다음 특성 집합을 통해 
 // 제어됩니다. 어셈블리와 관련된 정보를 수정하려면
@@ -18,6 +20,15 @@ using System.Runtime.InteropServices;
 // 표시되지 않습니다. COM에서 이 어셈블리의 형식에 액세스하려면
 // 해당 형식에 대해 ComVisible 특성을 true로 설정하세요.
 [assembly: ComVisible(false)]
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.None, //테마별 리소스 사전의 위치
+                                     //(페이지 또는 응용 프로그램 리소스 사진에
+                                     // 리소스가 없는 경우에 사용됨)
+    ResourceDictionaryLocation.SourceAssembly //제네릭 리소스 사전의 위치
+                                              //(페이지 또는 응용 프로그램 리소스 사진에
+                                              // 리소스가 없는 경우에 사용됨)
+)]
 
 // 이 프로젝트가 COM에 노출되는 경우 다음 GUID는 typelib의 ID를 나타냅니다.
 [assembly: Guid("54a1ee80-9957-4c42-919f-8b3bd654b682")]

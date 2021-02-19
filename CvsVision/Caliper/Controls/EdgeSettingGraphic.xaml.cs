@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Resources;
 using System.Windows.Shapes;
 
 namespace CvsVision.Caliper.Controls
@@ -36,6 +37,8 @@ namespace CvsVision.Caliper.Controls
         private double m_RectHeight;
 
         private Line m_RotationLine;
+
+        private Cursor m_RotateCursor;
         #endregion
 
         #region Properties
@@ -151,6 +154,10 @@ namespace CvsVision.Caliper.Controls
         public EdgeSettingGraphic()
         {
             InitializeComponent();
+
+            Uri uri = new Uri("pack://application:,,,/CvsVision;component/Resources/refresh.cur", UriKind.RelativeOrAbsolute);
+            StreamResourceInfo info = Application.GetResourceStream(uri);
+            m_RotateCursor = new Cursor(info.Stream);
         }
 
         #region Methods
@@ -198,7 +205,7 @@ namespace CvsVision.Caliper.Controls
                         this.Cursor = Cursors.SizeAll;
                         break;
                     case "Rotate_Grid":
-                        this.Cursor = ((FrameworkElement)this.Resources["Rotate_Cursor"]).Cursor;
+                        this.Cursor = m_RotateCursor;
                         break;
                 }
             }
@@ -380,12 +387,12 @@ namespace CvsVision.Caliper.Controls
         //내,외부에서 Width, Height 변경할 시 동작
         private void ContentControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (m_RectWidth != 0 && m_RectHeight != 0)
-            {
-                this.OriginX = m_RectOriginX + (m_RectWidth - this.Width) / 2;
-                this.OriginY = m_RectOriginY + (m_RectHeight - this.Height) / 2;
-                this.UpdateRect();
-            }
+            //if (IsGrouped && m_RectWidth != 0 && m_RectHeight != 0)
+            //{
+            //    this.OriginX = m_RectOriginX + (m_RectWidth - this.Width) / 2;
+            //    this.OriginY = m_RectOriginY + (m_RectHeight - this.Height) / 2;
+            //    this.UpdateRect();
+            //}
         }
         #endregion
 

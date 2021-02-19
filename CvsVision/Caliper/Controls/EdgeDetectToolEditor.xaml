@@ -8,8 +8,8 @@
              xmlns:z="clr-namespace:ZoomPanCon"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Name="uc"
-             d:DesignHeight="500" d:DesignWidth="800"
-             MinWidth="600" MinHeight="500">
+             d:DesignHeight="600" d:DesignWidth="800"
+             MinWidth="600" MinHeight="600">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
         <ObjectDataProvider x:Key="DirectionFromEnum" MethodName="GetValues"
@@ -31,9 +31,17 @@
                                           MouseMove="ZoomAndPanControl_MouseMove"
                                           MouseUp="ZoomAndPanControl_MouseUp">
                 <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
-                    <Image Name="Origin_Image" Source="{Binding OriginSource}"/>
+                    <Image Name="Origin_Image" Source="{Binding OriginSource}" SnapsToDevicePixels="True" UseLayoutRounding="False" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
-                    <local:EdgeSettingGraphic Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}}" Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}}" Visibility="{Binding IsEditing,Converter={StaticResource VisibilityConverter}}"/>
+                    <local:EdgeSettingGraphic 
+                                                Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}, Mode=TwoWay}" 
+                                                Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
+                                                OriginX="{Binding OriginX, Mode=TwoWay}"
+                                                OriginY="{Binding OriginY, Mode=TwoWay}"
+                                                Width="{Binding ProjectionLength, Mode=TwoWay}"
+                                                Height="{Binding SearchLength, Mode=TwoWay}"
+                                                Radian="{Binding Radian, Mode=TwoWay}"                                                
+                                                Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}"/>
                 </Canvas>
             </z:ZoomAndPanControl>
         </ScrollViewer>
@@ -43,7 +51,7 @@
                 <Button Content="Load Image" Margin="20,10" Padding="5" Click="LoadImageBtn_Click"/>
                 <Button Content="Load Tool" Margin="20,10" Padding="5" Click="LoadToolBtn_Click"/>
                 <Button Content="Save Tool" Margin="20,10" Padding="5" Click="SaveToolBtn_Click"/>
-                <ToggleButton Content="Edit Mode" Margin="20,10" Padding="5" IsChecked="{Binding IsEditing}"/>
+                <ToggleButton Content="Edit Mode" Margin="20,10" Padding="5" IsChecked="{Binding IsEditing, Mode=TwoWay}"/>
             </StackPanel>
             <UniformGrid Margin="20,190,20,0" Columns="2" Rows="5" VerticalAlignment="Top" Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}">
                 <TextBlock Text="Origin&#10;X / Y" VerticalAlignment="Center" Margin="5"/>
@@ -55,6 +63,8 @@
                 <TextBox VerticalAlignment="Center" Text="{Binding ProjectionLength}"/>
                 <TextBlock Text="Search&#10;Length" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding SearchLength}"/>
+                <TextBlock Text="Edge&#10;Degree" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding Rotation}"/>
                 <TextBlock Text="Contrast&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ContrastThreshold}"/>
                 <TextBlock Text="Half Size&#10;Pixel Count" VerticalAlignment="Center" Margin="5"/>

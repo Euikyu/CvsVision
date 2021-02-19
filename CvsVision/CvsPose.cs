@@ -1,5 +1,4 @@
-﻿using OpenCvSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -71,24 +70,40 @@ namespace CvsVision
                   0,    0,          1
             };
         }
-        
+
         public Point GetPointByPose(Point point)
         {
-            Mat poseMat = new Mat(3, 3, MatType.CV_64FC1, this.GetPose());
-            Mat pointMat = new Mat(3, 1, MatType.CV_64FC1, new double[] { point.X, point.Y, 1 });
-
-            Mat resultMat = poseMat * pointMat;
-
-            double[] resArr = new double[3];
-            resultMat.GetArray(0, 0, resArr);
+            var poseArr = this.GetPose();
+            var resArr = new double[3];
+            for (int i = 0; i < resArr.Length; i++)
+            {
+                resArr[i] = poseArr[3 * i] * point.X + poseArr[3 * i + 1] * point.Y + poseArr[3 * i + 2];
+            }
 
             return new Point(resArr[0], resArr[1]);
         }
-        
+        public Point GetPointByPose(double x, double y)
+        {
+            var poseArr = this.GetPose();
+            var resArr = new double[3];
+            for (int i = 0; i < resArr.Length; i++)
+            {
+                resArr[i] = poseArr[3 * i] * x + poseArr[3 * i + 1] * y + poseArr[3 * i + 2];
+            }
+
+            return new Point(resArr[0], resArr[1]);
+        }
+
         public Point GetPointByOrigin(Point point)
         {
             if (Parent == null) return this.GetPointByPose(point);
             return Parent.GetPointByOrigin(this.GetPointByPose(point));
+        }
+
+        public Point GetPointByOrigin(double x, double y)
+        {
+            if (Parent == null) return this.GetPointByPose(x,y);
+            return Parent.GetPointByOrigin(this.GetPointByPose(x,y));
         }
 
         public double GetRadianByOrigin()

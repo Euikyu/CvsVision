@@ -1,5 +1,4 @@
-﻿using OpenCvSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -16,10 +15,20 @@ namespace CvsVision.Caliper
         #region Fields
         private CvsRectangleAffine m_Region;
         private CvsEdgeDetect m_EdgeDetect;
+        private Bitmap m_InputImage;
         #endregion
 
         #region Properties
-        
+        public Bitmap InputImage
+        {
+            get { return m_InputImage; }
+            set
+            {
+                m_InputImage = value;
+                Overlay = null;
+            }
+        }
+
         public uint ContrastThreshold
         {
             get
@@ -41,7 +50,7 @@ namespace CvsVision.Caliper
             }
             set
             {
-                if(m_EdgeDetect != null)
+                if (m_EdgeDetect != null)
                 {
                     if (value < 1) m_EdgeDetect.HalfPixelCount = 1;
                     else m_EdgeDetect.HalfPixelCount = value;
@@ -79,8 +88,9 @@ namespace CvsVision.Caliper
 
         public CvsEdge Edge { get { return m_EdgeDetect.Edge; } }
         public DrawingGroup Overlay { get; private set; }
-        public Bitmap InputImage { get; set; }
+        
 
+        public Exception Exception { get; private set; }
         #endregion
 
         public CvsEdgeDetectTool()
@@ -97,23 +107,51 @@ namespace CvsVision.Caliper
         #region Methods
         public void Load(string filePath, Type toolType)
         {
+            try
+            {
 
+                Overlay = this.CreateGeometry();
+
+                Exception = null;
+            }
+            catch (Exception err)
+            {
+                Exception = err;
+            }
         }
 
         public void Save(string path)
         {
+            try
+            {
 
+                Exception = null;
+            }
+            catch (Exception err)
+            {
+                Exception = err;
+            }
         }
 
 
         public void Run()
         {
-            m_EdgeDetect.DetectImage = Region.Crop(InputImage);
-            m_EdgeDetect.Detect();
+            try
+            {
+                var cropImage = Region.Crop(InputImage);
+                m_EdgeDetect.DetectImage = cropImage;
+                m_EdgeDetect.Detect();
 
-            Overlay = this.CreateGeometry();
+                Overlay = this.CreateGeometry();
+
+                Exception = null;
+            }
+            catch (Exception err)
+            {
+                Exception = err;
+            }
         }
-        
+
         private DrawingGroup CreateGeometry()
         {
 
@@ -122,7 +160,7 @@ namespace CvsVision.Caliper
             {
                 Geometry = new RectangleGeometry(new System.Windows.Rect(0, 0, InputImage.Width, InputImage.Height)),
                 Brush = Brushes.Transparent,
-                Pen = new Pen(Brushes.Transparent, 1)
+                Pen = new Pen(Brushes.Transparent, 0)
             };
             dg.Children.Add(overlay);
 
@@ -131,7 +169,7 @@ namespace CvsVision.Caliper
                 GeometryDrawing graphic = new GeometryDrawing();
                 GeometryGroup group = new GeometryGroup();
 
-                group.Children.Add(new LineGeometry(m_Region.Pose.GetPointByOrigin(new System.Windows.Point(-m_Region.Width / 2, m_EdgeDetect.Edge.Y)), m_Region.Pose.GetPointByOrigin(new System.Windows.Point(m_Region.Width / 2, m_EdgeDetect.Edge.Y))));
+                group.Children.Add(new LineGeometry(m_Region.Pose.GetPointByOrigin(-m_Region.Width / 2, m_EdgeDetect.Edge.Y), m_Region.Pose.GetPointByOrigin(m_Region.Width / 2, m_EdgeDetect.Edge.Y)));
 
                 graphic.Geometry = group;
                 graphic.Brush = Brushes.Transparent;
