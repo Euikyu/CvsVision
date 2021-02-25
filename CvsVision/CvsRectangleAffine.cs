@@ -86,11 +86,18 @@ namespace CvsVision
         }
         public Point Center
         {
-            get { return new Point(m_Pose.TranslateX, m_Pose.TranslateY); }
+            get
+            {
+                if (m_Pose != null) return new Point(m_Pose.TranslateX, m_Pose.TranslateY);
+                else return new Point(m_OriginX + m_Width / 2, m_OriginY + m_Height / 2);
+            }
             set
             {
-                m_Pose.TranslateX = value.X - m_Width / 2;
-                m_Pose.TranslateY = value.Y - m_Height / 2;
+                if (m_Pose != null)
+                {
+                    m_Pose.TranslateX = value.X;
+                    m_Pose.TranslateY = value.Y;
+                }
             }
         }
         public CvsPose Pose
@@ -101,6 +108,7 @@ namespace CvsVision
                 m_Pose = value;
                 m_OriginX = m_Pose.TranslateX - m_Width / 2;
                 m_OriginY = m_Pose.TranslateY - m_Height / 2;
+                m_Radian = m_Pose.Radian;
             }
         }
         #endregion
