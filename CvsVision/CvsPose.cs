@@ -8,7 +8,7 @@ using Point = System.Windows.Point;
 
 namespace CvsVision
 {
-    public class CvsPose
+    public class CvsPose : ICloneable
     {
         #region Fields
         
@@ -37,7 +37,7 @@ namespace CvsVision
             TranslateX = centerX;
             TranslateY = centerY;
 
-            Parent = new CvsPose();
+            Parent = null;
         }
 
         public CvsPose(CvsPose parent)
@@ -59,6 +59,12 @@ namespace CvsVision
         }
 
         #region Methods
+        public object Clone()
+        {
+            if (Parent != null) return new CvsPose(Parent.Clone() as CvsPose, Radian, TranslateX, TranslateY);
+            else return new CvsPose(null, Radian, TranslateX, TranslateY);
+        }
+
         public double[] GetPose()
         {
             var cos = Math.Cos(Radian);
@@ -111,6 +117,7 @@ namespace CvsVision
             if (Parent == null) return 0;
             return Parent.GetRadianByOrigin() + this.Radian;
         }
+
         #endregion
     }
 }

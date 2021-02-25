@@ -421,7 +421,7 @@ namespace CvsVision.Caliper.Controls
             if (!m_IsCaptured)
             {
                 this.UpdateCaliper();
-                var interval = e.NewSize.Width / PoseCollection.Count;
+                var interval = this.Width / PoseCollection.Count;
                 for (int i = 0; i < PoseCollection.Count; i++) PoseCollection[i].TranslateX = (i + 0.5) * interval;
             }
         }

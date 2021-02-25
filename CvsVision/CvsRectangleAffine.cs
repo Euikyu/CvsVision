@@ -89,8 +89,8 @@ namespace CvsVision
             get { return new Point(m_Pose.TranslateX, m_Pose.TranslateY); }
             set
             {
-                OriginX = value.X - m_Width / 2;
-                OriginY = value.Y - m_Height / 2;
+                m_Pose.TranslateX = value.X - m_Width / 2;
+                m_Pose.TranslateY = value.Y - m_Height / 2;
             }
         }
         public CvsPose Pose

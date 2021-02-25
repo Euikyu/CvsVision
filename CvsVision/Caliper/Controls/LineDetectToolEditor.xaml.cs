@@ -570,8 +570,8 @@ namespace CvsVision.Caliper.Controls
             var count = lineSettingGraphic.PoseCollection.Count;
             for(int i =0; i < count; i++)
             {
-                var edge = new CvsEdgeSetting();
-                edge.Region.Pose = lineSettingGraphic.PoseCollection[i];
+                var edge = new CvsEdgeSetting { OriginX = 0, OriginY = 0, ProjectionLength = this.ProjectionLength, SearchLength = this.SearchLength};
+                edge.Region.Pose = lineSettingGraphic.PoseCollection[i].Clone() as CvsPose;
                 m_Tool.Setting.EdgeCollection.Add(edge);
             }
             m_Tool.Run();
