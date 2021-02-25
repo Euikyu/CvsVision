@@ -101,10 +101,10 @@ namespace CvsVision.Caliper
                 foreach(var edge in Setting.EdgeCollection)
                 {
                     var cropImage = edge.Region.Crop(m_InputImage);
-                    var edgeTool = edge.GetToolParams();
-                    edgeTool.DetectImage = cropImage;
-                    edgeTool.Detect();
-                    m_LineDetect.InputPointList.Add(edge.Region.Pose.GetPointByOrigin(edgeTool.Edge.X, edgeTool.Edge.Y));
+                    var edgeDetect = edge.GetToolParams();
+                    edgeDetect.DetectImage = cropImage;
+                    edgeDetect.Detect();
+                    if(edgeDetect.Edge != null) m_LineDetect.InputPointList.Add(edge.Region.Pose.GetPointByOrigin(edgeDetect.Edge.X, edgeDetect.Edge.Y));
                 }
                 m_LineDetect.Detect();
 
