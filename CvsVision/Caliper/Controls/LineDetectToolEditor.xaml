@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="CvsVision.Caliper.Controls.EdgeDetectToolEditor"
+﻿<UserControl x:Class="CvsVision.Caliper.Controls.LineDetectToolEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,8 +8,8 @@
              xmlns:z="clr-namespace:ZoomPanCon"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Name="uc"
-             d:DesignHeight="600" d:DesignWidth="800"
-             MinWidth="600" MinHeight="600">
+             d:DesignHeight="770" d:DesignWidth="800"
+             MinWidth="800" MinHeight="770">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
         <ObjectDataProvider x:Key="DirectionFromEnum" MethodName="GetValues"
@@ -37,14 +37,14 @@
                 <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
                     <Image Name="Origin_Image" Source="{Binding OriginSource}" SnapsToDevicePixels="True" UseLayoutRounding="False" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
-                    <local:EdgeSettingGraphic 
+                    <local:LineSettingGraphic   x:Name="lineSettingGraphic"
                                                 Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}, Mode=TwoWay}" 
                                                 Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
                                                 OriginX="{Binding ElementName=uc, Path=DataContext.OriginX, Mode=TwoWay}"
                                                 OriginY="{Binding ElementName=uc, Path=DataContext.OriginY, Mode=TwoWay}"
-                                                Width="{Binding ElementName=uc, Path=DataContext.ProjectionLength, Mode=TwoWay}"
-                                                Height="{Binding ElementName=uc, Path=DataContext.SearchLength, Mode=TwoWay}"
-                                                Radian="{Binding ElementName=uc, Path=DataContext.Radian, Mode=TwoWay}"                                                
+                                                ProjectionLength="{Binding ElementName=uc, Path=DataContext.ProjectionLength, Mode=TwoWay}"
+                                                SearchLength="{Binding ElementName=uc, Path=DataContext.SearchLength, Mode=TwoWay}"
+                                                Radian="{Binding ElementName=uc, Path=DataContext.Radian, Mode=TwoWay}" 
                                                 Visibility="{Binding ElementName=uc, Path=DataContext.IsEditing, Converter={StaticResource VisibilityConverter}}"/>
                 </Canvas>
             </z:ZoomAndPanControl>
@@ -57,22 +57,34 @@
                 <Button Content="Save Tool" Margin="20,10" Padding="5" Click="SaveToolBtn_Click"/>
                 <ToggleButton Content="Edit Mode" Margin="20,10" Padding="5" IsChecked="{Binding ElementName=uc, Path=DataContext.IsEditing, Mode=TwoWay}"/>
             </StackPanel>
-            <UniformGrid Margin="20,190,20,0" Columns="2" Rows="5" VerticalAlignment="Top" Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}">
+            <UniformGrid Margin="20,190,20,0" Columns="2" Rows="5" VerticalAlignment="Top" Visibility="{Binding ElementName=uc, Path=DataContext.IsEditing, Converter={StaticResource VisibilityConverter}}">
+                <TextBlock Text="Line Settings" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,-50,0"/>
+                <TextBlock Text="" VerticalAlignment="Center" Margin="5"/>
                 <TextBlock Text="Origin&#10;X / Y" VerticalAlignment="Center" Margin="5"/>
                 <UniformGrid Rows="1">
-                    <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginX, StringFormat=N1, Mode=TwoWay}" Margin="0,0,2,0"/>
+                    <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginX, StringFormat=N1}" Margin="0,0,2,0"/>
                     <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginY, StringFormat=N1}" Margin="2,0,0,0"/>
                 </UniformGrid>
-                <TextBlock Text="Projection&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ProjectionLength, StringFormat=N2}"/>
-                <TextBlock Text="Search&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.SearchLength, StringFormat=N2}"/>
-                <TextBlock Text="Edge&#10;Degree" VerticalAlignment="Center" Margin="5"/>
+                <TextBlock Text="Segment&#10;Length" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=lineSettingGraphic, Path=Width, StringFormat=N2, FallbackValue=100}"/>
+                <TextBlock Text="Segment&#10;Degree" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.Rotation, StringFormat=N1}"/>
+                <TextBlock Text="Caliper&#10;Count" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=lineSettingGraphic, Path=CaliperCount, FallbackValue=3}"/>
+                <TextBlock Text="Consensus&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ConsensusThreshold, FallbackValue=6}"/>
+
+                <TextBlock Text="Caliper Settings" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,-50,0"/>
+                <TextBlock Text="" VerticalAlignment="Center" Margin="5"/>
+                
+                <TextBlock Text="Projection&#10;Length" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ProjectionLength, StringFormat=N1}"/>
+                <TextBlock Text="Search&#10;Length" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.SearchLength, StringFormat=N1}"/>
                 <TextBlock Text="Contrast&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ContrastThreshold}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ContrastThreshold, FallbackValue=5}"/>
                 <TextBlock Text="Half Size&#10;Pixel Count" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.HalfPixelCount}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.HalfPixelCount, FallbackValue=2}"/>
                 <TextBlock Text="Edge&#10;Direction" VerticalAlignment="Center" Margin="5"/>
                 <ComboBox VerticalAlignment="Center" ItemsSource="{Binding Source={StaticResource DirectionFromEnum}}" SelectedIndex="{Binding SelectedEdgeDirection}"/>
             </UniformGrid>

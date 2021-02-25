@@ -70,10 +70,23 @@ namespace CvsVision.Caliper.Controls
             DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(EdgeSettingGraphic));
 
         public static readonly DependencyProperty RotationProperty =
-            DependencyProperty.Register(nameof(Rotation), typeof(double), typeof(EdgeSettingGraphic));
+            DependencyProperty.Register(nameof(Rotation), typeof(double), typeof(EdgeSettingGraphic),
+                new PropertyMetadata(Rotation_PropertyChanged));
 
+        private static void Rotation_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            EdgeSettingGraphic control = (EdgeSettingGraphic)o;
+            if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue;
+        }
         public static readonly DependencyProperty RadianProperty =
-            DependencyProperty.Register(nameof(Radian), typeof(double), typeof(EdgeSettingGraphic));
+            DependencyProperty.Register(nameof(Radian), typeof(double), typeof(EdgeSettingGraphic),
+                new PropertyMetadata(Radian_PropertyChanged));
+
+        private static void Radian_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            EdgeSettingGraphic control = (EdgeSettingGraphic)o;
+            if(!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
+        }
 
         public static readonly DependencyProperty IsGroupedProperty =
             DependencyProperty.Register(nameof(IsGrouped), typeof(bool), typeof(EdgeSettingGraphic));
@@ -82,10 +95,7 @@ namespace CvsVision.Caliper.Controls
         public double OriginX
         {
             get { return (double)GetValue(OriginXProperty); }
-            set
-            {
-                SetValue(OriginXProperty, value);
-            }
+            set { SetValue(OriginXProperty, value); }
         }
 
         public double OriginY
@@ -93,7 +103,7 @@ namespace CvsVision.Caliper.Controls
             get { return (double)GetValue(OriginYProperty); }
             set { SetValue(OriginYProperty, value); }
         }
-
+        
         public double Rotation
         {
             get { return (double)GetValue(RotationProperty); }
@@ -102,17 +112,6 @@ namespace CvsVision.Caliper.Controls
                 m_Radian = value * (Math.PI / 180);
                 SetValue(RadianProperty, m_Radian);
                 SetValue(RotationProperty, value);
-
-                if (IsGrouped) return;
-                if (RectRotateTransform is RotateTransform t)
-                {
-                    t.Angle = value;
-                }
-                else
-                {
-                    RectRotateTransform = new RotateTransform(value, this.Width / 2, this.Height / 2);
-                }
-                RaisePropertyChanged(nameof(RectRotateTransform));
             }
         }
 
@@ -125,17 +124,6 @@ namespace CvsVision.Caliper.Controls
                 SetValue(RadianProperty, value);
                 var deg = value * (180 / Math.PI);
                 SetValue(RotationProperty, deg);
-
-                if (IsGrouped) return;
-                if (RectRotateTransform is RotateTransform t)
-                {
-                    t.Angle = deg;
-                }
-                else
-                {
-                    RectRotateTransform = new RotateTransform(deg, this.Width / 2, this.Height / 2);
-                }
-                RaisePropertyChanged(nameof(RectRotateTransform));
             }
         }
 
@@ -387,12 +375,10 @@ namespace CvsVision.Caliper.Controls
         //내,외부에서 Width, Height 변경할 시 동작
         private void ContentControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //if (IsGrouped && m_RectWidth != 0 && m_RectHeight != 0)
-            //{
-            //    this.OriginX = m_RectOriginX + (m_RectWidth - this.Width) / 2;
-            //    this.OriginY = m_RectOriginY + (m_RectHeight - this.Height) / 2;
-            //    this.UpdateRect();
-            //}
+            if (!IsGrouped && !m_IsCaptured && m_RectWidth != 0 && m_RectHeight != 0)
+            {
+                this.UpdateRect();
+            }
         }
         #endregion
 

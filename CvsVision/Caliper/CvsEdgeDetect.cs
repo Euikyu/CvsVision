@@ -14,7 +14,7 @@ namespace CvsVision.Caliper
         LightToDark,
         DarkToLight
     }
-    public class CvsEdgeDetect
+    public class CvsEdgeDetect: IDisposable
     {
         #region Fields
         private float[] m_SubPixelArray;
@@ -124,6 +124,18 @@ namespace CvsVision.Caliper
             ContrastThreshold = 5;
             HalfPixelCount = 2;
             m_EdgeList = new List<CvsEdge>();
+        }
+
+        public void Dispose()
+        {
+            if (m_DetectImage != null)
+            {
+                m_DetectImage.Dispose();
+                m_DetectRawImage = null;
+            }
+            if (m_EdgeList != null) m_EdgeList.Clear();
+            m_ProjectionArray = null;
+            m_SubPixelArray = null;
         }
 
         #region Methods

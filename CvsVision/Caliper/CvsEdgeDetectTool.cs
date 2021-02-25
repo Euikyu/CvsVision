@@ -13,7 +13,7 @@ namespace CvsVision.Caliper
     public class CvsEdgeDetectTool : ICvsTool
     {
         #region Fields
-        private CvsRectangleAffine m_Region;
+        private CvsEdgeSetting m_Setting;
         private CvsEdgeDetect m_EdgeDetect;
         private Bitmap m_InputImage;
         #endregion
@@ -28,64 +28,15 @@ namespace CvsVision.Caliper
                 Overlay = null;
             }
         }
-
-        public uint ContrastThreshold
+        public CvsEdgeSetting Setting
         {
-            get
-            {
-                if (m_EdgeDetect != null) return m_EdgeDetect.ContrastThreshold;
-                else return 0;
-            }
+            get { return m_Setting; }
             set
             {
-                if (m_EdgeDetect != null) m_EdgeDetect.ContrastThreshold = value;
+                m_Setting = value;
+                m_EdgeDetect = m_Setting.GetToolParams();
             }
         }
-        public uint HalfPixelCount
-        {
-            get
-            {
-                if (m_EdgeDetect != null) return m_EdgeDetect.HalfPixelCount;
-                else return 0;
-            }
-            set
-            {
-                if (m_EdgeDetect != null)
-                {
-                    if (value < 1) m_EdgeDetect.HalfPixelCount = 1;
-                    else m_EdgeDetect.HalfPixelCount = value;
-                }
-            }
-        }
-        /// <summary>
-        /// 에지를 감지할 방향.
-        /// </summary>
-        public EDirection EdgeDirection
-        {
-            get
-            {
-                if (m_EdgeDetect != null) return m_EdgeDetect.EdgeDirection;
-                else return EDirection.Any;
-            }
-            set
-            {
-                if (m_EdgeDetect != null) m_EdgeDetect.EdgeDirection = value;
-            }
-        }
-
-
-        public ICvsRegion Region
-        {
-            get { return m_Region; }
-            set
-            {
-                if (value is CvsRectangleAffine affine)
-                {
-                    m_Region = affine;
-                }
-            }
-        }
-
         public CvsEdge Edge { get { return m_EdgeDetect.Edge; } }
         public DrawingGroup Overlay { get; private set; }
         
@@ -95,13 +46,13 @@ namespace CvsVision.Caliper
 
         public CvsEdgeDetectTool()
         {
-            m_EdgeDetect = new CvsEdgeDetect();
-            m_Region = new CvsRectangleAffine();
+            Setting = new CvsEdgeSetting();
         }
 
         public void Dispose()
         {
             if (InputImage != null) InputImage.Dispose();
+            if (m_EdgeDetect != null) m_EdgeDetect.Dispose(); 
         }
 
         #region Methods
@@ -109,8 +60,7 @@ namespace CvsVision.Caliper
         {
             try
             {
-
-                Overlay = this.CreateGeometry();
+                
 
                 Exception = null;
             }
@@ -138,9 +88,10 @@ namespace CvsVision.Caliper
         {
             try
             {
-                var cropImage = Region.Crop(InputImage);
+                var cropImage = Setting.Region.Crop(InputImage);
                 m_EdgeDetect.DetectImage = cropImage;
                 m_EdgeDetect.Detect();
+                if (m_EdgeDetect.Edge == null) throw new Exception("Edge not found.");
 
                 Overlay = this.CreateGeometry();
 
@@ -169,7 +120,7 @@ namespace CvsVision.Caliper
                 GeometryDrawing graphic = new GeometryDrawing();
                 GeometryGroup group = new GeometryGroup();
 
-                group.Children.Add(new LineGeometry(m_Region.Pose.GetPointByOrigin(-m_Region.Width / 2, m_EdgeDetect.Edge.Y), m_Region.Pose.GetPointByOrigin(m_Region.Width / 2, m_EdgeDetect.Edge.Y)));
+                group.Children.Add(new LineGeometry(Setting.Region.Pose.GetPointByOrigin(-Setting.ProjectionLength / 2, m_EdgeDetect.Edge.Y), Setting.Region.Pose.GetPointByOrigin(Setting.ProjectionLength / 2, m_EdgeDetect.Edge.Y)));
 
                 graphic.Geometry = group;
                 graphic.Brush = Brushes.Transparent;

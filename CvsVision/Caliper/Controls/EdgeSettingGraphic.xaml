@@ -50,7 +50,7 @@
                 <Rectangle Name="Size_N" Margin="4" VerticalAlignment="Top" Stroke="{StaticResource Rect_Stroke_Color}" StrokeThickness="6"/>
                 <Rectangle Name="Size_S" Margin="4" VerticalAlignment="Bottom" Stroke="{StaticResource Rect_Stroke_Color}" StrokeThickness="6"/>
                 <Polygon HorizontalAlignment="Center" VerticalAlignment="Top" Width="25" Height="15" Points="1,1 1,4 12,7.5 1,11 1,14 23,7.5" Fill="{StaticResource Rect_Stroke_Color}" Stroke="DarkBlue" StrokeThickness="1" Style="{StaticResource Polygon_Visibility_Style}"/>
-                <Polygon HorizontalAlignment="Left" VerticalAlignment="Center" Width="15" Height="25" Points="1,1 14,1 7.5,24" Fill="{StaticResource Rect_Stroke_Color}" Stroke="DarkBlue" StrokeThickness="1" Style="{StaticResource Polygon_Visibility_Style}"/>
+                <Polygon HorizontalAlignment="Left" VerticalAlignment="Center" Width="15" Height="25" Points="1,1 14,1 7.5,24" Fill="{StaticResource Rect_Stroke_Color}" Stroke="DarkBlue" StrokeThickness="1"/>
                 <Grid Name="Rotate_Grid" HorizontalAlignment="Right" VerticalAlignment="Center" Width="15" Height="15" Background="Red" MouseEnter="Rectangle_MouseEnter" MouseLeave="Rectangle_MouseLeave" MouseDown="Rectangle_MouseDown" MouseUp="Rectangle_MouseUp" MouseMove="Retangle_MouseMove" Style="{StaticResource Rotation_Visibility_Style}">
                     <Ellipse Margin="1" Stroke="White"/>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="5" Height="7.5" Background="Red">

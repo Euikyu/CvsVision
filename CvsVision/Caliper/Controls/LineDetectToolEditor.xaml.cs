@@ -18,17 +18,19 @@ using ZoomPanCon;
 namespace CvsVision.Caliper.Controls
 {
     /// <summary>
-    /// EdgeDetectToolEditor.xaml에 대한 상호 작용 논리
+    /// LineDetectToolEditor.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EdgeDetectToolEditor : UserControl, INotifyPropertyChanged
+    public partial class LineDetectToolEditor : UserControl, INotifyPropertyChanged
     {
         #region Fields
         private bool m_IsEditing;
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
         private DrawingImage m_OverlaySource;
-        private CvsEdgeDetectTool m_Tool;
+        private CvsLineDetectTool m_Tool;
 
+        //private double m_SegmentLength;
+        //private int m_CaliperCount;
         #endregion
 
         #region Properties
@@ -41,55 +43,8 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Common Properties
-        public bool IsEditing
-        {
-            get { return m_IsEditing; }
-            set
-            {
-                if (m_Tool != null && m_OriginSource != null)
-                {
-                    m_IsEditing = value;
-                    this.RaisePropertyChanged(nameof(IsEditing));
-                }
-                else
-                {
-                    m_IsEditing = false;
-                    this.RaisePropertyChanged(nameof(IsEditing));
-                }
-            }
-        }
-        public double ProjectionLength
-        {
-            get
-            {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ProjectionLength;
-                else return 0;
-            }
-            set
-            {
-                if (m_Tool != null && m_Tool.Setting != null)
-                {
-                    m_Tool.Setting.ProjectionLength = value;
-                    this.RaisePropertyChanged(nameof(ProjectionLength));
-                }
-            }
-        }
-        public double SearchLength
-        {
-            get
-            {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SearchLength;
-                else return 0;
-            }
-            set
-            {
-                if (m_Tool != null && m_Tool.Setting != null)
-                {
-                    m_Tool.Setting.SearchLength = value;
-                    this.RaisePropertyChanged(nameof(SearchLength));
-                }
-            }
-        }
+
+        #region Line Settings
         public double OriginX
         {
             get
@@ -152,6 +107,76 @@ namespace CvsVision.Caliper.Controls
             }
         }
 
+        public double ConsensusThreshold
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ConsensusThreshold;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Setting != null)
+                {
+                    m_Tool.Setting.ConsensusThreshold = value;
+                    this.RaisePropertyChanged(nameof(ConsensusThreshold));
+                }
+            }
+        }
+        //public double SegmentLength
+        //{
+        //    get { return m_SegmentLength; }
+        //    set
+        //    {
+        //        m_SegmentLength = value;
+        //        this.RaisePropertyChanged(nameof(SegmentLength));
+        //    }
+        //}
+        //public int CaliperCount
+        //{
+        //    get { return m_CaliperCount; }
+        //    set
+        //    {
+        //        m_CaliperCount = value;
+        //        this.RaisePropertyChanged(nameof(CaliperCount));
+        //    }
+        //}
+        #endregion
+
+        #region Caliper Settings
+        public double ProjectionLength
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ProjectionLength;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Setting != null)
+                {
+                    m_Tool.Setting.ProjectionLength = value;
+                    this.RaisePropertyChanged(nameof(ProjectionLength));
+                }
+            }
+        }
+        public double SearchLength
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SearchLength;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Setting != null)
+                {
+                    m_Tool.Setting.SearchLength = value;
+                    this.RaisePropertyChanged(nameof(SearchLength));
+                }
+            }
+        }
+
         public uint ContrastThreshold
         {
             get
@@ -189,7 +214,7 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null) return (int)m_Tool.Setting.EdgeDirection;
-                else return -1;
+                else return 0;
             }
             set
             {
@@ -197,6 +222,25 @@ namespace CvsVision.Caliper.Controls
                 {
                     m_Tool.Setting.EdgeDirection = (EDirection)value;
                     this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
+                }
+            }
+        }
+        #endregion
+
+        public bool IsEditing
+        {
+            get { return m_IsEditing; }
+            set
+            {
+                if (m_Tool != null && m_OriginSource != null)
+                {
+                    m_IsEditing = value;
+                    this.RaisePropertyChanged(nameof(IsEditing));
+                }
+                else
+                {
+                    m_IsEditing = false;
+                    this.RaisePropertyChanged(nameof(IsEditing));
                 }
             }
         }
@@ -225,9 +269,6 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(OverlaySource));
             }
         }
-        public double ImageWidth { get; private set; }
-        public double ImageHeight { get; private set; }
-        
         public string Message
         {
             get
@@ -238,16 +279,19 @@ namespace CvsVision.Caliper.Controls
                 else return "Success.";
             }
         }
+        public double ImageWidth { get; private set; }
+        public double ImageHeight { get; private set; }
+
         #endregion
 
         #region Dependency Properties
         public static readonly DependencyProperty SubjectToolProperty =
-            DependencyProperty.Register(nameof(SubjectTool), typeof(CvsEdgeDetectTool), typeof(EdgeDetectToolEditor),
-                new PropertyMetadata(new CvsEdgeDetectTool()));
+            DependencyProperty.Register(nameof(SubjectTool), typeof(CvsLineDetectTool), typeof(LineDetectToolEditor),
+                new PropertyMetadata(new CvsLineDetectTool()));
 
-        public CvsEdgeDetectTool SubjectTool
+        public CvsLineDetectTool SubjectTool
         {
-            get { return GetValue(SubjectToolProperty) as CvsEdgeDetectTool; }
+            get { return GetValue(SubjectToolProperty) as CvsLineDetectTool; }
             set
             {
                 SetValue(SubjectToolProperty, value);
@@ -259,28 +303,32 @@ namespace CvsVision.Caliper.Controls
 
         #endregion
 
-        public EdgeDetectToolEditor()
+        public LineDetectToolEditor()
         {
             InitializeComponent();
             DataContext = this;
-            SubjectTool = new CvsEdgeDetectTool();
+            SubjectTool = new CvsLineDetectTool();
         }
+
 
         #region Methods
         private void UpdateToolData()
         {
-            this.RaisePropertyChanged(nameof(ProjectionLength));
-            this.RaisePropertyChanged(nameof(SearchLength));
             this.RaisePropertyChanged(nameof(OriginX));
             this.RaisePropertyChanged(nameof(OriginY));
             this.RaisePropertyChanged(nameof(Radian));
             this.RaisePropertyChanged(nameof(Rotation));
+            this.RaisePropertyChanged(nameof(ConsensusThreshold));
+
+            this.RaisePropertyChanged(nameof(ProjectionLength));
+            this.RaisePropertyChanged(nameof(SearchLength));
             this.RaisePropertyChanged(nameof(ContrastThreshold));
             this.RaisePropertyChanged(nameof(HalfPixelCount));
             this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
+
             this.RaisePropertyChanged(nameof(Message));
         }
-
+        
         #region - Zoompan Control
         /*
          * * memberVar
@@ -304,9 +352,10 @@ namespace CvsVision.Caliper.Controls
         /// The point that was clicked relative to the content that is contained within the ZoomAndPanControl.
         /// </summary>
         private Point origContentMouseDownPoint;
+
         /*
-         * * property
-         */
+* * property
+*/
 
         /*
          * * method
@@ -505,7 +554,7 @@ namespace CvsVision.Caliper.Controls
         private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
         {
             //Tool 불러오는 과정 실행해야함
-            m_Tool.Load("<Input the loading file path>", typeof(CvsEdgeDetectTool));
+            m_Tool.Load("<Input the loading file path>", typeof(CvsLineDetectTool));
             this.UpdateToolData();
         }
         private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
@@ -516,6 +565,15 @@ namespace CvsVision.Caliper.Controls
         }
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
+            m_Tool.Setting.EdgeCollection.Clear();
+
+            var count = lineSettingGraphic.PoseCollection.Count;
+            for(int i =0; i < count; i++)
+            {
+                var edge = new CvsEdgeSetting();
+                edge.Region.Pose = lineSettingGraphic.PoseCollection[i];
+                m_Tool.Setting.EdgeCollection.Add(edge);
+            }
             m_Tool.Run();
             var overlayImg = new DrawingImage(m_Tool.Overlay);
             overlayImg.Freeze();

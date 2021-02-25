@@ -13,6 +13,7 @@ namespace CvsVision
         #region Properties
         Bitmap InputImage { get; set; }
         DrawingGroup Overlay { get; }
+        Exception Exception { get; }
         #endregion
 
         #region Methods

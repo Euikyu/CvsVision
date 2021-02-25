@@ -36,6 +36,7 @@ namespace CvsVision.Caliper.Controls
 
         private RotateTransform m_LineRotateTransform;
         private double m_Radian;
+
         #endregion
 
         #region Properties
@@ -55,90 +56,92 @@ namespace CvsVision.Caliper.Controls
             private set
             {
                 m_LineRotateTransform = value;
-                RaisePropertyChanged("RectRotateTransform");
+                RaisePropertyChanged(nameof(LineRotateTransform));
             }
         }
 
         /// <summary>
-        /// 현재 라인에 대한 캘리퍼 리스트를 가져옵니다.
+        /// 현재 라인에 대한 캘리퍼의 위치정보 리스트를 가져옵니다.
         /// </summary>
-        public ObservableCollection<EdgeSettingGraphic> EdgeCollection { get; }
+        public ObservableCollection<CvsPose> PoseCollection { get; }
         #endregion
 
         #region Dependency Properties
-        public static readonly DependencyProperty CaliperCountProperty =
-            DependencyProperty.Register("CaliperCount", typeof(int), typeof(LineSettingGraphic));
-        
-        public static readonly DependencyProperty SearchLengthProperty =
-                    DependencyProperty.Register("SearchLength", typeof(double), typeof(LineSettingGraphic));
-
-        public static readonly DependencyProperty ProjectionLengthProperty =
-                    DependencyProperty.Register("ProjectionLength", typeof(double), typeof(LineSettingGraphic));
-
         public static readonly DependencyProperty OriginXProperty =
-                    DependencyProperty.Register("OriginX", typeof(double), typeof(LineSettingGraphic));
+                    DependencyProperty.Register(nameof(OriginX), typeof(double), typeof(LineSettingGraphic));
 
         public static readonly DependencyProperty OriginYProperty =
-            DependencyProperty.Register("OriginY", typeof(double), typeof(LineSettingGraphic));
+                    DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(LineSettingGraphic));
+        
+        public static readonly DependencyProperty SearchLengthProperty =
+                    DependencyProperty.Register(nameof(SearchLength), typeof(double), typeof(LineSettingGraphic));
+
+        public static readonly DependencyProperty ProjectionLengthProperty =
+                    DependencyProperty.Register(nameof(ProjectionLength), typeof(double), typeof(LineSettingGraphic));
 
         public static readonly DependencyProperty RotationProperty =
-            DependencyProperty.Register("Rotation", typeof(double), typeof(LineSettingGraphic));
+                    DependencyProperty.Register(nameof(Rotation), typeof(double), typeof(LineSettingGraphic),
+                        new PropertyMetadata(Rotation_PropertyChanged));
 
+        private static void Rotation_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            LineSettingGraphic control = (LineSettingGraphic)o;
+            control.LineRotateTransform.Angle = (double)e.NewValue;
+        }
+        
         public static readonly DependencyProperty RadianProperty =
-            DependencyProperty.Register("Radian", typeof(double), typeof(LineSettingGraphic));
+                    DependencyProperty.Register(nameof(Radian), typeof(double), typeof(LineSettingGraphic),
+                        new PropertyMetadata(Radian_PropertyChanged));
+        private static void Radian_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            LineSettingGraphic control = (LineSettingGraphic)o;
+            control.LineRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
+        }
 
+        public static readonly DependencyProperty CaliperCountProperty =
+                    DependencyProperty.Register(nameof(CaliperCount), typeof(int), typeof(LineSettingGraphic),
+                        new PropertyMetadata(2, CaliperCount_PropertyChanged, CaliperCount_CoerceValue));
+        private static void CaliperCount_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            LineSettingGraphic control = (LineSettingGraphic)o;
+
+            var newCount = (int)e.NewValue > 200 ? 200 : ((int)e.NewValue < 3 ? 3 : (int)e.NewValue);
+            if (control.PoseCollection.Count != newCount)
+            {
+                if (control.Width == double.NaN || control.Width == 0) return;
+
+                control.PoseCollection.Clear();
+                var interval = control.Width / newCount;
+                for (int i = 0; i < newCount; i++) control.PoseCollection.Add(new CvsPose { TranslateX = (i + 0.5) * interval });
+            }
+        }
+        private static object CaliperCount_CoerceValue(DependencyObject o, object baseValue)
+        {
+            LineSettingGraphic control = (LineSettingGraphic)o;
+            if (baseValue is int count)
+            {
+                if (count < 3) return 3;
+                else if (count > 200) return 200;
+                else return count;
+            }
+            else return 3;
+        }
         /// <summary>
         /// 캘리퍼의 개수를 가져오거나 설정합니다.
         /// </summary>
         public int CaliperCount
         {
             get { return (int)GetValue(CaliperCountProperty); }
-            set
-            {
-                if (value < 3) return;
-                SetValue(CaliperCountProperty, value);
-                if (EdgeCollection.Count != value)
-                {
-                    var sub = EdgeCollection.Count - value;
-                    if (sub > 0)
-                    {
-                        for (int i = 0; i < sub; i++)
-                        {
-                            EdgeCollection.RemoveAt(0);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = sub; i < 0; i++)
-                        {
-                            var graphic = new EdgeSettingGraphic
-                            {
-                                IsGrouped = true,
-                                VerticalAlignment = VerticalAlignment.Center,
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                            };
-                            graphic.SizeChanged += Edge_SizeChanged;
-
-                            EdgeCollection.Add(graphic);
-                        }
-                    }
-                }
-                if (this.Width != double.NaN || this.Width != 0) this.UpdateCaliper();
-                RaisePropertyChanged("CaliperCount");
-            }
+            set { SetValue(CaliperCountProperty, value); }
         }
-        
+
         /// <summary>
         /// 각 캘리퍼가 탐색할 길이(높이)를 가져오거나 설정합니다.
         /// </summary>
         public double SearchLength
         {
             get { return (double)GetValue(SearchLengthProperty); }
-            set
-            {
-                SetValue(SearchLengthProperty, value);
-                RaisePropertyChanged("SearchLength");
-            }
+            set { if(value > 0) SetValue(SearchLengthProperty, value); }
         }
 
         /// <summary>
@@ -147,11 +150,7 @@ namespace CvsVision.Caliper.Controls
         public double ProjectionLength
         {
             get { return (double)GetValue(ProjectionLengthProperty); }
-            set
-            {
-                SetValue(ProjectionLengthProperty, value);
-                RaisePropertyChanged("ProjectionLength");
-            }
+            set { if (value > 0) SetValue(ProjectionLengthProperty, value); }
         }
 
         /// <summary>
@@ -160,11 +159,7 @@ namespace CvsVision.Caliper.Controls
         public double OriginX
         {
             get { return (double)GetValue(OriginXProperty); }
-            set
-            {
-                SetValue(OriginXProperty, value);
-                if (!m_IsCaptured && (this.Width != double.NaN || this.Width != 0)) this.UpdateCaliper();
-            }
+            set { SetValue(OriginXProperty, value); }
         }
 
         /// <summary>
@@ -173,11 +168,7 @@ namespace CvsVision.Caliper.Controls
         public double OriginY
         {
             get { return (double)GetValue(OriginYProperty); }
-            set
-            {
-                SetValue(OriginYProperty, value);
-                if (!m_IsCaptured && (this.Width != double.NaN || this.Width != 0)) this.UpdateCaliper();
-            }
+            set { SetValue(OriginYProperty, value); }
         }
 
         /// <summary>
@@ -185,26 +176,12 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         public double Rotation
         {
-            get
-            {
-                if (m_Radian != 0) return m_Radian * 180 / Math.PI;
-                return (double)GetValue(RotationProperty);
-            }
+            get { return (double)GetValue(RotationProperty); }
             set
             {
                 m_Radian = value * (Math.PI / 180);
                 SetValue(RadianProperty, m_Radian);
-                if (LineRotateTransform is RotateTransform t)
-                {
-                    t.Angle = value;
-                }
-                else
-                {
-                    LineRotateTransform = new RotateTransform(value, m_LineRotateTransform.CenterX, m_LineRotateTransform.CenterY);
-                }
-                RaisePropertyChanged("LineRotateTransform");
                 SetValue(RotationProperty, value);
-                if (!m_IsCaptured && (this.Width != double.NaN || this.Width != 0)) this.UpdateCaliper();
             }
         }
 
@@ -213,27 +190,13 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         public double Radian
         {
-            get
-            {
-                if (m_Radian != 0) return m_Radian;
-                return (double)GetValue(RadianProperty);
-            }
+            get { return (double)GetValue(RadianProperty); }
             set
             {
                 SetValue(RadianProperty, value);
                 m_Radian = value;
                 var deg = value * (180 / Math.PI);
-                if (LineRotateTransform is RotateTransform t)
-                {
-                    t.Angle = deg;
-                }
-                else
-                {
-                    LineRotateTransform = new RotateTransform(deg, m_LineRotateTransform.CenterX, m_LineRotateTransform.CenterY);
-                }
-                RaisePropertyChanged("LineRotateTransform");
                 SetValue(RotationProperty, deg);
-                if (!m_IsCaptured && (this.Width != double.NaN || this.Width != 0)) this.UpdateCaliper();
             }
         }
         #endregion
@@ -247,7 +210,8 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            EdgeCollection = new ObservableCollection<EdgeSettingGraphic>();
+            PoseCollection = new ObservableCollection<CvsPose>();
+            LineRotateTransform = new RotateTransform(m_Radian, 0, m_LineThickness / 2);
         }
 
         #region Methods
@@ -256,25 +220,13 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         private void UpdateCaliper()
         {
-            if (CaliperCount < 3) return;
-
+            if (double.IsNaN(this.Width)) this.Width = 100;
             m_LineWidth = this.Width;
             m_LineOriginX = this.OriginX;
             m_LineOriginY = this.OriginY;
+            Radian = m_Radian;
 
-            var caliperCenter = this.Width / CaliperCount;
-
-            //캘리퍼마다 Origin  재설정 (후에 바인딩 등을 통해서 자동으로 할 수 있으면 그렇게 하도록 교체 예정)
-            for (int i = 0; i < EdgeCollection.Count; i++)
-            {
-                if (LineRotateTransform == null) LineRotateTransform = new RotateTransform(m_Radian, 0, m_LineThickness / 2);
-                var newCaliperCenter = this.GetPointByRotation(new Point((i + 0.5) * caliperCenter - LineRotateTransform.CenterX, 0), Radian, new Point()) - new Point(-(this.OriginX + LineRotateTransform.CenterX), -(this.OriginY + LineRotateTransform.CenterY));
-                EdgeCollection[i].OriginX = newCaliperCenter.X - this.ProjectionLength / 2;
-                EdgeCollection[i].OriginY = newCaliperCenter.Y - SearchLength / 2;
-                EdgeCollection[i].Rotation = this.Rotation;
-                EdgeCollection[i].Width = this.ProjectionLength;
-                EdgeCollection[i].Height = this.SearchLength;
-            }
+            RaisePropertyChanged(nameof(LineRotateTransform));
         }
 
         /// <summary>
@@ -283,7 +235,7 @@ namespace CvsVision.Caliper.Controls
         /// <param name="controlName">현재 클릭한 컨트롤의 이름.</param>
         private void MoveRotateOrigin(string controlName)
         {
-            //기존에는 선의 시작점이 중심축이었고 이제 선의 시작점을 이동시켜야 할 경우
+            //선의 시작점이 중심축이었고 이제 선의 시작점을 이동시켜야 할 경우
             if (LineRotateTransform.CenterX == 0 && controlName.Contains("Start"))
             {
                 //새로 중심축이 될 좌표를 현재 중심축에서 로테이션한 좌표로 변환
@@ -291,22 +243,22 @@ namespace CvsVision.Caliper.Controls
 
                 //중심 축 이동
                 LineRotateTransform = new RotateTransform(Rotation, this.Width, m_LineThickness / 2);
-                RaisePropertyChanged("LineRotateTransform");
+                RaisePropertyChanged(nameof(LineRotateTransform));
 
                 //변환한 중심축의 실좌표에서 도형 안의 중심축 값을 빼면 도형이 생각하는 원점 좌표가 나옴.
                 this.OriginX = newCenter.X - LineRotateTransform.CenterX;
                 this.OriginY = newCenter.Y - LineRotateTransform.CenterY;
 
             }
-            //기존에는 선의 끝 점이 중심축이었고 이제 선의 끝점을 이동시켜야 할 경우
-            else if (LineRotateTransform.CenterX != 0 && controlName.Contains("End"))
+            //선의 끝 점이 중심축이었고 이제 중심축을 되돌릴 경우
+            else if (LineRotateTransform.CenterX != 0 && controlName.Contains("Start"))
             {
                 //새로 중심축이 될 좌표를 현재 중심축에서 로테이션한 좌표로 변환
                 var newCenter = this.GetPointByRotation(new Point(-this.Width, 0), m_Radian, new Point()) - new Point(-(this.OriginX + this.Width), -(this.OriginY + m_LineThickness / 2));
 
                 //중심 축 이동
                 LineRotateTransform = new RotateTransform(Rotation, 0, m_LineThickness / 2);
-                RaisePropertyChanged("LineRotateTransform");
+                RaisePropertyChanged(nameof(LineRotateTransform));
 
                 //변환한 중심축의 실좌표에서 도형 안의 중심축 값을 빼면 도형이 생각하는 원점 좌표가 나옴.
                 this.OriginX = newCenter.X - LineRotateTransform.CenterX;
@@ -331,11 +283,13 @@ namespace CvsVision.Caliper.Controls
         private void LineSearcher_Loaded(object sender, RoutedEventArgs e)
         {
             //컨트롤의 기본값 설정
+            CaliperCount = 3;
+            OriginX = 20;
+            OriginY = 20;
             ProjectionLength = 30;
             SearchLength = 100;
             m_LineThickness = this.MinHeight;
             Radian = 0;
-            CaliperCount = 6;
         }
 
         private void Line_MouseLeave(object sender, MouseEventArgs e)
@@ -393,9 +347,12 @@ namespace CvsVision.Caliper.Controls
                 //위치초기화
                 m_LastMovePoint = new Point();
 
+                //컨트롤 이름 가져와서 중심축 체크
+                if (sender is FrameworkElement control) this.MoveRotateOrigin(control.Name);
+
                 //캘리퍼 업데이트
                 this.UpdateCaliper();
-
+                
                 //상위에 연결된 다른 MouseUp 실행시키지 않음
                 e.Handled = true;
             }
@@ -419,7 +376,7 @@ namespace CvsVision.Caliper.Controls
                             //시작점일 경우
                             case "Point_Start":
                                 //마우스 위치 증감에 따라 반대로 움직여야 함
-                                m_Radian = Math.PI + Math.Atan2(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX));
+                                Radian = Math.PI + Math.Atan2(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX));
 
                                 //실측 길이와 실제 너비의 차이
                                 var offset = Math.Sqrt(Math.Pow(e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX), 2) + Math.Pow(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), 2)) - this.Width;
@@ -428,19 +385,19 @@ namespace CvsVision.Caliper.Controls
                                 this.OriginX -= offset;
                                 this.Width += offset;
 
-                                //회전 및 중심축 재설정
+                                //회전 및 중심축 재설정                                
                                 LineRotateTransform = new RotateTransform(Rotation, this.Width, m_LineThickness / 2);
-                                RaisePropertyChanged("LineRotateTransform");
+                                RaisePropertyChanged(nameof(LineRotateTransform));
                                 break;
                             //끝점일 경우
                             case "Point_End":
-                                m_Radian = Math.Atan2(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX));
+                                Radian = Math.Atan2(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX));
 
                                 this.Width = Math.Sqrt(Math.Pow(e.GetPosition(canvas).X - (LineRotateTransform.CenterX + this.OriginX), 2) + Math.Pow(e.GetPosition(canvas).Y - (LineRotateTransform.CenterY + this.OriginY), 2));
 
                                 //회전 재설정
                                 LineRotateTransform = new RotateTransform(Rotation, 0, m_LineThickness / 2);
-                                RaisePropertyChanged("LineRotateTransform");
+                                RaisePropertyChanged(nameof(LineRotateTransform));
                                 break;
                             //선분일 경우
                             case "Segment":
@@ -461,7 +418,12 @@ namespace CvsVision.Caliper.Controls
         //외부에서 Width 변경 시 호출하도록 설정
         private void ContentControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!m_IsCaptured) this.UpdateCaliper();
+            if (!m_IsCaptured)
+            {
+                this.UpdateCaliper();
+                var interval = e.NewSize.Width / PoseCollection.Count;
+                for (int i = 0; i < PoseCollection.Count; i++) PoseCollection[i].TranslateX = (i + 0.5) * interval;
+            }
         }
 
         //외부에서 Search Length, Projection Length 변경 시 호출하도록 설정

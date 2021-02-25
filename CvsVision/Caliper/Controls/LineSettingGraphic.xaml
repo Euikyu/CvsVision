@@ -14,12 +14,22 @@
         Width="{Binding Width}" SizeChanged="ContentControl_SizeChanged">
         <Grid RenderTransform="{Binding LineRotateTransform}">
             <Grid Name="Rotate_Grid" DataContext="{Binding ElementName=uc, Path=DataContext}">
-                <ItemsControl ItemsSource="{Binding EdgeCollection}">
+                <ItemsControl ItemsSource="{Binding PoseCollection}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:EdgeSettingGraphic  IsGrouped="True"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Width="{Binding DataContext.ProjectionLength, RelativeSource={RelativeSource AncestorType=ContentControl}, Mode=TwoWay}" 
+                                                       Height="{Binding DataContext.SearchLength, RelativeSource={RelativeSource AncestorType=ContentControl}, Mode=TwoWay}"
+                                                       SizeChanged="Edge_SizeChanged"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
                 <Rectangle Name="Segment" Margin="4" VerticalAlignment="Center" Stroke="{StaticResource Rect_Stroke_Color}" StrokeThickness="6" MouseEnter="Line_MouseEnter" MouseLeave="Line_MouseLeave" MouseDown="Line_MouseDown" MouseUp="Line_MouseUp" MouseMove="Line_MouseMove"/>

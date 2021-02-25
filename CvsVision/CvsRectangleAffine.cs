@@ -86,7 +86,7 @@ namespace CvsVision
         }
         public Point Center
         {
-            get { return new Point(m_OriginX + m_Width / 2, m_OriginY + m_Height / 2); }
+            get { return new Point(m_Pose.TranslateX, m_Pose.TranslateY); }
             set
             {
                 OriginX = value.X - m_Width / 2;
@@ -96,7 +96,12 @@ namespace CvsVision
         public CvsPose Pose
         {
             get { return m_Pose; }
-            set { m_Pose = value; }
+            set
+            {
+                m_Pose = value;
+                m_OriginX = m_Pose.TranslateX - m_Width / 2;
+                m_OriginY = m_Pose.TranslateY - m_Height / 2;
+            }
         }
         #endregion
 
