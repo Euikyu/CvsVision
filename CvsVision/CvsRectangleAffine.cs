@@ -10,6 +10,9 @@ using Point = System.Windows.Point;
 
 namespace CvsVision
 {
+    /// <summary>
+    /// 이미지 영역 중 하나인 Affine 사각형 영역 클래스입니다.
+    /// </summary>
     public class CvsRectangleAffine : ICvsRegion
     {
         #region Fields
@@ -23,7 +26,9 @@ namespace CvsVision
         #endregion
 
         #region Properties
-        // 사각형 정보
+        /// <summary>
+        /// 영역의 원점 X 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginX
         {
             get { return m_OriginX; }
@@ -36,6 +41,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 원점 Y좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginY
         {
             get { return m_OriginY; }
@@ -48,6 +56,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 너비를 가져오거나 설정합니다.
+        /// </summary>
         public double Width
         {
             get { return m_Width; }
@@ -60,6 +71,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 높이를 가져오거나 설정합니다.
+        /// </summary>
         public double Height
         {
             get { return m_Height; }
@@ -72,6 +86,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 회전 라디안 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Radian
         {
             get { return m_Radian; }
@@ -84,6 +101,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 중심 좌표 값을 가져오거나 설정합니다.
+        /// </summary>
         public Point Center
         {
             get
@@ -100,6 +120,9 @@ namespace CvsVision
                 }
             }
         }
+        /// <summary>
+        /// 영역의 Pose 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsPose Pose
         {
             get { return m_Pose; }
@@ -112,7 +135,9 @@ namespace CvsVision
             }
         }
         #endregion
-
+        /// <summary>
+        /// Affine 사각형 클래스를 생성합니다.
+        /// </summary>
         public CvsRectangleAffine()
         {
             Pose = new CvsPose();

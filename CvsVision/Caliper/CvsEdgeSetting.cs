@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
-
+    /// <summary>
+    /// 에지를 찾기 위한 설정 값 클래스입니다.
+    /// </summary>
     public class CvsEdgeSetting
     {
         #region Fields
@@ -15,6 +17,9 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값을 가져오거나 설정합니다. 
+        /// </summary>
         public uint ContrastThreshold
         {
             get
@@ -27,6 +32,9 @@ namespace CvsVision.Caliper
                 if (m_EdgeDetect != null) m_EdgeDetect.ContrastThreshold = value;
             }
         }
+        /// <summary>
+        /// 에지로 인식할 절반 픽셀 개수를 가져오거나 설정합니다.
+        /// </summary>
         public uint HalfPixelCount
         {
             get
@@ -44,7 +52,7 @@ namespace CvsVision.Caliper
             }
         }
         /// <summary>
-        /// 에지를 감지할 방향.
+        /// 에지를 감지할 방향을 가져오거나 설정합니다.
         /// </summary>
         public EDirection EdgeDirection
         {
@@ -58,7 +66,9 @@ namespace CvsVision.Caliper
                 if (m_EdgeDetect != null) m_EdgeDetect.EdgeDirection = value;
             }
         }
-
+        /// <summary>
+        /// 에지 검색 영역을 가져오거나 설정합니다.
+        /// </summary>
         public ICvsRegion Region
         {
             get { return m_Region; }
@@ -70,6 +80,11 @@ namespace CvsVision.Caliper
                 }
             }
         }
+
+        /// <summary>
+        /// 에지의 투사 길이를 가져오거나 설정합니다. 
+        /// (영역의 너비입니다.)
+        /// </summary>
         public double ProjectionLength
         {
             get
@@ -85,6 +100,10 @@ namespace CvsVision.Caliper
                 }
             }
         }
+        /// <summary>
+        /// 에지의 검색 길이를 가져오거나 설정합니다.
+        /// (영역의 높이입니다.)
+        /// </summary>
         public double SearchLength
         {
             get
@@ -100,6 +119,9 @@ namespace CvsVision.Caliper
                 }
             }
         }
+        /// <summary>
+        /// 에지 영역의 원점 X 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginX
         {
             get
@@ -115,6 +137,9 @@ namespace CvsVision.Caliper
                 }
             }
         }
+        /// <summary>
+        /// 에지 영역의 원점 Y 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginY
         {
             get
@@ -130,7 +155,9 @@ namespace CvsVision.Caliper
                 }
             }
         }
-
+        /// <summary>
+        /// 에지 영역의 회전 라디안 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Radian
         {
             get
@@ -149,6 +176,10 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Methods
+        /// <summary>
+        /// 현재 설정을 가진 에지 검색 클래스를 반환합니다.
+        /// </summary>
+        /// <returns></returns>
         public CvsEdgeDetect GetToolParams()
         {
             return m_EdgeDetect;

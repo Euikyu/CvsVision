@@ -7,6 +7,9 @@ using System.Windows;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 주어진 점 집합 내에서 선을 찾는 클래스입니다.
+    /// </summary>
     public class CvsLineDetect
     {
         #region Fields
@@ -30,19 +33,29 @@ namespace CvsVision.Caliper
         public CvsLine Line { get { return m_SelectedRANSAC; } }
         #endregion
 
-        // 생성자
+        /// <summary>
+        /// 선을 찾는 클래스를 생성합니다.
+        /// </summary>
         public CvsLineDetect()
         {
             this.InputPointList = new List<Point>();
             this.ConsensusThreshold = 6;
         }
 
+        /// <summary>
+        /// 입력한 점 집합의 선을 찾는 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="InputPoints">선을 찾을 점 집합.</param>
         public CvsLineDetect(List<Point> InputPoints)
         {
             this.InputPointList = InputPoints.ToList();
             this.ConsensusThreshold = 6;
         }
 
+        #region Methods
+        /// <summary>
+        /// 점 집합의 선을 검색합니다.
+        /// </summary>
         public void Detect()
         {
             // 모델들 구하기
@@ -54,7 +67,9 @@ namespace CvsVision.Caliper
             m_SelectedRANSAC = m_RANSAC_Models.First();
         }
 
-        // 모델 구하기
+        /// <summary>
+        /// 모델을 구하기.
+        /// </summary>
         private void CalcModels()
         {
             try
@@ -72,6 +87,13 @@ namespace CvsVision.Caliper
             }
         }
         
+        /// <summary>
+        /// 점 집합 내에서 무작위 두 점을 선택하기.
+        /// </summary>
+        /// <param name="points">점 집합.</param>
+        /// <param name="random">난수 변수.</param>
+        /// <param name="startPoint">첫 번째 점(시작점).</param>
+        /// <param name="endPoint">두 번째 점(끝점).</param>
         private void SelectLinePoint(List<Point> points, Random random, out Point startPoint, out Point endPoint)
         {
             try
@@ -105,17 +127,37 @@ namespace CvsVision.Caliper
                 throw;
             }
         }
-        
+
+        /// <summary>
+        /// 기울기 구하기.
+        /// </summary>
+        /// <param name="p1">첫 번째 점.</param>
+        /// <param name="p2">두 번째 점.</param>
+        /// <returns>기울기 값.</returns>
         private double CalcGradient(Point p1, Point p2)
         {
             return p2.X - p1.X == 0 ? double.NaN : (p2.Y - p1.Y) / (p2.X - p1.X);
         }
 
+        /// <summary>
+        /// Y 절편 구하기.
+        /// </summary>
+        /// <param name="p1">첫 번째 점.</param>
+        /// <param name="p2">두 번째 점.</param>
+        /// <returns>Y 절편 값.</returns>
         private double CalcIntercept(Point p1, Point p2)
         {
             return p2.X - p1.X == 0 ? double.NaN : (p2.X * p1.Y - p1.X * p2.Y) / (p2.X - p1.X);
         }
         
+        /// <summary>
+        /// 해당 선상에 존재하는 점 집합 구하기.
+        /// </summary>
+        /// <param name="points">총 점 집합.</param>
+        /// <param name="startPoint">시작점.</param>
+        /// <param name="endPoint">끝점.</param>
+        /// <param name="ConsensusThreshold">선상으로 인정되는 범위 값.</param>
+        /// <returns>선 모델.</returns>
         private CvsLine CalcConsensusPoints(List<Point> points, Point startPoint, Point endPoint, double ConsensusThreshold)
         {
             try
@@ -166,37 +208,51 @@ namespace CvsVision.Caliper
             }
         }
         
+        /// <summary>
+        /// 선 결과들 비교하여 정렬하기.
+        /// </summary>
         private void ScoringRANSACModel()
         {
             if (m_RANSAC_Models == null || m_RANSAC_Models.Count == 0) throw new Exception("The segment could not be found.");
             m_RANSAC_Models.Sort((i1, i2) => i2.ConsensusPoints.Length.CompareTo(i1.ConsensusPoints.Length));
         }
+        #endregion
     }
+    /// <summary>
+    /// 선 클래스입니다.
+    /// </summary>
     public class CvsLine
     {
         #region Properties
         /// <summary>
-        /// 선분의 시작점.
+        /// 선분의 시작점을 가져옵니다.
         /// </summary>
         public Point StartPoint { get; }
         /// <summary>
-        /// 선분의 끝점.
+        /// 선분의 끝점을 가져옵니다.
         /// </summary>
         public Point EndPoint { get; }
         /// <summary>
-        /// 선의 기울기.
+        /// 선의 기울기를 가져옵니다.
         /// </summary>
         public double Gradient { get; }
         /// <summary>
-        /// 선의 Y 절편.
+        /// 선의 Y 절편을 가져옵니다.
         /// </summary>
         public double Y_Intercept { get; }
         /// <summary>
-        /// 해당 선분의 선상에 있는 점들.
+        /// 해당 선분의 선상에 있는 점 집합을 가져옵니다.
         /// </summary>
         public Point[] ConsensusPoints { get; }
         #endregion
-
+        /// <summary>
+        /// 선 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="startP">선분의 시작점.</param>
+        /// <param name="endP">선분의 끝점.</param>
+        /// <param name="gradient">선의 기울기.</param>
+        /// <param name="intercept">선의 Y 절편.</param>
+        /// <param name="consensusPoints">선분의 선상에 있는 점 집합.</param>
         public CvsLine(Point startP, Point endP, double gradient, double intercept, Point[] consensusPoints)
         {
             this.StartPoint = startP;

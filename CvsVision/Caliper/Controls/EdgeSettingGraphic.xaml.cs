@@ -49,7 +49,9 @@ namespace CvsVision.Caliper.Controls
             if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
         }
         #region Common Properties
-
+        /// <summary>
+        /// 이 그래픽의 회전 변환을 가져오거나 설정합니다.
+        /// </summary>
         public RotateTransform RectRotateTransform
         {
             get { return m_RectRotateTransform; }
@@ -63,47 +65,66 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Dependency Properties
+        /// <summary>
+        /// EdgeSettingGraphic.IsGrouped 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
+        public static readonly DependencyProperty IsGroupedProperty =
+            DependencyProperty.Register(nameof(IsGrouped), typeof(bool), typeof(EdgeSettingGraphic));
+
+        /// <summary>
+        /// EdgeSettingGraphic.OriginX 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OriginXProperty =
             DependencyProperty.Register(nameof(OriginX), typeof(double), typeof(EdgeSettingGraphic));
-
+        /// <summary>
+        /// EdgeSettingGraphic.OriginY 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OriginYProperty =
             DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(EdgeSettingGraphic));
-
+        /// <summary>
+        /// EdgeSettingGraphic.Rotation 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty RotationProperty =
             DependencyProperty.Register(nameof(Rotation), typeof(double), typeof(EdgeSettingGraphic),
                 new PropertyMetadata(Rotation_PropertyChanged));
-
+        //회전 Degree 값이 변경된 후 호출되는 콜백
         private static void Rotation_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
             if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue;
         }
+        /// <summary>
+        /// EdgeSettingGraphic.Radian 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty RadianProperty =
             DependencyProperty.Register(nameof(Radian), typeof(double), typeof(EdgeSettingGraphic),
                 new PropertyMetadata(Radian_PropertyChanged));
-
+        //회전 라디안 값이 변경된 후 호출되는 콜백
         private static void Radian_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
             if(!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
         }
 
-        public static readonly DependencyProperty IsGroupedProperty =
-            DependencyProperty.Register(nameof(IsGrouped), typeof(bool), typeof(EdgeSettingGraphic));
-
-
+        /// <summary>
+        /// 그래픽의 원점 X 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginX
         {
             get { return (double)GetValue(OriginXProperty); }
             set { SetValue(OriginXProperty, value); }
         }
-
+        /// <summary>
+        /// 그래픽의 원점 Y 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginY
         {
             get { return (double)GetValue(OriginYProperty); }
             set { SetValue(OriginYProperty, value); }
         }
-        
+        /// <summary>
+        /// 그래픽의 회전 Degree 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Rotation
         {
             get { return (double)GetValue(RotationProperty); }
@@ -114,7 +135,9 @@ namespace CvsVision.Caliper.Controls
                 SetValue(RotationProperty, value);
             }
         }
-
+        /// <summary>
+        /// 그래픽의 회전 라디안 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Radian
         {
             get { return (double)GetValue(RadianProperty); }
@@ -149,6 +172,9 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Methods
+        /// <summary>
+        /// 사각형 업데이트하기.
+        /// </summary>
         private void UpdateRect()
         {
             m_RectWidth = this.Width;
@@ -158,11 +184,21 @@ namespace CvsVision.Caliper.Controls
 
             RectRotateTransform = new RotateTransform(Rotation, this.Width / 2, this.Height / 2);
         }
+        /// <summary>
+        /// 현재 그래픽의 중심 좌표 반환하기.
+        /// </summary>
+        /// <returns></returns>
         private Point GetCenter()
         {
             return new Point(this.OriginX + this.Width / 2, this.OriginY + this.Height / 2);
         }
-
+        /// <summary>
+        /// 지정된 중심축을 기준으로 회전 변환한 점을 반환하기.
+        /// </summary>
+        /// <param name="rotatePoint">회전 변환할 점.</param>
+        /// <param name="rad">회전 라디안 값.</param>
+        /// <param name="center">중심축 점.</param>
+        /// <returns></returns>
         private Point GetPointByRotation(Point rotatePoint, double rad, Point center)
         {
             return new Point(Math.Cos(rad) * rotatePoint.X - Math.Sin(rad) * rotatePoint.Y - center.X, Math.Sin(rad) * rotatePoint.X + Math.Cos(rad) * rotatePoint.Y - center.Y);
@@ -170,11 +206,12 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Events
-        private void ResizableRectangle_Loaded(object sender, RoutedEventArgs e)
+        //그래픽 렌더링된 후 호출되는 콜백
+        private void EdgeSettingGraphic_Loaded(object sender, RoutedEventArgs e)
         {
             this.UpdateRect();
         }
-
+        //사각형 내에 마우스 진입했을 때의 콜백
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
         {
             //그룹으로 묶여있는 것이면 Mouse 동작 스킵
@@ -198,7 +235,7 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-
+        //사각형 밖으로 마우스 나갈 때의 콜백
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
         {
             //그룹으로 묶여있는 것이면 Mouse 동작 스킵
@@ -208,7 +245,7 @@ namespace CvsVision.Caliper.Controls
                 this.Cursor = Cursors.Arrow;
             }
         }
-
+        //사각형 내에서 마우스 눌렀을 때의 콜백
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //그룹으로 묶여있는 것이면 Mouse 동작 스킵
@@ -223,7 +260,7 @@ namespace CvsVision.Caliper.Controls
                 e.Handled = true;
             }
         }
-
+        //마우스를 뗐을 때의 콜백 (마우스 캡쳐 상태면 어디서든 호출되고, 그렇지 않다면 사각형 내에서만 호출)
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
             //그룹으로 묶여있는 것이면 Mouse 동작 스킵
@@ -251,7 +288,7 @@ namespace CvsVision.Caliper.Controls
                 e.Handled = true;
             }
         }
-
+        //마우스를 이동했을 때의 콜백
         private void Retangle_MouseMove(object sender, MouseEventArgs e)
         {
             //그룹으로 묶여있는 것이면 Mouse 동작 스킵
@@ -259,6 +296,7 @@ namespace CvsVision.Caliper.Controls
 
             lock (m_MoveLock)
             {
+                //마우스 캡쳐 상태일 때에만 일련 동작 진행
                 if (m_IsCaptured)
                 {
                     if (sender is FrameworkElement control && this.Parent is Canvas canvas)
@@ -269,6 +307,7 @@ namespace CvsVision.Caliper.Controls
                         Vector deltaSize = this.GetPointByRotation(new Point(sizeOffset.X, sizeOffset.Y), -m_Radian, new Point(RectRotateTransform.CenterX, RectRotateTransform.CenterY)) - new Point(-RectRotateTransform.CenterX, -RectRotateTransform.CenterY);
                         switch (control.Name)
                         {
+                            //LEFT-TOP 빨간 사각형 클릭하여 그래픽 리사이징 하는 경우,
                             case "Size_NW":
                                 RectRotateTransform = new RotateTransform(Rotation, this.Width > this.MinWidth ? m_RectWidth / 2 - deltaSize.X : this.MinWidth / 2 - m_RectWidth / 2, this.Height > this.MinHeight ? m_RectHeight / 2 - deltaSize.Y : this.MinHeight / 2 - m_RectHeight / 2);
                                 if (m_RectWidth - deltaSize.X > this.MinWidth)
@@ -290,6 +329,7 @@ namespace CvsVision.Caliper.Controls
                                     this.Height = this.MinHeight;
                                 }
                                 break;
+                            //RIGHT-TOP 빨간 사각형 클릭하여 그래픽 리사이징 하는 경우,
                             case "Size_NE":
                                 RectRotateTransform = new RotateTransform(Rotation, m_RectWidth / 2, this.Height > this.MinHeight ? m_RectHeight / 2 - deltaSize.Y : this.MinHeight / 2 - m_RectHeight / 2);
                                 if (m_RectWidth + deltaSize.X > this.MinWidth)
@@ -310,6 +350,7 @@ namespace CvsVision.Caliper.Controls
                                     this.Height = this.MinHeight;
                                 }
                                 break;
+                            //LEFT-BOTTOM 빨간 사각형 클릭하여 그래픽 리사이징 하는 경우,
                             case "Size_SW":
                                 RectRotateTransform = new RotateTransform(Rotation, this.Width > this.MinWidth ? m_RectWidth / 2 - deltaSize.X : this.MinWidth / 2 - m_RectWidth / 2, m_RectHeight / 2);
                                 if (m_RectWidth - deltaSize.X > this.MinWidth)
@@ -330,6 +371,7 @@ namespace CvsVision.Caliper.Controls
                                     this.Height = this.MinHeight;
                                 }
                                 break;
+                            //RIGHT-BOTTOM 빨간 사각형 클릭하여 그래픽 리사이징 하는 경우,
                             case "Size_SE":
                                 RectRotateTransform = new RotateTransform(Rotation, m_RectWidth / 2, m_RectHeight / 2);
                                 if (m_RectWidth + deltaSize.X > this.MinWidth) this.Width = m_RectWidth + deltaSize.X;
@@ -337,7 +379,7 @@ namespace CvsVision.Caliper.Controls
                                 if (m_RectHeight + deltaSize.Y > this.MinHeight) this.Height = m_RectHeight + deltaSize.Y;
                                 else this.Height = this.MinHeight;
                                 break;
-
+                            //사각형 움직일 경우,
                             case "Movable_Grid":
                                 if (m_LastMovePoint.X == 0 && m_LastMovePoint.Y == 0)
                                 {
@@ -349,6 +391,7 @@ namespace CvsVision.Caliper.Controls
                                 this.OriginY += moveOffset.Y;
                                 m_LastMovePoint = e.GetPosition(canvas);
                                 break;
+                            //사각형 회전시킬 경우,
                             case "Rotate_Grid":
                                 if (m_RotationLine == null)
                                 {

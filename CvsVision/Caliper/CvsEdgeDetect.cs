@@ -8,12 +8,18 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 에지 감지할 방향.
+    /// </summary>
     public enum EDirection
     {
         Any,
         LightToDark,
         DarkToLight
     }
+    /// <summary>
+    /// 주어진 이미지 내에서 에지를 찾는 클래스입니다.
+    /// </summary>
     public class CvsEdgeDetect: IDisposable
     {
         #region Fields
@@ -31,7 +37,7 @@ namespace CvsVision.Caliper
 
         #region Properties
         /// <summary>
-        /// Projection Array 의 변화량을 측정한 배열.
+        /// 투사한 배열의 변화량을 측정한 배열을 가져옵니다.
         /// </summary>
         public float[] SubPixelArray
         {
@@ -42,7 +48,7 @@ namespace CvsVision.Caliper
             }
         }
         /// <summary>
-        /// 2차원의 이미지를 1차원 배열로 Projection 한 배열.
+        /// 2차원의 이미지를 1차원 배열로 투사한 배열을 가져옵니다.
         /// </summary>
         public float[] ProjectionArray
         {
@@ -54,7 +60,7 @@ namespace CvsVision.Caliper
         }
 
         /// <summary>
-        /// 검사할 이미지.
+        /// 검사할 이미지를 가져오거나 설정합니다.
         /// </summary>
         public Bitmap DetectImage
         {
@@ -81,7 +87,7 @@ namespace CvsVision.Caliper
         }
 
         /// <summary>
-        /// 에지로 인식할 절반 픽셀 개수.
+        /// 에지로 인식할 절반 픽셀 개수를 가져오거나 설정합니다.
         /// </summary>
         public uint HalfPixelCount
         {
@@ -93,20 +99,23 @@ namespace CvsVision.Caliper
             }
         }
         /// <summary>
-        /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값. 
+        /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값을 가져오거나 설정합니다. 
         /// </summary>
         public uint ContrastThreshold
         {
             get; set;
         }
         /// <summary>
-        /// 에지를 감지할 방향.
+        /// 에지를 감지할 방향을 가져오거나 설정합니다.
         /// </summary>
         public EDirection EdgeDirection
         {
             get; set;
         }
 
+        /// <summary>
+        /// 에지 결과들 중 가장 정확도가 높은 에지를 가져옵니다.
+        /// </summary>
         public CvsEdge Edge
         {
             get
@@ -116,7 +125,9 @@ namespace CvsVision.Caliper
             }
         }
         #endregion
-
+        /// <summary>
+        /// 에지를 찾는 클래스를 생성합니다.
+        /// </summary>
         public CvsEdgeDetect()
         {
             //초기 설정값
@@ -346,16 +357,36 @@ namespace CvsVision.Caliper
         }
         #endregion
     }
-
+    /// <summary>
+    /// 에지 클래스입니다.
+    /// </summary>
     public class CvsEdge
     {
         #region Properties
+        /// <summary>
+        /// 에지의 X 좌표를 가져옵니다.
+        /// </summary>
         public float X { get; }
+        /// <summary>
+        /// 에지의 Y 좌표를 가져옵니다.
+        /// </summary>
         public float Y { get; }
+        /// <summary>
+        /// 해당 에지의 최대 대비 값을 가져옵니다.
+        /// </summary>
         public float Contrast { get; }
+        /// <summary>
+        /// 해당 에지의 적분 값을 가져옵니다.
+        /// </summary>
         public float Sum { get; }
         #endregion
-
+        /// <summary>
+        /// 에지를 생성합니다.
+        /// </summary>
+        /// <param name="x">에지의 X 좌표.</param>
+        /// <param name="y">에지의 Y 좌표.</param>
+        /// <param name="contrast">해당 에지의 최대 대비 값.</param>
+        /// <param name="sum">해당 에지의 적분 값.</param>
         public CvsEdge(float x, float y, float contrast, float sum)
         {
             this.X = x;

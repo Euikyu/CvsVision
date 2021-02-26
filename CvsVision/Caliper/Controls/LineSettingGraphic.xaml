@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CvsVision.Caliper.Controls"
              mc:Ignorable="d" Name="uc"
              d:DesignHeight="450" d:DesignWidth="800"
-             MinWidth="20" MinHeight="14" MaxHeight="14" Height="14" Loaded="LineSearcher_Loaded">
+             MinWidth="20" MinHeight="14" MaxHeight="14" Height="14" Loaded="LineSettingGraphic_Loaded">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Rect_Stroke_Color" Color="#FF3A88C7"/>
     </UserControl.Resources>

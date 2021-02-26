@@ -61,7 +61,7 @@ namespace CvsVision.Caliper.Controls
         }
 
         /// <summary>
-        /// 현재 라인에 대한 캘리퍼의 위치정보 리스트를 가져옵니다.
+        /// 현재 선에 대한 에지 검색 위치정보 리스트를 가져옵니다.
         /// </summary>
         public ObservableCollection<CvsPose> PoseCollection { get; }
         #endregion
@@ -280,7 +280,7 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Events
-        private void LineSearcher_Loaded(object sender, RoutedEventArgs e)
+        private void LineSettingGraphic_Loaded(object sender, RoutedEventArgs e)
         {
             //컨트롤의 기본값 설정
             CaliperCount = 3;

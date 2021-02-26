@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CvsVision.Caliper.Controls"
              mc:Ignorable="d" Name="uc"
              d:DesignHeight="100" d:DesignWidth="300"
-             MinWidth="20" MinHeight="20" Loaded="ResizableRectangle_Loaded">
+             MinWidth="20" MinHeight="20" Loaded="EdgeSettingGraphic_Loaded">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Rect_Stroke_Color" Color="#FF3A88C7"/>
         <Style x:Key="Polygon_Visibility_Style" TargetType="Polygon">

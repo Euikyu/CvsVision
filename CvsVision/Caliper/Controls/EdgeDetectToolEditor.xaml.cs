@@ -41,6 +41,9 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Common Properties
+        /// <summary>
+        /// 현재 도구가 수정 중인지 여부를 가져오거나 설정합니다.
+        /// </summary>
         public bool IsEditing
         {
             get { return m_IsEditing; }
@@ -58,6 +61,10 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 투사 길이를 가져오거나 설정합니다. 
+        /// (영역의 너비입니다.)
+        /// </summary>
         public double ProjectionLength
         {
             get
@@ -74,6 +81,10 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 검색 길이를 가져오거나 설정합니다.
+        /// (영역의 높이입니다.)
+        /// </summary>
         public double SearchLength
         {
             get
@@ -90,6 +101,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 원점 X 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginX
         {
             get
@@ -106,6 +120,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 원점 Y 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginY
         {
             get
@@ -122,6 +139,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 회전 라디안 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Radian
         {
             get
@@ -139,6 +159,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지 그래픽의 회전 Degree 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Rotation
         {
             get
@@ -152,6 +175,9 @@ namespace CvsVision.Caliper.Controls
             }
         }
 
+        /// <summary>
+        /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값을 가져오거나 설정합니다. 
+        /// </summary>
         public uint ContrastThreshold
         {
             get
@@ -168,6 +194,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지로 인식할 절반 픽셀 개수를 가져오거나 설정합니다.
+        /// </summary>
         public uint HalfPixelCount
         {
             get
@@ -184,6 +213,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 에지를 감지할 방향을 가져오거나 설정합니다.
+        /// </summary>
         public int SelectedEdgeDirection
         {
             get
@@ -200,7 +232,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-
+        /// <summary>
+        /// 화면에 출력할 원본 이미지를 가져오거나 설정합니다.
+        /// </summary>
         public BitmapSource OriginSource
         {
             get { return m_OriginSource; }
@@ -216,6 +250,9 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(ImageHeight));
             }
         }
+        /// <summary>
+        /// 화면에 출력할 결과 오버레이 이미지를 가져오거나 출력합니다.
+        /// </summary>
         public DrawingImage OverlaySource
         {
             get { return m_OverlaySource; }
@@ -225,9 +262,9 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(OverlaySource));
             }
         }
-        public double ImageWidth { get; private set; }
-        public double ImageHeight { get; private set; }
-        
+        /// <summary>
+        /// 결과를 반영하는 메세지를 가져옵니다.
+        /// </summary>
         public string Message
         {
             get
@@ -238,13 +275,27 @@ namespace CvsVision.Caliper.Controls
                 else return "Success.";
             }
         }
+        /// <summary>
+        /// 원본 이미지의 너비를 가져옵니다.
+        /// </summary>
+        public double ImageWidth { get; private set; }
+        /// <summary>
+        /// 원본 이미지의 높이를 가져옵니다.
+        /// </summary>
+        public double ImageHeight { get; private set; }
         #endregion
 
         #region Dependency Properties
+        /// <summary>
+        /// EdgeDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
             DependencyProperty.Register(nameof(SubjectTool), typeof(CvsEdgeDetectTool), typeof(EdgeDetectToolEditor),
                 new PropertyMetadata(new CvsEdgeDetectTool()));
 
+        /// <summary>
+        /// 현재 에디터의 주체가 되는 검사 도구를 가져옵니다.
+        /// </summary>
         public CvsEdgeDetectTool SubjectTool
         {
             get { return GetValue(SubjectToolProperty) as CvsEdgeDetectTool; }
@@ -267,6 +318,9 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Methods
+        /// <summary>
+        /// 모든 속성 업데이트하기.
+        /// </summary>
         private void UpdateToolData()
         {
             this.RaisePropertyChanged(nameof(ProjectionLength));
@@ -475,6 +529,7 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Events
+        // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog d = new Microsoft.Win32.OpenFileDialog
@@ -490,30 +545,40 @@ namespace CvsVision.Caliper.Controls
                 }
                 else
                 {
+                    //현재 이미지에 넣고,
                     m_CurrentBitmap = bmp;
                     var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
-
+                    //화면에 출력
                     OriginSource = BitmapSource.Create(data.Width, data.Height, bmp.HorizontalResolution, bmp.VerticalResolution, PixelFormats.Gray8, null, data.Scan0, data.Stride * data.Height, data.Stride);
                     OriginSource.Freeze();
                     bmp.UnlockBits(data);
+                    //기존 입력이미지는 비우고
                     if (m_Tool.InputImage != null) m_Tool.InputImage.Dispose();
+                    //현재 이미지를 입력이미지로
                     m_Tool.InputImage = m_CurrentBitmap;
                 }
             }
+            //메세지 업데이트
             this.RaisePropertyChanged(nameof(Message));
         }
+
+        // 도구 불러오기 콜백
         private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
         {
             //Tool 불러오는 과정 실행해야함
             m_Tool.Load("<Input the loading file path>", typeof(CvsEdgeDetectTool));
             this.UpdateToolData();
         }
+
+        // 도구 저장하기 콜백
         private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
         {
             //Tool 저장
             SubjectTool = m_Tool;
             SubjectTool.Save("<Input the saving file path>");
         }
+
+        // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Run();

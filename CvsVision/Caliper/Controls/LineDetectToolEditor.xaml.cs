@@ -45,6 +45,9 @@ namespace CvsVision.Caliper.Controls
         #region Common Properties
 
         #region Line Settings
+        /// <summary>
+        /// 선 그래픽의 원점 X 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginX
         {
             get
@@ -61,6 +64,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 선 그래픽의 원점 Y 좌표를 가져오거나 설정합니다.
+        /// </summary>
         public double OriginY
         {
             get
@@ -77,6 +83,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 선 그래픽의 회전 라디안 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Radian
         {
             get
@@ -94,6 +103,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 선 그래픽의 회전 Degree 값을 가져오거나 설정합니다.
+        /// </summary>
         public double Rotation
         {
             get
@@ -106,7 +118,9 @@ namespace CvsVision.Caliper.Controls
 
             }
         }
-
+        /// <summary>
+        /// 선 상으로 인정되는 범위 값을 가져오거나 설정합니다.
+        /// </summary>
         public double ConsensusThreshold
         {
             get
@@ -144,89 +158,105 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Caliper Settings
+        /// <summary>
+        /// 각 에지 그래픽의 투사 길이를 가져오거나 설정합니다.
+        /// </summary>
         public double ProjectionLength
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ProjectionLength;
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.ProjectionLength;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
                 {
-                    m_Tool.Setting.ProjectionLength = value;
+                    m_Tool.Setting.EdgeCollection.ProjectionLength = value;
                     this.RaisePropertyChanged(nameof(ProjectionLength));
                 }
             }
         }
+        /// <summary>
+        /// 각 에지 그래픽의 검색 길이를 가져오거나 설정합니다.
+        /// </summary>
         public double SearchLength
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SearchLength;
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.SearchLength;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
                 {
-                    m_Tool.Setting.SearchLength = value;
+                    m_Tool.Setting.EdgeCollection.SearchLength = value;
                     this.RaisePropertyChanged(nameof(SearchLength));
                 }
             }
         }
-
+        /// <summary>
+        /// 각 에지의 대비 임계값을 가져오거나 설정합니다.
+        /// </summary>
         public uint ContrastThreshold
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ContrastThreshold;
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.ContrastThreshold;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
                 {
-                    m_Tool.Setting.ContrastThreshold = value;
+                    m_Tool.Setting.EdgeCollection.ContrastThreshold = value;
                     this.RaisePropertyChanged(nameof(ContrastThreshold));
                 }
             }
         }
+        /// <summary>
+        /// 각 에지의 절반 픽셀 크기를 가져오거나 설정합니다.
+        /// </summary>
         public uint HalfPixelCount
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.HalfPixelCount;
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.HalfPixelCount;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
                 {
-                    m_Tool.Setting.HalfPixelCount = value;
+                    m_Tool.Setting.EdgeCollection.HalfPixelCount = value;
                     this.RaisePropertyChanged(nameof(HalfPixelCount));
                 }
             }
         }
+        /// <summary>
+        /// 각 에지를 감지할 방향을 가져오거나 설정합니다.
+        /// </summary>
         public int SelectedEdgeDirection
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return (int)m_Tool.Setting.EdgeDirection;
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return (int)m_Tool.Setting.EdgeCollection.EdgeDirection;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
                 {
-                    m_Tool.Setting.EdgeDirection = (EDirection)value;
+                    m_Tool.Setting.EdgeCollection.EdgeDirection = (EDirection)value;
                     this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
                 }
             }
         }
         #endregion
-
+        /// <summary>
+        /// 현재 도구가 수정 중인지 여부를 가져오거나 설정합니다.
+        /// </summary>
         public bool IsEditing
         {
             get { return m_IsEditing; }
@@ -244,7 +274,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-
+        /// <summary>
+        /// 화면에 출력할 원본 이미지를 가져오거나 설정합니다.
+        /// </summary>
         public BitmapSource OriginSource
         {
             get { return m_OriginSource; }
@@ -260,6 +292,9 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(ImageHeight));
             }
         }
+        /// <summary>
+        /// 화면에 출력할 결과 오버레이 이미지를 가져오거나 출력합니다.
+        /// </summary>
         public DrawingImage OverlaySource
         {
             get { return m_OverlaySource; }
@@ -269,6 +304,9 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(OverlaySource));
             }
         }
+        /// <summary>
+        /// 결과를 반영하는 메세지를 가져옵니다.
+        /// </summary>
         public string Message
         {
             get
@@ -279,16 +317,27 @@ namespace CvsVision.Caliper.Controls
                 else return "Success.";
             }
         }
+        /// <summary>
+        /// 원본 이미지의 너비를 가져옵니다.
+        /// </summary>
         public double ImageWidth { get; private set; }
+        /// <summary>
+        /// 원본 이미지의 높이를 가져옵니다.
+        /// </summary>
         public double ImageHeight { get; private set; }
 
         #endregion
 
         #region Dependency Properties
+        /// <summary>
+        /// LineDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
             DependencyProperty.Register(nameof(SubjectTool), typeof(CvsLineDetectTool), typeof(LineDetectToolEditor),
                 new PropertyMetadata(new CvsLineDetectTool()));
-
+        /// <summary>
+        /// 현재 에디터의 주체가 되는 검사 도구를 가져옵니다.
+        /// </summary>
         public CvsLineDetectTool SubjectTool
         {
             get { return GetValue(SubjectToolProperty) as CvsLineDetectTool; }
@@ -312,6 +361,9 @@ namespace CvsVision.Caliper.Controls
 
 
         #region Methods
+        /// <summary>
+        /// 모든 속성 업데이트하기.
+        /// </summary>
         private void UpdateToolData()
         {
             this.RaisePropertyChanged(nameof(OriginX));
@@ -524,6 +576,7 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Events
+        // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog d = new Microsoft.Win32.OpenFileDialog
@@ -551,18 +604,21 @@ namespace CvsVision.Caliper.Controls
             }
             this.RaisePropertyChanged(nameof(Message));
         }
+        // 도구 불러오기 콜백
         private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
         {
             //Tool 불러오는 과정 실행해야함
             m_Tool.Load("<Input the loading file path>", typeof(CvsLineDetectTool));
             this.UpdateToolData();
         }
+        // 도구 저장하기 콜백
         private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
         {
             //Tool 저장
             SubjectTool = m_Tool;
             SubjectTool.Save("<Input the saving file path>");
         }
+        // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Setting.EdgeCollection.Clear();

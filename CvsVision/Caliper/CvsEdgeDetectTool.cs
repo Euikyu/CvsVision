@@ -10,6 +10,9 @@ using Pen = System.Windows.Media.Pen;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 이미지를 통해 에지를 찾을 수 있는 도구 클래스입니다.
+    /// </summary>
     public class CvsEdgeDetectTool : ICvsTool
     {
         #region Fields
@@ -19,6 +22,9 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 입력 이미지를 가져오거나 설정합니다.
+        /// </summary>
         public Bitmap InputImage
         {
             get { return m_InputImage; }
@@ -28,6 +34,9 @@ namespace CvsVision.Caliper
                 Overlay = null;
             }
         }
+        /// <summary>
+        /// 에지 검색을 위한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsEdgeSetting Setting
         {
             get { return m_Setting; }
@@ -37,13 +46,25 @@ namespace CvsVision.Caliper
                 m_EdgeDetect = m_Setting.GetToolParams();
             }
         }
+        /// <summary>
+        /// 결과 에지를 가져옵니다.
+        /// </summary>
         public CvsEdge Edge { get { return m_EdgeDetect.Edge; } }
+        /// <summary>
+        /// 결과 오버레이를 가져옵니다.
+        /// </summary>
         public DrawingGroup Overlay { get; private set; }
         
-
+        /// <summary>
+        /// 해당 도구 사용 시 발생하는 예외를 가져옵니다. 
+        /// (Null 값 일 경우, 정상적으로 동작한 것입니다.)
+        /// </summary>
         public Exception Exception { get; private set; }
         #endregion
 
+        /// <summary>
+        /// 에지를 찾는 도구 클래스를 생성합니다.
+        /// </summary>
         public CvsEdgeDetectTool()
         {
             Setting = new CvsEdgeSetting();
@@ -56,6 +77,11 @@ namespace CvsVision.Caliper
         }
 
         #region Methods
+        /// <summary>
+        /// 파일 형태로 저장된 설정 값들을 불러옵니다.
+        /// </summary>
+        /// <param name="filePath">저장된 설정 파일 경로.</param>
+        /// <param name="toolType">불러오는 도구의 타입.</param>
         public void Load(string filePath, Type toolType)
         {
             try
@@ -69,7 +95,10 @@ namespace CvsVision.Caliper
                 Exception = err;
             }
         }
-
+        /// <summary>
+        /// 현재 설정 값들을 파일 형태로 저장합니다.
+        /// </summary>
+        /// <param name="path">저장할 파일 경로.</param>
         public void Save(string path)
         {
             try
@@ -83,7 +112,9 @@ namespace CvsVision.Caliper
             }
         }
 
-
+        /// <summary>
+        /// 에지 검색을 시작합니다.
+        /// </summary>
         public void Run()
         {
             try
@@ -103,6 +134,10 @@ namespace CvsVision.Caliper
             }
         }
 
+        /// <summary>
+        /// 결과 그래픽을 생성합니다.
+        /// </summary>
+        /// <returns></returns>
         private DrawingGroup CreateGeometry()
         {
 
