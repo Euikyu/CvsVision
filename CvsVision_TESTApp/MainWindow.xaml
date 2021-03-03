@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CvsVision_TESTApp"
         xmlns:cal="clr-namespace:CvsVision.Caliper.Controls;assembly=CvsVision"
+        xmlns:con="clr-namespace:CvsVision.Controls;assembly=CvsVision"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800">
     <Grid>

@@ -26,7 +26,6 @@ namespace CvsVision.Caliper.Controls
         private bool m_IsEditing;
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
-        private DrawingImage m_OverlaySource;
         private CvsLineDetectTool m_Tool;
 
         //private double m_SegmentLength;
@@ -284,7 +283,7 @@ namespace CvsVision.Caliper.Controls
             {
                 m_OriginSource = value;
                 this.RaisePropertyChanged(nameof(OriginSource));
-                OverlaySource = null;
+                this.RaisePropertyChanged(nameof(Overlay));
 
                 ImageWidth = m_OriginSource.Width;
                 ImageHeight = m_OriginSource.Height;
@@ -293,15 +292,14 @@ namespace CvsVision.Caliper.Controls
             }
         }
         /// <summary>
-        /// 화면에 출력할 결과 오버레이 이미지를 가져오거나 출력합니다.
+        /// 화면에 출력할 결과 오버레이를 가져옵니다.
         /// </summary>
-        public DrawingImage OverlaySource
+        public DrawingGroup Overlay
         {
-            get { return m_OverlaySource; }
-            private set
+            get
             {
-                m_OverlaySource = value;
-                this.RaisePropertyChanged(nameof(OverlaySource));
+                if (m_Tool != null) return m_Tool.Overlay;
+                else return null;
             }
         }
         /// <summary>
@@ -381,200 +379,6 @@ namespace CvsVision.Caliper.Controls
             this.RaisePropertyChanged(nameof(Message));
         }
         
-        #region - Zoompan Control
-        /*
-         * * memberVar
-         */
-        /// <summary>
-        /// The point that was clicked relative to the ZoomAndPanControl.
-        /// </summary>
-        private Point origZoomAndPanControlMouseDownPoint;
-
-        /// <summary>
-        /// Records which mouse button clicked during mouse dragging.
-        /// </summary>
-        private MouseButton mouseButtonDown;
-
-        /// <summary>
-        /// Specifies the current state of the mouse handling logic.
-        /// </summary>
-        private MouseHandlingMode mouseHandlingMode = MouseHandlingMode.None;
-
-        /// <summary>
-        /// The point that was clicked relative to the content that is contained within the ZoomAndPanControl.
-        /// </summary>
-        private Point origContentMouseDownPoint;
-
-        /*
-* * property
-*/
-
-        /*
-         * * method
-         */
-        /// <summary>
-        /// Zoom the viewport in, centering on the specified point (in content coordinates).
-        /// </summary>
-        private void ZoomIn(Point contentZoomCenter)
-        {
-            zoomAndPanControl.ZoomAboutPoint(zoomAndPanControl.ContentScale * 1.2, contentZoomCenter);
-        }
-
-        /// <summary>
-        /// Zoom the viewport out, centering on the specified point (in content coordinates).
-        /// </summary>
-        private void ZoomOut(Point contentZoomCenter)
-        {
-            zoomAndPanControl.ZoomAboutPoint(zoomAndPanControl.ContentScale / 1.2, contentZoomCenter);
-        }
-        /*
-         * Callback
-         */
-        /// <summary>
-        /// Event raised by rotating the mouse wheel
-        /// </summary>
-
-        /// <summary>
-        /// The 'ZoomIn' command (bound to the plus key) was executed.
-        /// </summary>
-        private void ZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            ZoomIn(new Point(zoomAndPanControl.ContentZoomFocusX, zoomAndPanControl.ContentZoomFocusY));
-        }
-
-        /// <summary>
-        /// The 'ZoomOut' command (bound to the minus key) was executed.
-        /// </summary>
-        private void ZoomOut_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            ZoomOut(new Point(zoomAndPanControl.ContentZoomFocusX, zoomAndPanControl.ContentZoomFocusY));
-        }
-
-        private void ZoomAndPanControl_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            e.Handled = true;
-
-            if (e.Delta > 0)
-            {
-                Point curContentMousePoint = e.GetPosition(ImgCanvas);
-                ZoomIn(curContentMousePoint);
-            }
-            else if (e.Delta < 0)
-            {
-                Point curContentMousePoint = e.GetPosition(ImgCanvas);
-                ZoomOut(curContentMousePoint);
-            }
-
-        }
-        /// <summary>
-        /// Event raised on mouse down in the ZoomAndPanControl.
-        /// </summary>
-        private void ZoomAndPanControl_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ImgCanvas.Focus();
-
-            mouseButtonDown = e.ChangedButton;
-            origZoomAndPanControlMouseDownPoint = e.GetPosition(zoomAndPanControl);
-            origContentMouseDownPoint = e.GetPosition(ImgCanvas);
-
-            if (mouseButtonDown == MouseButton.Left)
-            {
-                // Just a plain old left-down initiates panning mode.
-                mouseHandlingMode = MouseHandlingMode.Panning;
-            }
-
-            if (mouseHandlingMode != MouseHandlingMode.None)
-            {
-                // Capture the mouse so that we eventually receive the mouse up event.
-                zoomAndPanControl.CaptureMouse();
-                e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// Event raised on mouse up in the ZoomAndPanControl.
-        /// </summary>
-        private void ZoomAndPanControl_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (mouseHandlingMode != MouseHandlingMode.None)
-            {
-                if (mouseHandlingMode == MouseHandlingMode.Zooming)
-                {
-                    if (mouseButtonDown == MouseButton.Left)
-                    {
-                        // Shift + left-click zooms in on the ImgCanvas.
-                        ZoomIn(origContentMouseDownPoint);
-                    }
-                    else if (mouseButtonDown == MouseButton.Right)
-                    {
-                        // Shift + left-click zooms out from the ImgCanvas.
-                        ZoomOut(origContentMouseDownPoint);
-                    }
-                }
-                zoomAndPanControl.ReleaseMouseCapture();
-                mouseHandlingMode = MouseHandlingMode.None;
-                e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// Event raised on mouse move in the ZoomAndPanControl.
-        /// </summary>
-        private void ZoomAndPanControl_MouseMove(object sender, MouseEventArgs e)
-        {
-            //shseol85: overlay랑 충돌
-            //Color c = GetPixelColor(e.GetPosition(ImgCanvas));
-            //PixelInfo = string.Format("{0}", c.B);
-
-            if (mouseHandlingMode == MouseHandlingMode.Panning)
-            {
-                //
-                // The user is left-dragging the mouse.
-                // Pan the viewport by the appropriate amount.
-                //
-                Point curContentMousePoint = e.GetPosition(ImgCanvas);
-                Vector dragOffset = curContentMousePoint - origContentMouseDownPoint;
-
-                zoomAndPanControl.ContentOffsetX -= dragOffset.X;
-                zoomAndPanControl.ContentOffsetY -= dragOffset.Y;
-
-                e.Handled = true;
-            }
-            else if (mouseHandlingMode == MouseHandlingMode.Zooming)
-            {
-                Point curZoomAndPanControlMousePoint = e.GetPosition(zoomAndPanControl);
-                Vector dragOffset = curZoomAndPanControlMousePoint - origZoomAndPanControlMouseDownPoint;
-                double dragThreshold = 10;
-                if (mouseButtonDown == MouseButton.Left && (Math.Abs(dragOffset.X) > dragThreshold ||
-                                                            Math.Abs(dragOffset.Y) > dragThreshold))
-                {
-                    //
-                    // When Shift + left-down zooming mode and the user drags beyond the drag threshold,
-                    // initiate drag zooming mode where the user can drag out a rectangle to select the area
-                    // to zoom in on.
-                    //
-                    mouseHandlingMode = MouseHandlingMode.DragZooming;
-                    Point curContentMousePoint = e.GetPosition(ImgCanvas);
-                    //InitDragZoomRect(origContentMouseDownPoint, curContentMousePoint); //LDH9999 추후
-                }
-
-                e.Handled = true;
-            }
-            /*LDH9999 추후
-            else if (mouseHandlingMode == MouseHandlingMode.DragZooming)
-            {
-                //
-                // When in drag zooming mode continously update the position of the rectangle
-                // that the user is dragging out.
-                //
-                Point curContentMousePoint = e.GetPosition(content);
-                SetDragZoomRect(origContentMouseDownPoint, curContentMousePoint);
-
-                e.Handled = true;
-            }*/
-        }
-        #endregion
-
         #region Events
         // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
@@ -622,7 +426,7 @@ namespace CvsVision.Caliper.Controls
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Setting.EdgeCollection.Clear();
-
+            var lineSettingGraphic = display.SettingGraphic as LineSettingGraphic;
             var count = lineSettingGraphic.PoseCollection.Count;
             for(int i =0; i < count; i++)
             {
@@ -631,9 +435,7 @@ namespace CvsVision.Caliper.Controls
                 m_Tool.Setting.EdgeCollection.Add(edge);
             }
             m_Tool.Run();
-            var overlayImg = new DrawingImage(m_Tool.Overlay);
-            overlayImg.Freeze();
-            OverlaySource = overlayImg;
+            this.RaisePropertyChanged(nameof(Overlay));
 
             IsEditing = false;
             this.RaisePropertyChanged(nameof(Message));

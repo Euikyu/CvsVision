@@ -20,7 +20,7 @@ namespace CvsVision.Caliper.Controls
     /// <summary>
     /// LineSettingGraphic.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class LineSettingGraphic : UserControl, INotifyPropertyChanged
+    public partial class LineSettingGraphic : UserControl, INotifyPropertyChanged, CvsVision.Controls.ISettingGraphic
     {
 
         #region Fields
@@ -352,7 +352,9 @@ namespace CvsVision.Caliper.Controls
 
                 //캘리퍼 업데이트
                 this.UpdateCaliper();
-                
+                var interval = this.Width / PoseCollection.Count;
+                for (int i = 0; i < PoseCollection.Count; i++) PoseCollection[i].TranslateX = (i + 0.5) * interval;
+
                 //상위에 연결된 다른 MouseUp 실행시키지 않음
                 e.Handled = true;
             }

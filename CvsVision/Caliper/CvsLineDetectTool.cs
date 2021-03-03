@@ -96,6 +96,7 @@ namespace CvsVision.Caliper
             try
             {
 
+                Exception = null;
             }
             catch(Exception err)
             {
@@ -112,6 +113,7 @@ namespace CvsVision.Caliper
             try
             {
 
+                Exception = null;
             }
             catch (Exception err)
             {
@@ -148,6 +150,8 @@ namespace CvsVision.Caliper
 
                 //결과 오버레이 생성
                 Overlay = this.CreateGeometry();
+
+                Exception = null;
             }
             catch (Exception err)
             {

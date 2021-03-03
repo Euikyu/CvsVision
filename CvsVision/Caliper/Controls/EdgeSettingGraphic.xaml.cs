@@ -20,7 +20,7 @@ namespace CvsVision.Caliper.Controls
     /// <summary>
     /// EdgeSettingGraphic.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EdgeSettingGraphic : UserControl, INotifyPropertyChanged
+    public partial class EdgeSettingGraphic : UserControl, INotifyPropertyChanged, CvsVision.Controls.ISettingGraphic
     {
         #region Fields
         private readonly object m_MoveLock = new object();

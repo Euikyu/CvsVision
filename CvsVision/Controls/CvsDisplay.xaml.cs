@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace CvsVision.Controls
     public partial class CvsDisplay : UserControl, INotifyPropertyChanged
     {
         #region Fields
-
+        //private DrawingImage m_OverlaySource;
         #endregion
 
         #region Properties
@@ -35,8 +36,27 @@ namespace CvsVision.Controls
         }
 
         #region Common Properties
+        ///// <summary>
+        ///// 화면에 출력할 결과 오버레이 이미지를 가져오거나 설정합니다.
+        ///// </summary>
+        //public DrawingImage OverlaySource
+        //{
+        //    get { return m_OverlaySource; }
+        //    internal set
+        //    {
+        //        m_OverlaySource = value;
+        //        this.RaisePropertyChanged(nameof(OverlaySource));
+        //    }
+        //}
 
-
+        ///// <summary>
+        ///// 원본 이미지의 너비를 가져옵니다.
+        ///// </summary>
+        //public double ImageWidth { get; private set; }
+        ///// <summary>
+        ///// 원본 이미지의 높이를 가져옵니다.
+        ///// </summary>
+        //public double ImageHeight { get; private set; }
         #endregion
 
         #region Dependency Properties
@@ -78,6 +98,97 @@ namespace CvsVision.Controls
         //    get { return (bool)GetValue(IsGroupedProperty); }
         //    set { SetValue(IsGroupedProperty, value); }
         //}
+
+        //public static readonly DependencyProperty OriginSourceProperty =
+        //    DependencyProperty.Register(nameof(OriginSource), typeof(ImageSource), typeof(CvsDisplay),
+        //        new PropertyMetadata(null, OriginSource_PropertyChanged, OriginSource_CoerceValue));
+
+        //private static void OriginSource_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        //{
+        //    CvsDisplay control = (CvsDisplay)o;
+        //    control.Overlay = null;
+        //}
+        //private static object OriginSource_CoerceValue(DependencyObject o, object baseValue)
+        //{
+        //    if (baseValue is ImageSource source)
+        //    {
+        //        return source;
+        //    }
+        //    else if (baseValue is string str)
+        //    {
+        //        try
+        //        {
+        //            var u = new Uri(str, UriKind.RelativeOrAbsolute);
+        //            if (u.IsFile) return new BitmapImage(u);
+        //            else return null;
+        //        }
+        //        catch
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    else if (baseValue is Uri uri)
+        //    {
+        //        return new BitmapImage(uri);
+        //    }
+        //    else return null;
+        //}
+
+        public static readonly DependencyProperty OriginSourceProperty =
+           DependencyProperty.Register(nameof(OriginSource), typeof(ImageSource), typeof(CvsDisplay));
+        
+
+        public static readonly DependencyProperty OverlayProperty =
+            DependencyProperty.Register(nameof(Overlay), typeof(DrawingGroup), typeof(CvsDisplay),
+                new PropertyMetadata(Overlay_PropertyChanged));
+
+        private static void Overlay_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CvsDisplay control = (CvsDisplay)o;
+            var img = new DrawingImage(e.NewValue as DrawingGroup);
+            if (img.CanFreeze)
+            {
+                img.Freeze();
+                control.Overlay_Image.Source = img;
+            }
+        }
+
+        public static readonly DependencyProperty SettingGraphicProperty =
+            DependencyProperty.Register(nameof(SettingGraphic), typeof(ISettingGraphic), typeof(CvsDisplay),
+                new PropertyMetadata(SettingGraphic_PropertyChanged));
+        private static void SettingGraphic_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CvsDisplay control = (CvsDisplay)o;
+            if(e.OldValue is UIElement oldUI && e.OldValue is ISettingGraphic && control.ImgCanvas.Children.Contains(oldUI))
+            {
+                control.ImgCanvas.Children.Remove(oldUI);
+            }
+            if(e.NewValue is UIElement newUI && e.NewValue is ISettingGraphic)
+            {
+                control.ImgCanvas.Children.Add(newUI);
+            }
+        }
+
+        /// <summary>
+        /// 화면에 출력할 원본 이미지를 가져오거나 설정합니다.
+        /// </summary>
+        public ImageSource OriginSource
+        {
+            get { return (BitmapSource)GetValue(OriginSourceProperty); }
+            set { SetValue(OriginSourceProperty, value); }
+        }
+
+        public DrawingGroup Overlay
+        {
+            get { return (DrawingGroup)GetValue(OverlayProperty); }
+            set { SetValue(OverlayProperty, value); }
+        }
+
+        public ISettingGraphic SettingGraphic
+        {
+            get { return (ISettingGraphic)GetValue(SettingGraphicProperty); }
+            set { SetValue(SettingGraphicProperty, value); }
+        }
         #endregion
 
         #endregion

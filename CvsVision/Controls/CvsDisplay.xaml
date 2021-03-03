@@ -5,18 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CvsVision.Controls"
              xmlns:z="clr-namespace:ZoomPanCon"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"  Name="uc"
              d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+    <ScrollViewer DataContext="{Binding ElementName=uc}"
+                  x:Name="scrollViewer" CanContentScroll="True" 
+                  VerticalScrollBarVisibility="Visible" 
+                  HorizontalScrollBarVisibility="Visible">
         <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
                                           MouseWheel="ZoomAndPanControl_MouseWheel"
                                           MouseDown="ZoomAndPanControl_MouseDown"
                                           MouseMove="ZoomAndPanControl_MouseMove"
                                           MouseUp="ZoomAndPanControl_MouseUp">
-            <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
+            <Canvas Name="ImgCanvas" Width="{Binding OriginSource.Width}" Height="{Binding OriginSource.Height}">
                 <Image Name="Origin_Image" Source="{Binding OriginSource}"/>
-                <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
-                
+                <Image Name="Overlay_Image"/>
             </Canvas>
         </z:ZoomAndPanControl>
     </ScrollViewer>

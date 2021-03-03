@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CvsVision.Caliper.Controls"
              xmlns:caliper="clr-namespace:CvsVision.Caliper"
+             xmlns:con="clr-namespace:CvsVision.Controls"
              xmlns:z="clr-namespace:ZoomPanCon"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Name="uc"
@@ -28,16 +29,9 @@
             <RowDefinition/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-            <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
-                                          MouseWheel="ZoomAndPanControl_MouseWheel"
-                                          MouseDown="ZoomAndPanControl_MouseDown"
-                                          MouseMove="ZoomAndPanControl_MouseMove"
-                                          MouseUp="ZoomAndPanControl_MouseUp">
-                <Canvas Name="ImgCanvas" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
-                    <Image Name="Origin_Image" Source="{Binding OriginSource}" SnapsToDevicePixels="True" UseLayoutRounding="False" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                    <Image Name="Overlay_Image" Source="{Binding OverlaySource}"/>
-                    <local:LineSettingGraphic   x:Name="lineSettingGraphic"
+        <con:CvsDisplay x:Name="display" OriginSource="{Binding OriginSource}" Overlay="{Binding ElementName=uc, Path=DataContext.Overlay}">
+            <con:CvsDisplay.SettingGraphic>
+                <local:LineSettingGraphic       
                                                 Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}, Mode=TwoWay}" 
                                                 Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
                                                 OriginX="{Binding ElementName=uc, Path=DataContext.OriginX, Mode=TwoWay}"
@@ -46,10 +40,9 @@
                                                 SearchLength="{Binding ElementName=uc, Path=DataContext.SearchLength, Mode=TwoWay}"
                                                 Radian="{Binding ElementName=uc, Path=DataContext.Radian, Mode=TwoWay}" 
                                                 Visibility="{Binding ElementName=uc, Path=DataContext.IsEditing, Converter={StaticResource VisibilityConverter}}"/>
-                </Canvas>
-            </z:ZoomAndPanControl>
-        </ScrollViewer>
-
+            </con:CvsDisplay.SettingGraphic>
+        </con:CvsDisplay>
+        
         <Grid Grid.Column="1">
             <StackPanel>
                 <Button Content="Load Image" Margin="20,10" Padding="5" Click="LoadImageBtn_Click"/>
@@ -66,11 +59,11 @@
                     <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginY, StringFormat=N1}" Margin="2,0,0,0"/>
                 </UniformGrid>
                 <TextBlock Text="Segment&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=lineSettingGraphic, Path=Width, StringFormat=N2, FallbackValue=100}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=display, Path=SettingGraphic.Width, StringFormat=N2, FallbackValue=100}"/>
                 <TextBlock Text="Segment&#10;Degree" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.Rotation, StringFormat=N1}"/>
                 <TextBlock Text="Caliper&#10;Count" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=lineSettingGraphic, Path=CaliperCount, FallbackValue=3}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=display, Path=SettingGraphic.CaliperCount, FallbackValue=3}"/>
                 <TextBlock Text="Consensus&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ConsensusThreshold, FallbackValue=6}"/>
 
