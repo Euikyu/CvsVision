@@ -155,6 +155,7 @@ namespace CvsVision.Caliper
             }
             catch (Exception err)
             {
+                Overlay = null;
                 Exception = err;
             }
         }
