@@ -189,8 +189,8 @@ namespace CvsVision.Caliper
             //x = c 인 직선
             if (Line.Gradient == double.NaN)
             {
-                p0 = new Point(Line.StartPoint.X, 0);
-                p1 = new Point(Line.StartPoint.X, m_InputImage.Height);
+                p0 = new Point(Line.Y_Intercept, 0);
+                p1 = new Point(Line.Y_Intercept, m_InputImage.Height);
             }
             //y = c 인 직선
             else if (Line.Gradient == 0)

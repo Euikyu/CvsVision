@@ -30,8 +30,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <con:CvsDisplay OriginSource="{Binding ElementName=uc, Path=DataContext.OriginSource}" Overlay="{Binding ElementName=uc, Path=DataContext.Overlay}">
-            <con:CvsDisplay.SettingGraphic>
-                <local:EdgeSettingGraphic 
+            <local:EdgeSettingGraphic 
                                                 Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}, Mode=TwoWay}" 
                                                 Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
                                                 OriginX="{Binding ElementName=uc, Path=DataContext.OriginX, Mode=TwoWay}"
@@ -40,7 +39,6 @@
                                                 Height="{Binding ElementName=uc, Path=DataContext.SearchLength, Mode=TwoWay}"
                                                 Radian="{Binding ElementName=uc, Path=DataContext.Radian, Mode=TwoWay}"                                                
                                                 Visibility="{Binding ElementName=uc, Path=DataContext.IsEditing, Converter={StaticResource VisibilityConverter}}"/>
-            </con:CvsDisplay.SettingGraphic>
         </con:CvsDisplay>
         
         <Grid Grid.Column="1">

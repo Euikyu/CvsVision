@@ -20,7 +20,7 @@ namespace CvsVision.Caliper.Controls
     /// <summary>
     /// LineSettingGraphic.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class LineSettingGraphic : UserControl, INotifyPropertyChanged, CvsVision.Controls.ISettingGraphic
+    public partial class LineSettingGraphic : UserControl, INotifyPropertyChanged
     {
 
         #region Fields
@@ -87,6 +87,7 @@ namespace CvsVision.Caliper.Controls
         {
             LineSettingGraphic control = (LineSettingGraphic)o;
             control.LineRotateTransform.Angle = (double)e.NewValue;
+            if (control.Radian != ((double)e.NewValue) * Math.PI / 180) control.Radian = ((double)e.NewValue) * Math.PI / 180;
         }
         
         public static readonly DependencyProperty RadianProperty =
@@ -96,6 +97,7 @@ namespace CvsVision.Caliper.Controls
         {
             LineSettingGraphic control = (LineSettingGraphic)o;
             control.LineRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
+            if (control.Rotation != (double)e.NewValue * 180 / Math.PI) control.Rotation = (double)e.NewValue * 180 / Math.PI;
         }
 
         public static readonly DependencyProperty CaliperCountProperty =
@@ -180,7 +182,6 @@ namespace CvsVision.Caliper.Controls
             set
             {
                 m_Radian = value * (Math.PI / 180);
-                SetValue(RadianProperty, m_Radian);
                 SetValue(RotationProperty, value);
             }
         }
@@ -193,10 +194,8 @@ namespace CvsVision.Caliper.Controls
             get { return (double)GetValue(RadianProperty); }
             set
             {
-                SetValue(RadianProperty, value);
                 m_Radian = value;
-                var deg = value * (180 / Math.PI);
-                SetValue(RotationProperty, deg);
+                SetValue(RadianProperty, value);
             }
         }
         #endregion
@@ -220,7 +219,7 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         private void UpdateCaliper()
         {
-            if (double.IsNaN(this.Width)) this.Width = 100;
+            if (double.IsNaN(this.Width) || this.Width == 0) this.Width = 100;
             m_LineWidth = this.Width;
             m_LineOriginX = this.OriginX;
             m_LineOriginY = this.OriginY;
@@ -289,7 +288,6 @@ namespace CvsVision.Caliper.Controls
             ProjectionLength = 30;
             SearchLength = 100;
             m_LineThickness = this.MinHeight;
-            Radian = 0;
         }
 
         private void Line_MouseLeave(object sender, MouseEventArgs e)

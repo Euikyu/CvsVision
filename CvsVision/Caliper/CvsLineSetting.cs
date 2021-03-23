@@ -14,7 +14,6 @@ namespace CvsVision.Caliper
     {
         #region Fields
         private CvsLineDetect m_LineDetect;
-        private CvsEdgeSettingCollection m_Collection;
         private CvsPose m_Pose;
         #endregion
 
@@ -22,7 +21,7 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 에지 설정 집합을 가져옵니다.
         /// </summary>
-        public CvsEdgeSettingCollection EdgeCollection { get { return m_Collection; } }
+        public CvsEdgeSettingCollection EdgeCollection { get; }
         /// <summary>
         /// 선 상으로 인정되는 범위 값을 가져오거나 설정합니다.
         /// </summary>
@@ -79,8 +78,8 @@ namespace CvsVision.Caliper
         {
             m_Pose = new CvsPose();
             m_LineDetect = new CvsLineDetect();
-            m_Collection = new CvsEdgeSettingCollection();
-            m_Collection.SetParentPose(m_Pose);
+            EdgeCollection = new CvsEdgeSettingCollection();
+            EdgeCollection.SetParentPose(m_Pose);
         }
         #region Methods
         /// <summary>

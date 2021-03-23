@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -21,6 +22,7 @@ namespace CvsVision.Controls
     /// <summary>
     /// CvsDisplay.xaml에 대한 상호 작용 논리
     /// </summary>
+    [ContentProperty(nameof(Children))]
     public partial class CvsDisplay : UserControl, INotifyPropertyChanged
     {
         #region Fields
@@ -153,21 +155,8 @@ namespace CvsVision.Controls
             }
         }
 
-        public static readonly DependencyProperty SettingGraphicProperty =
-            DependencyProperty.Register(nameof(SettingGraphic), typeof(ISettingGraphic), typeof(CvsDisplay),
-                new PropertyMetadata(SettingGraphic_PropertyChanged));
-        private static void SettingGraphic_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
-        {
-            CvsDisplay control = (CvsDisplay)o;
-            if(e.OldValue is UIElement oldUI && e.OldValue is ISettingGraphic && control.ImgCanvas.Children.Contains(oldUI))
-            {
-                control.ImgCanvas.Children.Remove(oldUI);
-            }
-            if(e.NewValue is UIElement newUI && e.NewValue is ISettingGraphic)
-            {
-                control.ImgCanvas.Children.Add(newUI);
-            }
-        }
+        public static readonly DependencyProperty ChildrenProperty =
+            DependencyProperty.Register(nameof(Children), typeof(UIElementCollection), typeof(CvsDisplay));
 
         /// <summary>
         /// 화면에 출력할 원본 이미지를 가져오거나 설정합니다.
@@ -184,10 +173,10 @@ namespace CvsVision.Controls
             set { SetValue(OverlayProperty, value); }
         }
 
-        public ISettingGraphic SettingGraphic
+        public UIElementCollection Children
         {
-            get { return (ISettingGraphic)GetValue(SettingGraphicProperty); }
-            set { SetValue(SettingGraphicProperty, value); }
+            get { return (UIElementCollection)GetValue(ChildrenProperty); }
+            set { SetValue(ChildrenProperty, value); }
         }
         #endregion
 
@@ -196,6 +185,7 @@ namespace CvsVision.Controls
         public CvsDisplay()
         {
             InitializeComponent();
+            Children = ImgCanvas.Children;
         }
 
         #region Methods

@@ -20,9 +20,10 @@ namespace CvsVision
         private double m_OriginY;
         private double m_Width;
         private double m_Height;
-        private double m_Radian;
 
         private CvsPose m_Pose;
+
+        private bool m_IsCenterOriented;
         #endregion
 
         #region Properties
@@ -34,6 +35,7 @@ namespace CvsVision
             get { return m_OriginX; }
             set
             {
+                m_IsCenterOriented = false;
                 m_OriginX = value;
                 if(m_Pose != null)
                 {
@@ -49,6 +51,7 @@ namespace CvsVision
             get { return m_OriginY; }
             set
             {
+                m_IsCenterOriented = false;
                 m_OriginY = value;
                 if (m_Pose != null)
                 {
@@ -67,7 +70,8 @@ namespace CvsVision
                 m_Width = value;
                 if (m_Pose != null)
                 {
-                    m_Pose.TranslateX = m_OriginX + m_Width / 2;
+                    if (m_IsCenterOriented) m_OriginX = m_Pose.TranslateX - m_Width / 2;
+                    else m_Pose.TranslateX = m_OriginX + m_Width / 2;
                 }
             }
         }
@@ -82,7 +86,8 @@ namespace CvsVision
                 m_Height = value;
                 if (m_Pose != null)
                 {
-                    m_Pose.TranslateY = m_OriginY + m_Height / 2;
+                    if (m_IsCenterOriented) m_OriginY = m_Pose.TranslateY - m_Height / 2;
+                    else m_Pose.TranslateY = m_OriginY + m_Height / 2;
                 }
             }
         }
@@ -91,13 +96,16 @@ namespace CvsVision
         /// </summary>
         public double Radian
         {
-            get { return m_Radian; }
+            get
+            {
+                if (m_Pose != null) return m_Pose.Radian;
+                else return 0;
+            }
             set
             {
-                m_Radian = value;
                 if (m_Pose != null)
                 {
-                    m_Pose.Radian = m_Radian;
+                    m_Pose.Radian = value;
                 }
             }
         }
@@ -115,6 +123,7 @@ namespace CvsVision
             {
                 if (m_Pose != null)
                 {
+                    m_IsCenterOriented = true;
                     m_Pose.TranslateX = value.X;
                     m_Pose.TranslateY = value.Y;
                 }
@@ -128,24 +137,69 @@ namespace CvsVision
             get { return m_Pose; }
             set
             {
+                m_IsCenterOriented = true;
                 m_Pose = value;
                 m_OriginX = m_Pose.TranslateX - m_Width / 2;
                 m_OriginY = m_Pose.TranslateY - m_Height / 2;
-                m_Radian = m_Pose.Radian;
             }
         }
         #endregion
+
+        #region Constuctor
         /// <summary>
         /// Affine 사각형 클래스를 생성합니다.
         /// </summary>
         public CvsRectangleAffine()
         {
             Pose = new CvsPose();
-            OriginX = 20;
-            OriginY = 20;
-            Width = 100;
-            Height = 100;
         }
+        /// <summary>
+        /// 지정된 너비와 높이를 가지는 Affine 사각형 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="width">사각형의 너비.</param>
+        /// <param name="height">사각형의 높이.</param>
+        public CvsRectangleAffine(double width, double height)
+        {
+            Pose = new CvsPose();
+            this.Width = width;
+            this.Height = height;
+        }
+        /// <summary>
+        /// 지정된 값들을 이용하여 Affine 사각형 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="originX">사각형의 원점 X 좌표.</param>
+        /// <param name="originY">사각형의 원점 Y 좌표.</param>
+        /// <param name="width">사각형의 너비.</param>
+        /// <param name="height">사각형의 높이.</param>
+        /// <param name="radian">사각형의 회전 라디안 값.</param>
+        public CvsRectangleAffine(double originX, double originY, double width, double height, double radian)
+        {
+            Pose = new CvsPose();
+            this.OriginX = originX;
+            this.OriginY = originY;
+            this.Width = width;
+            this.Height = height;
+            this.Radian = radian;
+        }
+        /// <summary>
+        /// 지정된 좌표 축을 가지는 Affine 사각형 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="pose">사각형의 좌표 축 값.</param>
+        public CvsRectangleAffine(CvsPose pose)
+        {
+            this.Pose = pose;
+        }
+        /// <summary>
+        /// 지정된 좌표 축과 회전 라디안 값을 가지는 Affine 사각형 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="pose">사각형의 좌표 축 값.</param>
+        /// <param name="radian">사각형의 회전 라디안 값.</param>
+        public CvsRectangleAffine(CvsPose pose, double radian)
+        {
+            this.Pose = pose;
+            this.Radian = radian;
+        }
+        #endregion
 
         #region Methods
         /// <summary>

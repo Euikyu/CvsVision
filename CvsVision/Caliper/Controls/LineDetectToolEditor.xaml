@@ -30,17 +30,18 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <con:CvsDisplay x:Name="display" OriginSource="{Binding OriginSource}" Overlay="{Binding ElementName=uc, Path=DataContext.Overlay}">
-            <con:CvsDisplay.SettingGraphic>
-                <local:LineSettingGraphic       
+            <local:LineSettingGraphic  
                                                 Canvas.Left="{Binding OriginX, RelativeSource={RelativeSource Self}, Mode=TwoWay}" 
                                                 Canvas.Top="{Binding OriginY, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
                                                 OriginX="{Binding ElementName=uc, Path=DataContext.OriginX, Mode=TwoWay}"
                                                 OriginY="{Binding ElementName=uc, Path=DataContext.OriginY, Mode=TwoWay}"
                                                 ProjectionLength="{Binding ElementName=uc, Path=DataContext.ProjectionLength, Mode=TwoWay}"
                                                 SearchLength="{Binding ElementName=uc, Path=DataContext.SearchLength, Mode=TwoWay}"
+                                                CaliperCount="{Binding ElementName=uc, Path=DataContext.CaliperCount, Mode=TwoWay}"
+                                                Width="{Binding ElementName=uc, Path=DataContext.SegmentLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 Radian="{Binding ElementName=uc, Path=DataContext.Radian, Mode=TwoWay}" 
                                                 Visibility="{Binding ElementName=uc, Path=DataContext.IsEditing, Converter={StaticResource VisibilityConverter}}"/>
-            </con:CvsDisplay.SettingGraphic>
+            
         </con:CvsDisplay>
         
         <Grid Grid.Column="1">
@@ -59,11 +60,11 @@
                     <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginY, StringFormat=N1}" Margin="2,0,0,0"/>
                 </UniformGrid>
                 <TextBlock Text="Segment&#10;Length" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=display, Path=SettingGraphic.Width, StringFormat=N2, FallbackValue=100}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.SegmentLength, StringFormat=N2, FallbackValue=100}"/>
                 <TextBlock Text="Segment&#10;Degree" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.Rotation, StringFormat=N1}"/>
                 <TextBlock Text="Caliper&#10;Count" VerticalAlignment="Center" Margin="5"/>
-                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=display, Path=SettingGraphic.CaliperCount, FallbackValue=3}"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.CaliperCount, FallbackValue=3}"/>
                 <TextBlock Text="Consensus&#10;Threshold" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.ConsensusThreshold, FallbackValue=6}"/>
 

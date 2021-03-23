@@ -27,6 +27,8 @@ namespace CvsVision.Caliper.Controls
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
         private CvsLineDetectTool m_Tool;
+        private double m_SegmentLength;
+        private int m_CaliperCount;
 
         //private double m_SegmentLength;
         //private int m_CaliperCount;
@@ -324,6 +326,24 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         public double ImageHeight { get; private set; }
 
+        public double SegmentLength
+        {
+            get { return m_SegmentLength; }
+            set
+            {
+                m_SegmentLength = value;
+                this.RaisePropertyChanged(nameof(SegmentLength));
+            }
+        }
+        public int CaliperCount
+        {
+            get { return m_CaliperCount; }
+            set
+            {
+                m_CaliperCount = value;
+                this.RaisePropertyChanged(nameof(CaliperCount));
+            }
+        }
         #endregion
 
         #region Dependency Properties
@@ -354,6 +374,7 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
+            m_Tool = new CvsLineDetectTool();
             SubjectTool = new CvsLineDetectTool();
         }
 
@@ -368,6 +389,8 @@ namespace CvsVision.Caliper.Controls
             this.RaisePropertyChanged(nameof(OriginY));
             this.RaisePropertyChanged(nameof(Radian));
             this.RaisePropertyChanged(nameof(Rotation));
+            this.RaisePropertyChanged(nameof(SegmentLength));
+            this.RaisePropertyChanged(nameof(CaliperCount));
             this.RaisePropertyChanged(nameof(ConsensusThreshold));
 
             this.RaisePropertyChanged(nameof(ProjectionLength));
@@ -378,7 +401,7 @@ namespace CvsVision.Caliper.Controls
 
             this.RaisePropertyChanged(nameof(Message));
         }
-        
+
         #region Events
         // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
@@ -426,11 +449,11 @@ namespace CvsVision.Caliper.Controls
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Setting.EdgeCollection.Clear();
-            var lineSettingGraphic = display.SettingGraphic as LineSettingGraphic;
+            var lineSettingGraphic = display.Children.OfType<LineSettingGraphic>().First();
             var count = lineSettingGraphic.PoseCollection.Count;
-            for(int i =0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
-                var edge = new CvsEdgeSetting { OriginX = 0, OriginY = 0, ProjectionLength = this.ProjectionLength, SearchLength = this.SearchLength};
+                var edge = new CvsEdgeSetting();
                 edge.Region.Pose = lineSettingGraphic.PoseCollection[i].Clone() as CvsPose;
                 m_Tool.Setting.EdgeCollection.Add(edge);
             }

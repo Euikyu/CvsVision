@@ -20,7 +20,7 @@ namespace CvsVision.Caliper.Controls
     /// <summary>
     /// EdgeSettingGraphic.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EdgeSettingGraphic : UserControl, INotifyPropertyChanged, CvsVision.Controls.ISettingGraphic
+    public partial class EdgeSettingGraphic : UserControl, INotifyPropertyChanged
     {
         #region Fields
         private readonly object m_MoveLock = new object();
@@ -92,6 +92,7 @@ namespace CvsVision.Caliper.Controls
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
             if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue;
+            if (control.Radian != ((double)e.NewValue) * Math.PI / 180) control.Radian = ((double)e.NewValue) * Math.PI / 180;
         }
         /// <summary>
         /// EdgeSettingGraphic.Radian 에 대한 종속성 속성을 식별합니다.
@@ -104,6 +105,7 @@ namespace CvsVision.Caliper.Controls
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
             if(!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
+            if (control.Rotation != (double)e.NewValue * 180 / Math.PI) control.Rotation = (double)e.NewValue * 180 / Math.PI;
         }
 
         /// <summary>
@@ -131,7 +133,6 @@ namespace CvsVision.Caliper.Controls
             set
             {
                 m_Radian = value * (Math.PI / 180);
-                SetValue(RadianProperty, m_Radian);
                 SetValue(RotationProperty, value);
             }
         }
@@ -145,8 +146,6 @@ namespace CvsVision.Caliper.Controls
             {
                 m_Radian = value;
                 SetValue(RadianProperty, value);
-                var deg = value * (180 / Math.PI);
-                SetValue(RotationProperty, deg);
             }
         }
 
@@ -209,6 +208,10 @@ namespace CvsVision.Caliper.Controls
         //그래픽 렌더링된 후 호출되는 콜백
         private void EdgeSettingGraphic_Loaded(object sender, RoutedEventArgs e)
         {
+            this.OriginX = 20;
+            this.OriginY = 20;
+            this.Width = 30;
+            this.Height = 100;
             this.UpdateRect();
         }
         //사각형 내에 마우스 진입했을 때의 콜백

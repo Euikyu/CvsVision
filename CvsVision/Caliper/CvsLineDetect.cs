@@ -147,7 +147,7 @@ namespace CvsVision.Caliper
         /// <returns>Y 절편 값.</returns>
         private double CalcIntercept(Point p1, Point p2)
         {
-            return p2.X - p1.X == 0 ? double.NaN : (p2.X * p1.Y - p1.X * p2.Y) / (p2.X - p1.X);
+            return p2.X - p1.X == 0 ? p2.X : (p2.X * p1.Y - p1.X * p2.Y) / (p2.X - p1.X);
         }
         
         /// <summary>
