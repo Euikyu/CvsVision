@@ -14,7 +14,7 @@
         Width="{Binding Width}" SizeChanged="ContentControl_SizeChanged">
         <Grid RenderTransform="{Binding LineRotateTransform}">
             <Grid Name="Rotate_Grid" DataContext="{Binding ElementName=uc, Path=DataContext}">
-                <ItemsControl ItemsSource="{Binding PoseCollection}">
+                <ItemsControl ItemsSource="{Binding CaliperCollection}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1"/>

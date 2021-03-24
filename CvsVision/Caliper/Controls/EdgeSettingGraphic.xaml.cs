@@ -208,10 +208,10 @@ namespace CvsVision.Caliper.Controls
         //그래픽 렌더링된 후 호출되는 콜백
         private void EdgeSettingGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            this.OriginX = 20;
-            this.OriginY = 20;
-            this.Width = 30;
-            this.Height = 100;
+            //this.OriginX = 20;
+            //this.OriginY = 20;
+            //this.Width = 30;
+            //this.Height = 100;
             this.UpdateRect();
         }
         //사각형 내에 마우스 진입했을 때의 콜백

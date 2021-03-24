@@ -67,7 +67,15 @@ namespace CvsVision.Caliper
         /// </summary>
         public CvsEdgeDetectTool()
         {
-            Setting = new CvsEdgeSetting();
+            Setting = new CvsEdgeSetting
+            {
+                OriginX = 20,
+                OriginY = 20,
+                ProjectionLength = 30,
+                SearchLength = 100,
+                ContrastThreshold = 5,
+                HalfPixelCount = 2
+            };
         }
 
         public void Dispose()

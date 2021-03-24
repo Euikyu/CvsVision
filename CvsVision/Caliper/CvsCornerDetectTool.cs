@@ -54,7 +54,21 @@ namespace CvsVision.Caliper
         {
             m_LineATool = new CvsLineDetectTool();
             m_LineBTool = new CvsLineDetectTool();
-            Setting = new CvsCornerSetting();
+
+            m_Setting = new CvsCornerSetting
+            {
+                LineASetting = m_LineATool.Setting,
+                LineBSetting = m_LineBTool.Setting
+            };
+
+            Setting.LineASetting.OriginX = 40;
+            Setting.LineASetting.OriginY = 20;
+
+            Setting.LineBSetting.OriginX = 20;
+            Setting.LineBSetting.OriginY = 40;
+            Setting.LineBSetting.Radian = Math.PI / 2;
+
+            m_CornerDetect = m_Setting.GetToolParams();
         }
 
 

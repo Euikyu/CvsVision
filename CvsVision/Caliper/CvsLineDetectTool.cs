@@ -77,7 +77,18 @@ namespace CvsVision.Caliper
         /// </summary>
         public CvsLineDetectTool()
         {
-            Setting = new CvsLineSetting();
+            Setting = new CvsLineSetting
+            {
+                ConsensusThreshold = 6,
+                OriginX = 20,
+                OriginY = 20,
+                SegmentLength = 100,
+                CaliperCount = 3
+            };
+            Setting.EdgeCollection.ProjectionLength = 30;
+            Setting.EdgeCollection.SearchLength = 100;
+            Setting.EdgeCollection.ContrastThreshold = 5;
+            Setting.EdgeCollection.HalfPixelCount = 2;
         }
         
         public void Dispose()
@@ -131,7 +142,16 @@ namespace CvsVision.Caliper
                 if (m_LineDetect.InputPointList != null) m_LineDetect.InputPointList.Clear();
                 else m_LineDetect.InputPointList = new List<Point>();
 
-                foreach(var edge in Setting.EdgeCollection)
+                Setting.EdgeCollection.Clear();
+                var interval = Setting.SegmentLength / Setting.CaliperCount;
+                for (int i = 0; i < Setting.CaliperCount; i++)
+                {
+                    var edge = new CvsEdgeSetting();
+                    edge.Region.Pose = new CvsPose(0, (i + 0.5) * interval, 0);
+                    Setting.EdgeCollection.Add(edge);
+                }
+                
+                foreach (var edge in Setting.EdgeCollection)
                 {
                     //주어진 설정 값으로 각 이미지 자르고
                     var cropImage = edge.Region.Crop(m_InputImage);

@@ -27,8 +27,6 @@ namespace CvsVision.Caliper.Controls
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
         private CvsLineDetectTool m_Tool;
-        private double m_SegmentLength;
-        private int m_CaliperCount;
 
         //private double m_SegmentLength;
         //private int m_CaliperCount;
@@ -138,24 +136,39 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-        //public double SegmentLength
-        //{
-        //    get { return m_SegmentLength; }
-        //    set
-        //    {
-        //        m_SegmentLength = value;
-        //        this.RaisePropertyChanged(nameof(SegmentLength));
-        //    }
-        //}
-        //public int CaliperCount
-        //{
-        //    get { return m_CaliperCount; }
-        //    set
-        //    {
-        //        m_CaliperCount = value;
-        //        this.RaisePropertyChanged(nameof(CaliperCount));
-        //    }
-        //}
+        public double SegmentLength
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SegmentLength;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Setting != null)
+                {
+                    m_Tool.Setting.SegmentLength = value;
+                    this.RaisePropertyChanged(nameof(SegmentLength));
+                }
+            }
+        }
+        public int CaliperCount
+        {
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.CaliperCount;
+                else return 0;
+            }
+            set
+            {
+                if (m_Tool != null && m_Tool.Setting != null)
+                {
+
+                    m_Tool.Setting.CaliperCount = value > 200 ? 200 : (value < 3 ? 3 : value);
+                    this.RaisePropertyChanged(nameof(CaliperCount));
+                }
+            }
+        }
         #endregion
 
         #region Caliper Settings
@@ -326,24 +339,6 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         public double ImageHeight { get; private set; }
 
-        public double SegmentLength
-        {
-            get { return m_SegmentLength; }
-            set
-            {
-                m_SegmentLength = value;
-                this.RaisePropertyChanged(nameof(SegmentLength));
-            }
-        }
-        public int CaliperCount
-        {
-            get { return m_CaliperCount; }
-            set
-            {
-                m_CaliperCount = value;
-                this.RaisePropertyChanged(nameof(CaliperCount));
-            }
-        }
         #endregion
 
         #region Dependency Properties
@@ -374,12 +369,15 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            m_Tool = new CvsLineDetectTool();
-            SubjectTool = new CvsLineDetectTool();
+            m_Tool = SubjectTool;
         }
 
 
         #region Methods
+        private void Editor_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.UpdateToolData();
+        }
         /// <summary>
         /// 모든 속성 업데이트하기.
         /// </summary>
@@ -448,15 +446,6 @@ namespace CvsVision.Caliper.Controls
         // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
-            m_Tool.Setting.EdgeCollection.Clear();
-            var lineSettingGraphic = display.Children.OfType<LineSettingGraphic>().First();
-            var count = lineSettingGraphic.PoseCollection.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var edge = new CvsEdgeSetting();
-                edge.Region.Pose = lineSettingGraphic.PoseCollection[i].Clone() as CvsPose;
-                m_Tool.Setting.EdgeCollection.Add(edge);
-            }
             m_Tool.Run();
             this.RaisePropertyChanged(nameof(Overlay));
 

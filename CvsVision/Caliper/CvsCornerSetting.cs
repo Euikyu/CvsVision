@@ -9,7 +9,7 @@ namespace CvsVision.Caliper
     public class CvsCornerSetting
     {
         #region Fields
-        private CvsCornerDetect m_Detect;
+        private readonly CvsCornerDetect m_Detect = new CvsCornerDetect();
         #endregion
 
         #region Properties
@@ -21,7 +21,6 @@ namespace CvsVision.Caliper
         /// </summary>
         public CvsCornerSetting()
         {
-            m_Detect = new CvsCornerDetect();
             LineASetting = new CvsLineSetting();
             LineBSetting = new CvsLineSetting();
         }

@@ -70,6 +70,15 @@ namespace CvsVision.Caliper
             }
             set { if (m_Pose != null) m_Pose.Radian = value; }
         }
+        /// <summary>
+        /// 선 모델의 캘리퍼 개수를 가져옵니다.
+        /// </summary>
+        public int CaliperCount { get; set; }
+        /// <summary>
+        /// 선 모델의 선분 길이를 가져오거나 설정합니다.
+        /// </summary>
+        public double SegmentLength { get; set; }
+        
         #endregion
         /// <summary>
         /// 선을 찾기 위한 설정 값 클래스를 생성합니다.
@@ -218,8 +227,6 @@ namespace CvsVision.Caliper
         public CvsEdgeSettingCollection()
         {
             m_List = new List<CvsEdgeSetting>();
-            m_ContrastThreshold = 5;
-            m_HalfPixelCount = 2;
             m_Pose = new CvsPose();
         }
 

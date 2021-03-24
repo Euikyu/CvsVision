@@ -63,7 +63,7 @@ namespace CvsVision.Caliper.Controls
         /// <summary>
         /// 현재 선에 대한 에지 검색 위치정보 리스트를 가져옵니다.
         /// </summary>
-        public ObservableCollection<CvsPose> PoseCollection { get; }
+        public ObservableCollection<bool> CaliperCollection { get; }
         #endregion
 
         #region Dependency Properties
@@ -108,13 +108,18 @@ namespace CvsVision.Caliper.Controls
             LineSettingGraphic control = (LineSettingGraphic)o;
 
             var newCount = (int)e.NewValue > 200 ? 200 : ((int)e.NewValue < 3 ? 3 : (int)e.NewValue);
-            if (control.PoseCollection.Count != newCount)
+            if (control.CaliperCollection.Count != newCount)
             {
                 if (control.Width == double.NaN || control.Width == 0) return;
-
-                control.PoseCollection.Clear();
-                var interval = control.Width / newCount;
-                for (int i = 0; i < newCount; i++) control.PoseCollection.Add(new CvsPose { TranslateX = (i + 0.5) * interval });
+                var calCount = control.CaliperCollection.Count - newCount;
+                if(calCount > 0)
+                {
+                    for (int i = 0; i < calCount; i++) control.CaliperCollection.RemoveAt(0);
+                }
+                else
+                {
+                    for (int i = 0; i > calCount; i--) control.CaliperCollection.Add(true);
+                }
             }
         }
         private static object CaliperCount_CoerceValue(DependencyObject o, object baseValue)
@@ -209,7 +214,7 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            PoseCollection = new ObservableCollection<CvsPose>();
+            CaliperCollection = new ObservableCollection<bool>();
             LineRotateTransform = new RotateTransform(m_Radian, 0, m_LineThickness / 2);
         }
 
@@ -281,12 +286,6 @@ namespace CvsVision.Caliper.Controls
         #region Events
         private void LineSettingGraphic_Loaded(object sender, RoutedEventArgs e)
         {
-            //컨트롤의 기본값 설정
-            CaliperCount = 3;
-            OriginX = 20;
-            OriginY = 20;
-            ProjectionLength = 30;
-            SearchLength = 100;
             m_LineThickness = this.MinHeight;
         }
 
@@ -350,8 +349,6 @@ namespace CvsVision.Caliper.Controls
 
                 //캘리퍼 업데이트
                 this.UpdateCaliper();
-                var interval = this.Width / PoseCollection.Count;
-                for (int i = 0; i < PoseCollection.Count; i++) PoseCollection[i].TranslateX = (i + 0.5) * interval;
 
                 //상위에 연결된 다른 MouseUp 실행시키지 않음
                 e.Handled = true;
@@ -421,8 +418,6 @@ namespace CvsVision.Caliper.Controls
             if (!m_IsCaptured)
             {
                 this.UpdateCaliper();
-                var interval = this.Width / PoseCollection.Count;
-                for (int i = 0; i < PoseCollection.Count; i++) PoseCollection[i].TranslateX = (i + 0.5) * interval;
             }
         }
 

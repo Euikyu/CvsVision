@@ -26,10 +26,6 @@ namespace CvsVision.Caliper.Controls
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
         private CvsCornerDetectTool m_Tool;
-        private int m_CaliperCount;
-
-        private double m_ASegmentLength;
-        private double m_BSegmentLength;
 
         //private double m_SegmentLength;
         //private int m_CaliperCount;
@@ -63,108 +59,7 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-
-        ///// <summary>
-        ///// 선 그래픽의 원점 X 좌표를 가져오거나 설정합니다.
-        ///// </summary>
-        //public double OriginX
-        //{
-        //    get
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.OriginX;
-        //        else return 0;
-        //    }
-        //    set
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null)
-        //        {
-        //            m_Tool.Setting.OriginX = value;
-        //            this.RaisePropertyChanged(nameof(OriginX));
-        //        }
-        //    }
-        //}
-        ///// <summary>
-        ///// 선 그래픽의 원점 Y 좌표를 가져오거나 설정합니다.
-        ///// </summary>
-        //public double OriginY
-        //{
-        //    get
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.OriginY;
-        //        else return 0;
-        //    }
-        //    set
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null)
-        //        {
-        //            m_Tool.Setting.OriginY = value;
-        //            this.RaisePropertyChanged(nameof(OriginY));
-        //        }
-        //    }
-        //}
-        ///// <summary>
-        ///// 선 그래픽의 회전 라디안 값을 가져오거나 설정합니다.
-        ///// </summary>
-        //public double Radian
-        //{
-        //    get
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.Radian;
-        //        else return 0;
-        //    }
-        //    set
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null)
-        //        {
-        //            m_Tool.Setting.Radian = value;
-        //            this.RaisePropertyChanged(nameof(Radian));
-        //            this.RaisePropertyChanged(nameof(Rotation));
-        //        }
-        //    }
-        //}
-        ///// <summary>
-        ///// 선 그래픽의 회전 Degree 값을 가져오거나 설정합니다.
-        ///// </summary>
-        //public double Rotation
-        //{
-        //    get
-        //    {
-        //        return Radian * 180 / Math.PI;
-        //    }
-        //    set
-        //    {
-        //        Radian = value * Math.PI / 180;
-
-        //    }
-        //}
-        ///// <summary>
-        ///// 선 상으로 인정되는 범위 값을 가져오거나 설정합니다.
-        ///// </summary>
-        //public double ConsensusThreshold
-        //{
-        //    get
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ConsensusThreshold;
-        //        else return 0;
-        //    }
-        //    set
-        //    {
-        //        if (m_Tool != null && m_Tool.Setting != null)
-        //        {
-        //            m_Tool.Setting.ConsensusThreshold = value;
-        //            this.RaisePropertyChanged(nameof(ConsensusThreshold));
-        //        }
-        //    }
-        //}
-        public double LineASegmentLength
-        {
-            get { return m_ASegmentLength; }
-            set
-            {
-                m_ASegmentLength = value;
-                this.RaisePropertyChanged(nameof(LineASegmentLength));
-            }
-        }
+        
         public double LineARotation
         {
             get
@@ -216,25 +111,30 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-        public double LineBSegmentLength
-        {
-            get { return m_BSegmentLength; }
-            set
-            {
-                m_BSegmentLength = value;
-                this.RaisePropertyChanged(nameof(LineBSegmentLength));
-            }
-        }
         #endregion
 
         #region Caliper Settings
         public int CaliperCount
         {
-            get { return m_CaliperCount; }
+            get
+            {
+                if (m_Tool != null && m_Tool.Setting != null && 
+                    m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
+                    m_Tool.Setting.LineASetting.CaliperCount == m_Tool.Setting.LineASetting.CaliperCount)
+                {
+                    return m_Tool.Setting.LineASetting.CaliperCount;
+                }
+                else return 0;
+            }
             set
             {
-                m_CaliperCount = value;
-                this.RaisePropertyChanged(nameof(CaliperCount));
+                if (m_Tool != null && m_Tool.Setting != null &&
+                    m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
+                {
+                    m_Tool.Setting.LineASetting.CaliperCount = value > 200 ? 200 : (value < 3 ? 3 : value);
+                    m_Tool.Setting.LineBSetting.CaliperCount = value > 200 ? 200 : (value < 3 ? 3 : value);
+                    this.RaisePropertyChanged(nameof(CaliperCount));
+                }
             }
         }
         /// <summary>
@@ -468,8 +368,7 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            m_Tool = new CvsCornerDetectTool();
-            SubjectTool = new CvsCornerDetectTool();
+            m_Tool = SubjectTool;
         }
 
 
@@ -481,8 +380,8 @@ namespace CvsVision.Caliper.Controls
         {
             this.RaisePropertyChanged(nameof(LineASetting));
             this.RaisePropertyChanged(nameof(LineBSetting));
-            this.RaisePropertyChanged(nameof(LineASegmentLength));
-            this.RaisePropertyChanged(nameof(LineBSegmentLength));
+            this.RaisePropertyChanged(nameof(LineARotation));
+            this.RaisePropertyChanged(nameof(LineBRotation));
 
             this.RaisePropertyChanged(nameof(CaliperCount));
             this.RaisePropertyChanged(nameof(ProjectionLength));
@@ -495,9 +394,9 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Events
-        private void Uc_Loaded(object sender, RoutedEventArgs e)
+        private void Editor_Loaded(object sender, RoutedEventArgs e)
         {
-            LineBRotation = 90;
+            this.UpdateToolData();
         }
         // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
@@ -544,24 +443,6 @@ namespace CvsVision.Caliper.Controls
         // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
-            m_Tool.Setting.LineASetting.EdgeCollection.Clear();
-            var lineA_interval = LineASegmentLength / CaliperCount;
-            for (int i = 0; i < CaliperCount; i++)
-            {
-                var edge = new CvsEdgeSetting();
-                edge.Region.Pose = new CvsPose(0, (i + 0.5) * lineA_interval, 0);
-                m_Tool.Setting.LineASetting.EdgeCollection.Add(edge);
-            }
-
-            m_Tool.Setting.LineBSetting.EdgeCollection.Clear();
-            var lineB_interval = LineBSegmentLength / CaliperCount;
-            for (int i = 0; i < CaliperCount; i++)
-            {
-                var edge = new CvsEdgeSetting();
-                edge.Region.Pose = new CvsPose(0, (i + 0.5) * lineB_interval, 0);
-                m_Tool.Setting.LineBSetting.EdgeCollection.Add(edge);
-            }
-
             m_Tool.Run();
             this.RaisePropertyChanged(nameof(Overlay));
 

@@ -312,10 +312,14 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            SubjectTool = new CvsEdgeDetectTool();
+            m_Tool = SubjectTool;
         }
 
         #region Methods
+        private void Editor_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.UpdateToolData();
+        }
         /// <summary>
         /// 모든 속성 업데이트하기.
         /// </summary>
