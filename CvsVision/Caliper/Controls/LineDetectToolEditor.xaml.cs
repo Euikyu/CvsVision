@@ -136,6 +136,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 선 모델의 선분 길이를 가져오거나 설정합니다.
+        /// </summary>
         public double SegmentLength
         {
             get
@@ -152,6 +155,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 캘리퍼 모델의 개수를 가져오거나 설정합니다.
+        /// </summary>
         public int CaliperCount
         {
             get
@@ -179,14 +185,14 @@ namespace CvsVision.Caliper.Controls
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.ProjectionLength;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ProjectionLength;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.EdgeCollection.ProjectionLength = value;
+                    m_Tool.Setting.ProjectionLength = value;
                     this.RaisePropertyChanged(nameof(ProjectionLength));
                 }
             }
@@ -198,14 +204,14 @@ namespace CvsVision.Caliper.Controls
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.SearchLength;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SearchLength;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.EdgeCollection.SearchLength = value;
+                    m_Tool.Setting.SearchLength = value;
                     this.RaisePropertyChanged(nameof(SearchLength));
                 }
             }
@@ -217,14 +223,14 @@ namespace CvsVision.Caliper.Controls
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.ContrastThreshold;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ContrastThreshold;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.EdgeCollection.ContrastThreshold = value;
+                    m_Tool.Setting.ContrastThreshold = value;
                     this.RaisePropertyChanged(nameof(ContrastThreshold));
                 }
             }
@@ -236,14 +242,14 @@ namespace CvsVision.Caliper.Controls
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return m_Tool.Setting.EdgeCollection.HalfPixelCount;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.HalfPixelCount;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.EdgeCollection.HalfPixelCount = value;
+                    m_Tool.Setting.HalfPixelCount = value;
                     this.RaisePropertyChanged(nameof(HalfPixelCount));
                 }
             }
@@ -255,14 +261,14 @@ namespace CvsVision.Caliper.Controls
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null) return (int)m_Tool.Setting.EdgeCollection.EdgeDirection;
+                if (m_Tool != null && m_Tool.Setting != null) return (int)m_Tool.Setting.EdgeDirection;
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.EdgeCollection.EdgeDirection = (EDirection)value;
+                    m_Tool.Setting.EdgeDirection = (EDirection)value;
                     this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
                 }
             }
@@ -432,16 +438,29 @@ namespace CvsVision.Caliper.Controls
         // 도구 불러오기 콜백
         private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Tool 불러오는 과정 실행해야함
-            m_Tool.Load("<Input the loading file path>", typeof(CvsLineDetectTool));
-            this.UpdateToolData();
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Crevis Vision Tools. (*.cvt)|*.cvt"
+            };
+            if ((bool)dialog.ShowDialog())
+            {
+                m_Tool.Load(dialog.FileName);
+                this.UpdateToolData();
+            }
         }
         // 도구 저장하기 콜백
         private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Tool 저장
-            SubjectTool = m_Tool;
-            SubjectTool.Save("<Input the saving file path>");
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Crevis Vision Tools. (*.cvt)|*.cvt"
+            };
+
+            if ((bool)dialog.ShowDialog())
+            {
+                m_Tool.Save(dialog.FileName);
+                this.RaisePropertyChanged(nameof(Message));
+            }
         }
         // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)

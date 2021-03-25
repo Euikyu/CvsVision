@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Brushes = System.Windows.Media.Brushes;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
@@ -39,10 +41,13 @@ namespace CvsVision.Caliper
             set
             {
                 m_Setting = value;
-                m_LineATool.Setting = m_Setting.LineASetting;
-                m_LineBTool.Setting = m_Setting.LineBSetting;
+                if (value != null)
+                {
+                    m_LineATool.Setting = m_Setting.LineASetting;
+                    m_LineBTool.Setting = m_Setting.LineBSetting;
 
-                m_CornerDetect = m_Setting.GetToolParams();
+                    m_CornerDetect = m_Setting.GetToolParams();
+                }
             }
         }
         public CvsCorner Corner { get; private set; }
@@ -65,8 +70,8 @@ namespace CvsVision.Caliper
             Setting.LineASetting.OriginY = 20;
 
             Setting.LineBSetting.OriginX = 20;
-            Setting.LineBSetting.OriginY = 40;
-            Setting.LineBSetting.Radian = Math.PI / 2;
+            Setting.LineBSetting.OriginY = 140;
+            Setting.LineBSetting.Radian = -Math.PI / 2;
 
             m_CornerDetect = m_Setting.GetToolParams();
         }
@@ -80,13 +85,49 @@ namespace CvsVision.Caliper
         }
 
         #region Methods
-        public void Load(string filePath, Type toolType)
+        public void Load(string path)
         {
+            try
+            {
+                if (!File.Exists(path)) throw new Exception("Not found file.");
+                XmlSerializer xml = new XmlSerializer(typeof(CvsCornerSetting));
 
+                using (var sr = new StreamReader(path))
+                {
+                    try
+                    {
+                        var newSetting = xml.Deserialize(sr) as CvsCornerSetting;
+                        Setting = newSetting ?? throw new Exception();
+                    }
+                    catch
+                    {
+                        throw new Exception("Different tool type.");
+                    }
+                }
+
+                Exception = null;
+            }
+            catch (Exception err)
+            {
+                Exception = err;
+            }
         }
         public void Save(string path)
         {
+            try
+            {
+                using (var sw = new StreamWriter(path))
+                {
+                    XmlSerializer xml = new XmlSerializer(typeof(CvsCornerSetting));
+                    xml.Serialize(sw, Setting);
+                }
 
+                Exception = null;
+            }
+            catch (Exception err)
+            {
+                Exception = err;
+            }
         }
 
         public void Run()

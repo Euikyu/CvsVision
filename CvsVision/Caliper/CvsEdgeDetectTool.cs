@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Brushes = System.Windows.Media.Brushes;
 using Pen = System.Windows.Media.Pen;
 
@@ -43,7 +45,7 @@ namespace CvsVision.Caliper
             set
             {
                 m_Setting = value;
-                m_EdgeDetect = m_Setting.GetToolParams();
+                if(value != null) m_EdgeDetect = m_Setting.GetToolParams();
             }
         }
         /// <summary>
@@ -88,13 +90,26 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 파일 형태로 저장된 설정 값들을 불러옵니다.
         /// </summary>
-        /// <param name="filePath">저장된 설정 파일 경로.</param>
-        /// <param name="toolType">불러오는 도구의 타입.</param>
-        public void Load(string filePath, Type toolType)
+        /// <param name="path">저장된 설정 파일 경로.</param>
+        public void Load(string path)
         {
             try
             {
-                
+                if (!File.Exists(path)) throw new Exception("Not found file.");
+                XmlSerializer xml = new XmlSerializer(typeof(CvsEdgeSetting));
+
+                using (var sr = new StreamReader(path))
+                {
+                    try
+                    {
+                        var newSetting = xml.Deserialize(sr) as CvsEdgeSetting;
+                        Setting = newSetting ?? throw new Exception();
+                    }
+                    catch
+                    {
+                        throw new Exception("Different tool type.");
+                    }
+                }
 
                 Exception = null;
             }
@@ -111,6 +126,11 @@ namespace CvsVision.Caliper
         {
             try
             {
+                using (var sw = new StreamWriter(path))
+                {
+                    XmlSerializer xml = new XmlSerializer(typeof(CvsEdgeSetting));
+                    xml.Serialize(sw, Setting);
+                }
 
                 Exception = null;
             }

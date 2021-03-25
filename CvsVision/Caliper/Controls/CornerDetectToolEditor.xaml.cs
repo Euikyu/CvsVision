@@ -145,20 +145,18 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection.ProjectionLength == m_Tool.Setting.LineBSetting.EdgeCollection.ProjectionLength)
+                    m_Tool.Setting.LineASetting.ProjectionLength == m_Tool.Setting.LineBSetting.ProjectionLength)
                 {
-                    return m_Tool.Setting.LineASetting.EdgeCollection.ProjectionLength;
+                    return m_Tool.Setting.LineASetting.ProjectionLength;
                 }
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
                 {
-                    m_Tool.Setting.LineASetting.EdgeCollection.ProjectionLength = value;
-                    m_Tool.Setting.LineBSetting.EdgeCollection.ProjectionLength = value;
+                    m_Tool.Setting.LineASetting.ProjectionLength = value;
+                    m_Tool.Setting.LineBSetting.ProjectionLength = value;
                     this.RaisePropertyChanged(nameof(ProjectionLength));
                 }
             }
@@ -171,20 +169,18 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection.SearchLength == m_Tool.Setting.LineBSetting.EdgeCollection.SearchLength)
+                    m_Tool.Setting.LineASetting.SearchLength == m_Tool.Setting.LineBSetting.SearchLength)
                 {
-                    return m_Tool.Setting.LineASetting.EdgeCollection.SearchLength;
+                    return m_Tool.Setting.LineASetting.SearchLength;
                 }
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
                 {
-                    m_Tool.Setting.LineASetting.EdgeCollection.SearchLength = value;
-                    m_Tool.Setting.LineBSetting.EdgeCollection.SearchLength = value;
+                    m_Tool.Setting.LineASetting.SearchLength = value;
+                    m_Tool.Setting.LineBSetting.SearchLength = value;
                     this.RaisePropertyChanged(nameof(SearchLength));
                 }
             }
@@ -197,20 +193,18 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection.ContrastThreshold == m_Tool.Setting.LineBSetting.EdgeCollection.ContrastThreshold)
+                    m_Tool.Setting.LineASetting.ContrastThreshold == m_Tool.Setting.LineBSetting.ContrastThreshold)
                 {
-                    return m_Tool.Setting.LineASetting.EdgeCollection.ContrastThreshold;
+                    return m_Tool.Setting.LineASetting.ContrastThreshold;
                 }
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
                 {
-                    m_Tool.Setting.LineASetting.EdgeCollection.ContrastThreshold = value;
-                    m_Tool.Setting.LineBSetting.EdgeCollection.ContrastThreshold = value;
+                    m_Tool.Setting.LineASetting.ContrastThreshold = value;
+                    m_Tool.Setting.LineBSetting.ContrastThreshold = value;
                     this.RaisePropertyChanged(nameof(ContrastThreshold));
                 }
             }
@@ -223,20 +217,18 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection.HalfPixelCount == m_Tool.Setting.LineBSetting.EdgeCollection.HalfPixelCount)
+                    m_Tool.Setting.LineASetting.HalfPixelCount == m_Tool.Setting.LineBSetting.HalfPixelCount)
                 {
-                    return m_Tool.Setting.LineASetting.EdgeCollection.HalfPixelCount;
+                    return m_Tool.Setting.LineASetting.HalfPixelCount;
                 }
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
                 {
-                    m_Tool.Setting.LineASetting.EdgeCollection.HalfPixelCount = value;
-                    m_Tool.Setting.LineBSetting.EdgeCollection.HalfPixelCount = value;
+                    m_Tool.Setting.LineASetting.HalfPixelCount = value;
+                    m_Tool.Setting.LineBSetting.HalfPixelCount = value;
                     this.RaisePropertyChanged(nameof(HalfPixelCount));
                 }
             }
@@ -249,19 +241,18 @@ namespace CvsVision.Caliper.Controls
             get
             {
                 if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection.EdgeDirection == m_Tool.Setting.LineBSetting.EdgeCollection.EdgeDirection)
+                    m_Tool.Setting.LineASetting.EdgeDirection == m_Tool.Setting.LineBSetting.EdgeDirection)
                 {
-                    return (int)m_Tool.Setting.LineASetting.EdgeCollection.EdgeDirection;
+                    return (int)m_Tool.Setting.LineASetting.EdgeDirection;
                 }
                 else return 0;
             }
             set
             {
-                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null &&
-                    m_Tool.Setting.LineASetting.EdgeCollection != null && m_Tool.Setting.LineASetting.EdgeCollection != null)
+                if (m_Tool != null && m_Tool.Setting != null && m_Tool.Setting.LineASetting != null && m_Tool.Setting.LineBSetting != null)
                 {
-                    m_Tool.Setting.LineASetting.EdgeCollection.EdgeDirection = (EDirection)value;
+                    m_Tool.Setting.LineASetting.EdgeDirection = (EDirection)value;
+                    m_Tool.Setting.LineBSetting.EdgeDirection = (EDirection)value;
                     this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
                 }
             }
@@ -429,16 +420,29 @@ namespace CvsVision.Caliper.Controls
         // 도구 불러오기 콜백
         private void LoadToolBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Tool 불러오는 과정 실행해야함
-            m_Tool.Load("<Input the loading file path>", typeof(CvsLineDetectTool));
-            this.UpdateToolData();
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Crevis Vision Tools. (*.cvt)|*.cvt"
+            };
+            if ((bool)dialog.ShowDialog())
+            {
+                m_Tool.Load(dialog.FileName);
+                this.UpdateToolData();
+            }
         }
         // 도구 저장하기 콜백
         private void SaveToolBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Tool 저장
-            SubjectTool = m_Tool;
-            SubjectTool.Save("<Input the saving file path>");
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Crevis Vision Tools. (*.cvt)|*.cvt"
+            };
+
+            if ((bool)dialog.ShowDialog())
+            {
+                m_Tool.Save(dialog.FileName);
+                this.RaisePropertyChanged(nameof(Message));
+            }
         }
         // 검사 실행하기 콜백
         private void RunBtn_Click(object sender, RoutedEventArgs e)

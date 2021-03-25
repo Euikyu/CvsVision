@@ -9,6 +9,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800">
     <Grid>
-        <cal:LineDetectToolEditor/>
+        <cal:EdgeDetectToolEditor/>
     </Grid>
 </Window>

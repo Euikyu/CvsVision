@@ -147,5 +147,6 @@
   <ItemGroup>
     <Resource Include="Resources\refresh.cur" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -33,9 +33,8 @@ namespace CvsVision
         /// <summary>
         /// 파일 형태로 저장된 설정 값들을 불러옵니다.
         /// </summary>
-        /// <param name="filePath">저장된 설정 파일 경로.</param>
-        /// <param name="toolType">불러오는 도구의 타입.</param>
-        void Load(string filePath, Type toolType);
+        /// <param name="path">저장된 설정 파일 경로.</param>
+        void Load(string path);
         /// <summary>
         /// 현재 설정 값들을 파일 형태로 저장합니다.
         /// </summary>

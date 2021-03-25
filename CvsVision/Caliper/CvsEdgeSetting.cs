@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace CvsVision.Caliper
 {
@@ -69,18 +70,14 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 에지 검색 영역을 가져오거나 설정합니다.
         /// </summary>
-        public ICvsRegion Region
+        public CvsRectangleAffine Region
         {
             get { return m_Region; }
             set
             {
-                if (value is CvsRectangleAffine affine)
-                {
-                    m_Region = affine;
-                }
+                m_Region = value;
             }
         }
-
         /// <summary>
         /// 에지의 투사 길이를 가져오거나 설정합니다. 
         /// (영역의 너비입니다.)

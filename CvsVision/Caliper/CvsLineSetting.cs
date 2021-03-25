@@ -14,14 +14,12 @@ namespace CvsVision.Caliper
     {
         #region Fields
         private CvsLineDetect m_LineDetect;
-        private CvsPose m_Pose;
+        private CvsEdgeSetting m_EdgeSetting;
         #endregion
 
         #region Properties
-        /// <summary>
-        /// 에지 설정 집합을 가져옵니다.
-        /// </summary>
-        public CvsEdgeSettingCollection EdgeCollection { get; }
+
+        #region Line Settings
         /// <summary>
         /// 선 상으로 인정되는 범위 값을 가져오거나 설정합니다.
         /// </summary>
@@ -34,6 +32,7 @@ namespace CvsVision.Caliper
             }
             set { if (m_LineDetect != null) m_LineDetect.ConsensusThreshold = value; }
         }
+        public CvsPose LinePose { get; set; }
         /// <summary>
         /// 선 모델의 원점 X 좌표를 가져오거나 설정합니다.
         /// </summary>
@@ -41,10 +40,10 @@ namespace CvsVision.Caliper
         {
             get
             {
-                if (m_Pose != null) return m_Pose.TranslateX;
+                if (LinePose != null) return LinePose.TranslateX;
                 else return 0;
             }
-            set { if (m_Pose != null) m_Pose.TranslateX = value; }
+            set { if (LinePose != null) LinePose.TranslateX = value; }
         }
         /// <summary>
         /// 선 모델의 원점 Y 좌표를 가져오거나 설정합니다.
@@ -53,10 +52,10 @@ namespace CvsVision.Caliper
         {
             get
             {
-                if (m_Pose != null) return m_Pose.TranslateY;
+                if (LinePose != null) return LinePose.TranslateY;
                 else return 0;
             }
-            set { if (m_Pose != null) m_Pose.TranslateY = value; }
+            set { if (LinePose != null) LinePose.TranslateY = value; }
         }
         /// <summary>
         /// 선 모델의 회전 라디안 값을 가져오거나 설정합니다.
@@ -65,10 +64,10 @@ namespace CvsVision.Caliper
         {
             get
             {
-                if (m_Pose != null) return m_Pose.Radian;
+                if (LinePose != null) return LinePose.Radian;
                 else return 0;
             }
-            set { if (m_Pose != null) m_Pose.Radian = value; }
+            set { if (LinePose != null) LinePose.Radian = value; }
         }
         /// <summary>
         /// 선 모델의 캘리퍼 개수를 가져옵니다.
@@ -78,17 +77,112 @@ namespace CvsVision.Caliper
         /// 선 모델의 선분 길이를 가져오거나 설정합니다.
         /// </summary>
         public double SegmentLength { get; set; }
-        
+        #endregion
+
+        #region Caliper Settings
+        /// <summary>
+        /// 각 에지의 투사 길이를 가져오거나 설정합니다.
+        /// (영역의 너비입니다.)
+        /// </summary>
+        public double ProjectionLength
+        {
+            get
+            {
+                if (m_EdgeSetting != null) return m_EdgeSetting.ProjectionLength;
+                else return 0;
+            }
+            set
+            {
+                if (m_EdgeSetting != null)
+                {
+                    m_EdgeSetting.ProjectionLength = value;
+                }
+            }
+        }
+        /// <summary>
+        /// 각 에지의 검색 길이를 가져오거나 설정합니다.
+        /// (영역의 높이입니다.)
+        /// </summary>
+        public double SearchLength
+        {
+            get
+            {
+                if (m_EdgeSetting != null) return m_EdgeSetting.SearchLength;
+                else return 0;
+            }
+            set
+            {
+                if (m_EdgeSetting != null)
+                {
+                    m_EdgeSetting.SearchLength = value;
+                }
+            }
+        }
+        /// <summary>
+        /// 각 에지의 절반 픽셀 크기를 가져오거나 설정합니다.
+        /// </summary>
+        public uint HalfPixelCount
+        {
+            get
+            {
+                if (m_EdgeSetting != null) return m_EdgeSetting.HalfPixelCount;
+                else return 0;
+            }
+            set
+            {
+                if (m_EdgeSetting != null)
+                {
+                    m_EdgeSetting.HalfPixelCount = value;
+                }
+            }
+        }
+        /// <summary>
+        /// 각 에지의 대비 임계값을 가져오거나 설정합니다.
+        /// </summary>
+        public uint ContrastThreshold
+        {
+            get
+            {
+                if (m_EdgeSetting != null) return m_EdgeSetting.ContrastThreshold;
+                else return 0;
+            }
+            set
+            {
+                if (m_EdgeSetting != null)
+                {
+                    m_EdgeSetting.ContrastThreshold = value;
+                }
+            }
+        }
+        /// <summary>
+        /// 각 에지를 감지할 방향을 가져오거나 설정합니다.
+        /// </summary>
+        public EDirection EdgeDirection
+        {
+            get
+            {
+                if (m_EdgeSetting != null) return m_EdgeSetting.EdgeDirection;
+                else return 0;
+            }
+            set
+            {
+                if (m_EdgeSetting != null)
+                {
+                    m_EdgeSetting.EdgeDirection = value;
+                }
+            }
+        }
+        #endregion 
+
         #endregion
         /// <summary>
         /// 선을 찾기 위한 설정 값 클래스를 생성합니다.
         /// </summary>
         public CvsLineSetting()
         {
-            m_Pose = new CvsPose();
+            LinePose = new CvsPose();
             m_LineDetect = new CvsLineDetect();
-            EdgeCollection = new CvsEdgeSettingCollection();
-            EdgeCollection.SetParentPose(m_Pose);
+            m_EdgeSetting = new CvsEdgeSetting();
         }
         #region Methods
         /// <summary>
@@ -98,6 +192,14 @@ namespace CvsVision.Caliper
         public CvsLineDetect GetToolParams()
         {
             return m_LineDetect;
+        }
+        /// <summary>
+        /// 현재 에지에 해당되는 설정 값을 반환합니다.
+        /// </summary>
+        /// <returns></returns>
+        public CvsEdgeSetting GetCaliperSettings()
+        {
+            return m_EdgeSetting;
         }
         #endregion
     }
@@ -109,15 +211,8 @@ namespace CvsVision.Caliper
     {
         #region Fields
         List<CvsEdgeSetting> m_List;
-
+        private CvsEdgeSetting m_EdgeSetting;
         private CvsPose m_Pose;
-        //private double m_SegmentLength;
-
-        private double m_ProjectionLength;
-        private double m_SearchLength;
-        private uint m_HalfPixelCount;
-        private uint m_ContrastThreshold;
-        private EDirection m_EdgeDirection;
         #endregion
 
         #region Properties
@@ -137,13 +232,13 @@ namespace CvsVision.Caliper
         /// </summary>
         public double ProjectionLength
         {
-            get { return m_ProjectionLength; }
+            get { return m_EdgeSetting.ProjectionLength; }
             set
             {
-                m_ProjectionLength = value;
+                m_EdgeSetting.ProjectionLength = value;
                 foreach (var item in m_List)
                 {
-                    item.ProjectionLength = m_ProjectionLength;
+                    item.ProjectionLength = m_EdgeSetting.ProjectionLength;
                 }
             }
         }
@@ -153,13 +248,13 @@ namespace CvsVision.Caliper
         /// </summary>
         public double SearchLength
         {
-            get { return m_SearchLength; }
+            get { return m_EdgeSetting.SearchLength; }
             set
             {
-                m_SearchLength = value;
+                m_EdgeSetting.SearchLength = value;
                 foreach (var item in m_List)
                 {
-                    item.SearchLength = m_SearchLength;
+                    item.SearchLength = m_EdgeSetting.SearchLength;
                 }
             }
         }
@@ -168,13 +263,13 @@ namespace CvsVision.Caliper
         /// </summary>
         public uint HalfPixelCount
         {
-            get { return m_HalfPixelCount; }
+            get { return m_EdgeSetting.HalfPixelCount; }
             set
             {
-                m_HalfPixelCount = value;
+                m_EdgeSetting.HalfPixelCount = value;
                 foreach (var item in m_List)
                 {
-                    item.HalfPixelCount = m_HalfPixelCount;
+                    item.HalfPixelCount = m_EdgeSetting.HalfPixelCount;
                 }
             }
         }
@@ -183,13 +278,13 @@ namespace CvsVision.Caliper
         /// </summary>
         public uint ContrastThreshold
         {
-            get { return m_ContrastThreshold; }
+            get { return m_EdgeSetting.ContrastThreshold; }
             set
             {
-                m_ContrastThreshold = value;
+                m_EdgeSetting.ContrastThreshold = value;
                 foreach (var item in m_List)
                 {
-                    item.ContrastThreshold = m_ContrastThreshold;
+                    item.ContrastThreshold = m_EdgeSetting.ContrastThreshold;
                 }
             }
         }
@@ -198,28 +293,16 @@ namespace CvsVision.Caliper
         /// </summary>
         public EDirection EdgeDirection
         {
-            get { return m_EdgeDirection; }
+            get { return m_EdgeSetting.EdgeDirection; }
             set
             {
-                m_EdgeDirection = value;
+                m_EdgeSetting.EdgeDirection = value;
                 foreach (var item in m_List)
                 {
-                    item.EdgeDirection = m_EdgeDirection;
+                    item.EdgeDirection = m_EdgeSetting.EdgeDirection;
                 }
             }
         }
-        //public double SegmentLength
-        //{
-        //    get { return m_SegmentLength; }
-        //    set
-        //    {
-        //        m_SegmentLength = value;
-        //        for(int i = 0; i < Count; i++)
-        //        {
-        //            this[i].Region.Pose.TranslateX = (i + 0.5) * m_SegmentLength;
-        //        }
-        //    }
-        //}
         #endregion
         /// <summary>
         /// 에지 설정 집합 클래스를 생성합니다.
@@ -227,6 +310,7 @@ namespace CvsVision.Caliper
         public CvsEdgeSettingCollection()
         {
             m_List = new List<CvsEdgeSetting>();
+            m_EdgeSetting = new CvsEdgeSetting();
             m_Pose = new CvsPose();
         }
 
@@ -249,13 +333,14 @@ namespace CvsVision.Caliper
         /// <param name="setting">일체 설정할 설정 값.</param>
         public void SetWholeEdgeSetting(CvsEdgeSetting setting)
         {
+            m_EdgeSetting = setting;
             foreach (var item in m_List)
             {
-                item.EdgeDirection = m_EdgeDirection = setting.EdgeDirection;
-                item.ContrastThreshold = m_ContrastThreshold = setting.ContrastThreshold;
-                item.HalfPixelCount = m_HalfPixelCount = setting.HalfPixelCount;
-                item.SearchLength = m_SearchLength = setting.SearchLength;
-                item.ProjectionLength = m_ProjectionLength = setting.ProjectionLength;
+                item.EdgeDirection = m_EdgeSetting.EdgeDirection;
+                item.ContrastThreshold = m_EdgeSetting.ContrastThreshold;
+                item.HalfPixelCount = m_EdgeSetting.HalfPixelCount;
+                item.SearchLength = m_EdgeSetting.SearchLength;
+                item.ProjectionLength = m_EdgeSetting.ProjectionLength;
             }
         }
         /// <summary>
@@ -265,11 +350,11 @@ namespace CvsVision.Caliper
         public void Add(CvsEdgeSetting item)
         {
             item.Region.Pose.Parent = m_Pose;
-            item.EdgeDirection = m_EdgeDirection;
-            item.ContrastThreshold = m_ContrastThreshold;
-            item.HalfPixelCount = m_HalfPixelCount;
-            item.SearchLength = m_SearchLength;
-            item.ProjectionLength = m_ProjectionLength;
+            item.EdgeDirection = m_EdgeSetting.EdgeDirection;
+            item.ContrastThreshold = m_EdgeSetting.ContrastThreshold;
+            item.HalfPixelCount = m_EdgeSetting.HalfPixelCount;
+            item.SearchLength = m_EdgeSetting.SearchLength;
+            item.ProjectionLength = m_EdgeSetting.ProjectionLength;
             m_List.Add(item);
         }
         /// <summary>
@@ -342,11 +427,11 @@ namespace CvsVision.Caliper
         public void Insert(int index, CvsEdgeSetting item)
         {
             item.Region.Pose.Parent = m_Pose;
-            item.EdgeDirection = m_EdgeDirection;
-            item.ContrastThreshold = m_ContrastThreshold;
-            item.HalfPixelCount = m_HalfPixelCount;
-            item.SearchLength = m_SearchLength;
-            item.ProjectionLength = m_ProjectionLength;
+            item.EdgeDirection = m_EdgeSetting.EdgeDirection;
+            item.ContrastThreshold = m_EdgeSetting.ContrastThreshold;
+            item.HalfPixelCount = m_EdgeSetting.HalfPixelCount;
+            item.SearchLength = m_EdgeSetting.SearchLength;
+            item.ProjectionLength = m_EdgeSetting.ProjectionLength;
             m_List.Insert(index, item);
         }
         /// <summary>

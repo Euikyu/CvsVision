@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Brushes = System.Windows.Media.Brushes;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
@@ -22,6 +24,7 @@ namespace CvsVision.Caliper
         private Bitmap m_InputImage;
         private CvsLineDetect m_LineDetect;
         private CvsLineSetting m_Setting;
+        private CvsEdgeSettingCollection m_Collection;
         #endregion
 
         #region Properties
@@ -46,7 +49,12 @@ namespace CvsVision.Caliper
             set
             {
                 m_Setting = value;
-                m_LineDetect = m_Setting.GetToolParams();
+                if (value != null)
+                {
+                    m_LineDetect = m_Setting.GetToolParams();
+                    m_Collection.SetParentPose(m_Setting.LinePose);
+                    m_Collection.SetWholeEdgeSetting(value.GetCaliperSettings());
+                }
             }
         }
         /// <summary>
@@ -77,18 +85,23 @@ namespace CvsVision.Caliper
         /// </summary>
         public CvsLineDetectTool()
         {
-            Setting = new CvsLineSetting
+            m_Collection = new CvsEdgeSettingCollection();
+            m_Setting = new CvsLineSetting
             {
                 ConsensusThreshold = 6,
                 OriginX = 20,
                 OriginY = 20,
                 SegmentLength = 100,
-                CaliperCount = 3
+                CaliperCount = 3,
+                ProjectionLength = 30,
+                SearchLength = 100,
+                ContrastThreshold = 5,
+                HalfPixelCount = 2
             };
-            Setting.EdgeCollection.ProjectionLength = 30;
-            Setting.EdgeCollection.SearchLength = 100;
-            Setting.EdgeCollection.ContrastThreshold = 5;
-            Setting.EdgeCollection.HalfPixelCount = 2;
+
+            m_LineDetect = m_Setting.GetToolParams();
+            m_Collection.SetWholeEdgeSetting(m_Setting.GetCaliperSettings());
+            m_Collection.SetParentPose(m_Setting.LinePose);
         }
         
         public void Dispose()
@@ -100,12 +113,26 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 파일 형태로 저장된 설정 값들을 불러옵니다.
         /// </summary>
-        /// <param name="filePath">저장된 설정 파일 경로.</param>
-        /// <param name="toolType">불러오는 도구의 타입.</param>
-        public void Load(string filePath, Type toolType)
+        /// <param name="path">저장된 설정 파일 경로.</param>
+        public void Load(string path)
         {
             try
             {
+                if (!File.Exists(path)) throw new Exception("Not found file.");
+                XmlSerializer xml = new XmlSerializer(typeof(CvsLineSetting));
+
+                using (var sr = new StreamReader(path))
+                {
+                    try
+                    {
+                        var newSetting = xml.Deserialize(sr) as CvsLineSetting;
+                        Setting = newSetting ?? throw new Exception();
+                    }
+                    catch
+                    {
+                        throw new Exception("Different tool type.");
+                    }
+                }
 
                 Exception = null;
             }
@@ -123,6 +150,11 @@ namespace CvsVision.Caliper
         {
             try
             {
+                using (var sw = new StreamWriter(path))
+                {
+                    XmlSerializer xml = new XmlSerializer(typeof(CvsLineSetting));
+                    xml.Serialize(sw, Setting);
+                }
 
                 Exception = null;
             }
@@ -141,17 +173,18 @@ namespace CvsVision.Caliper
             {
                 if (m_LineDetect.InputPointList != null) m_LineDetect.InputPointList.Clear();
                 else m_LineDetect.InputPointList = new List<Point>();
-
-                Setting.EdgeCollection.Clear();
+                
                 var interval = Setting.SegmentLength / Setting.CaliperCount;
+                m_Collection.Clear();
+
                 for (int i = 0; i < Setting.CaliperCount; i++)
                 {
                     var edge = new CvsEdgeSetting();
                     edge.Region.Pose = new CvsPose(0, (i + 0.5) * interval, 0);
-                    Setting.EdgeCollection.Add(edge);
+                    m_Collection.Add(edge);
                 }
                 
-                foreach (var edge in Setting.EdgeCollection)
+                foreach (var edge in m_Collection)
                 {
                     //주어진 설정 값으로 각 이미지 자르고
                     var cropImage = edge.Region.Crop(m_InputImage);
