@@ -241,7 +241,6 @@ namespace CvsVision.Caliper.Controls
             {
                 m_OriginSource = value;
                 this.RaisePropertyChanged(nameof(OriginSource));
-                this.RaisePropertyChanged(nameof(Overlay));
 
                 ImageWidth = m_OriginSource.Width;
                 ImageHeight = m_OriginSource.Height;
@@ -325,6 +324,8 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         private void UpdateToolData()
         {
+            m_Tool = SubjectTool;
+
             this.RaisePropertyChanged(nameof(ProjectionLength));
             this.RaisePropertyChanged(nameof(SearchLength));
             this.RaisePropertyChanged(nameof(OriginX));
@@ -334,6 +335,8 @@ namespace CvsVision.Caliper.Controls
             this.RaisePropertyChanged(nameof(ContrastThreshold));
             this.RaisePropertyChanged(nameof(HalfPixelCount));
             this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
+
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
         
@@ -368,6 +371,7 @@ namespace CvsVision.Caliper.Controls
                 }
             }
             //메세지 업데이트
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
 
@@ -404,9 +408,9 @@ namespace CvsVision.Caliper.Controls
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Run();
-            this.RaisePropertyChanged(nameof(Overlay));
-
             IsEditing = false;
+
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
         #endregion

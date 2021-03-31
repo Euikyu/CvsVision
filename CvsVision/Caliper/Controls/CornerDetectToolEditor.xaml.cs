@@ -288,7 +288,6 @@ namespace CvsVision.Caliper.Controls
             {
                 m_OriginSource = value;
                 this.RaisePropertyChanged(nameof(OriginSource));
-                this.RaisePropertyChanged(nameof(Overlay));
 
                 ImageWidth = m_OriginSource.Width;
                 ImageHeight = m_OriginSource.Height;
@@ -369,6 +368,8 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         private void UpdateToolData()
         {
+            m_Tool = SubjectTool;
+
             this.RaisePropertyChanged(nameof(LineASetting));
             this.RaisePropertyChanged(nameof(LineBSetting));
             this.RaisePropertyChanged(nameof(LineARotation));
@@ -381,6 +382,7 @@ namespace CvsVision.Caliper.Controls
             this.RaisePropertyChanged(nameof(HalfPixelCount));
             this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
 
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
 
@@ -415,6 +417,7 @@ namespace CvsVision.Caliper.Controls
                     m_Tool.InputImage = m_CurrentBitmap;
                 }
             }
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
         // 도구 불러오기 콜백
@@ -448,9 +451,9 @@ namespace CvsVision.Caliper.Controls
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
             m_Tool.Run();
-            this.RaisePropertyChanged(nameof(Overlay));
-
             IsEditing = false;
+
+            this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
         #endregion

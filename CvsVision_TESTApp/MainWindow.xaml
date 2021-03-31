@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800">
     <Grid>
-        <cal:EdgeDetectToolEditor/>
+        <cal:EdgeDetectToolEditor SubjectTool="{Binding Tool, Mode=TwoWay}" Loaded="EdgeDetectToolEditor_Loaded"/>
+        <TextBlock Text="{Binding TEXT}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

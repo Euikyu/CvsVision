@@ -12,12 +12,15 @@
                   VerticalScrollBarVisibility="Visible" 
                   HorizontalScrollBarVisibility="Visible">
         <z:ZoomAndPanControl x:Name ="zoomAndPanControl" Background="WhiteSmoke"
+                                          ContentScale="{Binding ContentScale, Mode=TwoWay}"
+                                          ContentOffsetX="{Binding ContentOffsetX, Mode=TwoWay}"
+                                          ContentOffsetY="{Binding ContentOffsetY, Mode=TwoWay}"
                                           MouseWheel="ZoomAndPanControl_MouseWheel"
                                           MouseDown="ZoomAndPanControl_MouseDown"
                                           MouseMove="ZoomAndPanControl_MouseMove"
                                           MouseUp="ZoomAndPanControl_MouseUp">
             <Canvas Name="ImgCanvas" Width="{Binding OriginSource.Width}" Height="{Binding OriginSource.Height}">
-                <Image Name="Origin_Image" Source="{Binding OriginSource}"/>
+                <Image Name="Origin_Image" Source="{Binding OriginSource}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                 <Image Name="Overlay_Image"/>
             </Canvas>
         </z:ZoomAndPanControl>

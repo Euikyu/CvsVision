@@ -137,8 +137,18 @@ namespace CvsVision.Controls
         //}
 
         public static readonly DependencyProperty OriginSourceProperty =
-           DependencyProperty.Register(nameof(OriginSource), typeof(ImageSource), typeof(CvsDisplay));
-        
+           DependencyProperty.Register(nameof(OriginSource), typeof(ImageSource), typeof(CvsDisplay),
+               new PropertyMetadata(OriginSource_PropertyChanged));
+
+        private static void OriginSource_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CvsDisplay control = (CvsDisplay)o;
+            if (e.OldValue == null)
+            {
+                var img = e.NewValue as ImageSource;
+                control.ContentScale = control.ActualWidth > control.ActualHeight ? (control.ActualHeight - 20 > 0 ? (control.ActualHeight - 20) / img.Height : 0) : (control.ActualWidth - 20 > 0 ? (control.ActualWidth - 20) / img.Width : 0);
+            }
+        }
 
         public static readonly DependencyProperty OverlayProperty =
             DependencyProperty.Register(nameof(Overlay), typeof(DrawingGroup), typeof(CvsDisplay),
@@ -154,6 +164,16 @@ namespace CvsVision.Controls
                 control.Overlay_Image.Source = img;
             }
         }
+
+
+        public static readonly DependencyProperty ContentOffsetXProperty =
+            DependencyProperty.Register(nameof(ContentOffsetX), typeof(double), typeof(CvsDisplay));
+
+        public static readonly DependencyProperty ContentOffsetYProperty =
+            DependencyProperty.Register(nameof(ContentOffsetY), typeof(double), typeof(CvsDisplay));
+
+        public static readonly DependencyProperty ContentScaleProperty =
+            DependencyProperty.Register(nameof(ContentScale), typeof(double), typeof(CvsDisplay));
 
         public static readonly DependencyProperty ChildrenProperty =
             DependencyProperty.Register(nameof(Children), typeof(UIElementCollection), typeof(CvsDisplay));
@@ -177,6 +197,22 @@ namespace CvsVision.Controls
         {
             get { return (UIElementCollection)GetValue(ChildrenProperty); }
             set { SetValue(ChildrenProperty, value); }
+        }
+
+        public double ContentScale
+        {
+            get { return (double)GetValue(ContentScaleProperty); }
+            set { SetValue(ContentScaleProperty, value); }
+        }
+        public double ContentOffsetX
+        {
+            get { return (double)GetValue(ContentOffsetXProperty); }
+            set { SetValue(ContentOffsetXProperty, value); }
+        }
+        public double ContentOffsetY
+        {
+            get { return (double)GetValue(ContentOffsetYProperty); }
+            set { SetValue(ContentOffsetYProperty, value); }
         }
         #endregion
 
