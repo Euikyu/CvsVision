@@ -99,6 +99,11 @@
     <Compile Include="Controls\ZoomPanCon\ZoomAndPanControl_IScrollInfo.cs" />
     <Compile Include="CvsPose.cs" />
     <Compile Include="CvsRectangleAffine.cs" />
+    <Compile Include="Graphic\Controls\TextCreationToolEdltor.xaml.cs">
+      <DependentUpon>TextCreationToolEdltor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Graphic\CvsTextCreationSetting.cs" />
+    <Compile Include="Graphic\CvsTextCreationTool.cs" />
     <Compile Include="ICvsRegion.cs" />
     <Compile Include="ICvsTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -136,6 +141,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CvsDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Graphic\Controls\TextCreationToolEdltor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

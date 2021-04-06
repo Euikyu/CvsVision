@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="CvsVision.Graphic.Controls.TextCreationToolEdltor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CvsVision.Graphic.Controls"
+             xmlns:con="clr-namespace:CvsVision.Controls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" Name="uc"
+             d:DesignHeight="600" d:DesignWidth="800"
+             MinWidth="600" MinHeight="600" Loaded="Editor_Loaded">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+        <SolidColorBrush Color="{Binding ElementName=uc, Path=DataContext.FontBrush}" x:Key="FontBrush"/>
+    </UserControl.Resources>
+    <Grid Background="White" DataContext="{Binding ElementName=uc, Path=DataContext}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <con:CvsDisplay OriginSource="{Binding ElementName=uc, Path=DataContext.OriginSource}" Overlay="{Binding ElementName=uc, Path=DataContext.Overlay}"/>
+
+        <Grid Grid.Column="1">
+            <StackPanel>
+                <Button Content="Load Image" Margin="20,10" Padding="5" Click="LoadImageBtn_Click"/>
+                <Button Content="Load Tool" Margin="20,10" Padding="5" Click="LoadToolBtn_Click"/>
+                <Button Content="Save Tool" Margin="20,10" Padding="5" Click="SaveToolBtn_Click"/>
+                <ToggleButton Content="Edit Mode" Margin="20,10" Padding="5" IsChecked="{Binding ElementName=uc, Path=DataContext.IsEditing, Mode=TwoWay}"/>
+            </StackPanel>
+            <UniformGrid Margin="20,190,20,0" Columns="2" Rows="4" VerticalAlignment="Top" Visibility="{Binding IsEditing, Converter={StaticResource VisibilityConverter}}">
+                <TextBlock Text="Origin&#10;X / Y" VerticalAlignment="Center" Margin="5"/>
+                <UniformGrid Rows="1">
+                    <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginX, StringFormat=N1, Mode=TwoWay}" Margin="0,0,2,0"/>
+                    <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OriginY, StringFormat=N1}" Margin="2,0,0,0"/>
+                </UniformGrid>
+                <TextBlock Text="Text&#10;Degree" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.Rotation, StringFormat=N1}"/>
+                <TextBlock Text="Text Input :" VerticalAlignment="Center"/>
+                <TextBlock/>
+                <TextBox VerticalAlignment="Top" Text="{Binding ElementName=uc, Path=DataContext.OverlayText}" Margin="0,0,-80,0" Panel.ZIndex="100"/>
+                <TextBlock/>
+
+                <TextBlock Text="Font&#10;Size" VerticalAlignment="Center" Margin="5"/>
+                <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OverlayFontSize, StringFormat=N1}"/>
+                <TextBlock Text="Font&#10;Brush" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox Name="ComboBox" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" SelectedValue="{Binding ElementName=uc, Path=DataContext.FontBrush, Mode=TwoWay}" SelectedValuePath="">
+                    <ComboBox.ItemsSource>
+                        <x:Array Type="sys:String">
+                            <sys:String>Red</sys:String>
+                            <sys:String>Cyan</sys:String>
+                            <sys:String>Magenta</sys:String>
+                            <sys:String>Black</sys:String>
+                            <sys:String>DarkRed</sys:String>
+                            <sys:String>LawnGreen</sys:String>
+                            <sys:String>Orange</sys:String>
+                            <sys:String>Yellow</sys:String>
+                        </x:Array>
+                    </ComboBox.ItemsSource>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid HorizontalAlignment="Stretch" Margin="0,2">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Fill="{Binding}" Width="10" Height="10" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding}" Margin="5, 0"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </UniformGrid>
+            <Button Content="RUN" VerticalAlignment="Bottom" Margin="20,10" Padding="5" Click="RunBtn_Click"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="10,0">
+            <TextBlock Text="{Binding Message}"/>
+        </Grid>
+    </Grid>
+</UserControl>

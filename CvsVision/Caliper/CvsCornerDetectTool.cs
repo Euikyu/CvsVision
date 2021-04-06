@@ -134,6 +134,8 @@ namespace CvsVision.Caliper
         {
             try
             {
+                if (InputImage == null) throw new Exception("Input image first.");
+
                 m_LineATool.InputImage = InputImage;
                 m_LineBTool.InputImage = InputImage;
 

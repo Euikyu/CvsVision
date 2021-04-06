@@ -169,9 +169,13 @@ namespace CvsVision
             if (Parent == null) return this.GetPointByPose(x,y);
             return Parent.GetPointByOrigin(this.GetPointByPose(x,y));
         }
+        /// <summary>
+        /// 이전 좌표계에서의 회전 라디안 값을 반환합니다.
+        /// </summary>
+        /// <returns></returns>
         public double GetRadianByParent()
         {
-            if (Parent == null) return 0;
+            if (Parent == null) return Radian;
             return Parent.Radian + this.Radian;
         }
         /// <summary>
@@ -180,8 +184,8 @@ namespace CvsVision
         /// <returns></returns>
         public double GetRadianByOrigin()
         {
-            if (Parent == null) return 0;
-            return Parent.GetRadianByParent() + this.Radian;
+            if (Parent == null) return this.Radian;
+            return Parent.GetRadianByOrigin() + this.Radian;
         }
 
         #endregion

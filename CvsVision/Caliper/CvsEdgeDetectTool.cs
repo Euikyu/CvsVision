@@ -147,6 +147,8 @@ namespace CvsVision.Caliper
         {
             try
             {
+                if (InputImage == null) throw new Exception("Input image first.");
+
                 var cropImage = Setting.Region.Crop(InputImage);
                 m_EdgeDetect.DetectImage = cropImage;
                 m_EdgeDetect.Detect();

@@ -171,6 +171,8 @@ namespace CvsVision.Caliper
         {
             try
             {
+                if (InputImage == null) throw new Exception("Input image first.");
+
                 if (m_LineDetect.InputPointList != null) m_LineDetect.InputPointList.Clear();
                 else m_LineDetect.InputPointList = new List<Point>();
                 
