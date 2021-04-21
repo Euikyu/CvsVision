@@ -21,9 +21,10 @@ namespace CvsVision_TESTApp
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private string _TEXT;
 
         public CvsVision.Caliper.CvsEdgeDetectTool Tool { get; set; }
-        public string TEXT { get; set; }
+        public string TEXT { get => _TEXT; set { _TEXT = value; R(nameof(TEXT)); } }
         public MainWindow()
         {
             InitializeComponent();
@@ -39,13 +40,13 @@ namespace CvsVision_TESTApp
 
         private void EdgeDetectToolEditor_Loaded(object sender, RoutedEventArgs e)
         {
-            var m_Tool = new CvsVision.Caliper.CvsEdgeDetectTool();
-            m_Tool.Load(@"C:\Users\crevis_TS 박의규\Desktop\edge.cvt");
-            Tool = m_Tool;
-            R(nameof(Tool));
+            //var m_Tool = new CvsVision.Caliper.CvsEdgeDetectTool();
+            //m_Tool.Load(@"C:\Users\crevis_TS 박의규\Desktop\edge.cvt");
+            //Tool = m_Tool;
+            //R(nameof(Tool));
 
-            TEXT = "AAAAAAAAAAAAAA";
-            R(nameof(TEXT));
+            //TEXT = "AAAAAAAAAAAAAA";
+            //R(nameof(TEXT));
         }
     }
 }

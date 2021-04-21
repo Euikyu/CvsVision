@@ -8,7 +8,7 @@
              xmlns:con="clr-namespace:CvsVision.Controls"
              xmlns:z="clr-namespace:ZoomPanCon"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Name="uc"
+             mc:Ignorable="d" x:Name="uc"
              d:DesignHeight="770" d:DesignWidth="800"
              MinWidth="800" MinHeight="770" Loaded="Editor_Loaded">
     <UserControl.Resources>

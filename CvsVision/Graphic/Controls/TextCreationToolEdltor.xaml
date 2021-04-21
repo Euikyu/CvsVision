@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CvsVision.Graphic.Controls"
              xmlns:con="clr-namespace:CvsVision.Controls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Name="uc"
+             mc:Ignorable="d" x:Name="uc"
              d:DesignHeight="600" d:DesignWidth="800"
              MinWidth="600" MinHeight="600" Loaded="Editor_Loaded">
     <UserControl.Resources>
@@ -47,7 +47,7 @@
                 <TextBlock Text="Font&#10;Size" VerticalAlignment="Center" Margin="5"/>
                 <TextBox VerticalAlignment="Center" Text="{Binding ElementName=uc, Path=DataContext.OverlayFontSize, StringFormat=N1}"/>
                 <TextBlock Text="Font&#10;Brush" VerticalAlignment="Center" Margin="5"/>
-                <ComboBox Name="ComboBox" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" SelectedValue="{Binding ElementName=uc, Path=DataContext.FontBrush, Mode=TwoWay}" SelectedValuePath="">
+                <ComboBox VerticalAlignment="Center" HorizontalContentAlignment="Stretch" SelectedItem="{Binding ElementName=uc, Path=DataContext.FontBrush, Mode=TwoWay}">
                     <ComboBox.ItemsSource>
                         <x:Array Type="sys:String">
                             <sys:String>Red</sys:String>

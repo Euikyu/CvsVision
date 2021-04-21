@@ -57,7 +57,7 @@ namespace CvsVision.Caliper.Controls
             get { return m_RectRotateTransform; }
             set
             {
-                if (IsGrouped) return;
+                //if (IsGrouped) return;
                 m_RectRotateTransform = value;
                 RaisePropertyChanged(nameof(RectRotateTransform));
             }
@@ -91,8 +91,9 @@ namespace CvsVision.Caliper.Controls
         private static void Rotation_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
-            if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue;
+            //if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue;
             if (control.Radian != ((double)e.NewValue) * Math.PI / 180) control.Radian = ((double)e.NewValue) * Math.PI / 180;
+            if (control.RectRotateTransform != null) control.RectRotateTransform.Angle = (double)e.NewValue;
         }
         /// <summary>
         /// EdgeSettingGraphic.Radian 에 대한 종속성 속성을 식별합니다.
@@ -104,8 +105,9 @@ namespace CvsVision.Caliper.Controls
         private static void Radian_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             EdgeSettingGraphic control = (EdgeSettingGraphic)o;
-            if(!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
+            //if (!control.IsGrouped) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
             if (control.Rotation != (double)e.NewValue * 180 / Math.PI) control.Rotation = (double)e.NewValue * 180 / Math.PI;
+            if (control.RectRotateTransform != null) control.RectRotateTransform.Angle = (double)e.NewValue * 180 / Math.PI;
         }
 
         /// <summary>

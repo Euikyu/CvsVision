@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CvsVision.Caliper.Controls"
-             mc:Ignorable="d" Name="uc"
+             mc:Ignorable="d" x:Name="uc"
              d:DesignHeight="450" d:DesignWidth="800"
              MinWidth="20" MinHeight="14" MaxHeight="14" Height="14" Loaded="LineSettingGraphic_Loaded">
     <UserControl.Resources>

@@ -10,7 +10,7 @@ namespace CvsVision.Caliper
     /// <summary>
     /// 주어진 점 집합 내에서 선을 찾는 클래스입니다.
     /// </summary>
-    public class CvsLineDetect
+    public class CvsLineDetect : IDisposable
     {
         #region Fields
         private Random m_Rand = new Random();
@@ -50,6 +50,11 @@ namespace CvsVision.Caliper
         {
             this.InputPointList = InputPoints.ToList();
             this.ConsensusThreshold = 6;
+        }
+
+        public void Dispose()
+        {
+            if (InputPointList != null) InputPointList.Clear();
         }
 
         #region Methods

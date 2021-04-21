@@ -195,6 +195,8 @@ namespace CvsVision.Caliper
 
                 dg.Children.Add(graphic);
             }
+            dg.Freeze();
+
             return dg;
         }
 

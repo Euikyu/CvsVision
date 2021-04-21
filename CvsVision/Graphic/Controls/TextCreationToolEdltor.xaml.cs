@@ -292,8 +292,6 @@ namespace CvsVision.Graphic.Controls
             this.RaisePropertyChanged(nameof(FontBrush));
             this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
-
-            this.ComboBox.SelectedValue = m_Tool.Setting.FontBrush;
         }
 
         #region Events

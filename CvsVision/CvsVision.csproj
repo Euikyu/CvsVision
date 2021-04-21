@@ -66,6 +66,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caliper\Controls\CircleSettingGraphic.xaml.cs">
+      <DependentUpon>CircleSettingGraphic.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Caliper\Controls\CornerDetectToolEditor.xaml.cs">
       <DependentUpon>CornerDetectToolEditor.xaml</DependentUpon>
     </Compile>
@@ -81,6 +84,7 @@
     <Compile Include="Caliper\Controls\LineSettingGraphic.xaml.cs">
       <DependentUpon>LineSettingGraphic.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Caliper\CvsCircleDetect.cs" />
     <Compile Include="Caliper\CvsCornerDetect.cs" />
     <Compile Include="Caliper\CvsCornerDetectTool.cs" />
     <Compile Include="Caliper\CvsCornerSetting.cs" />
@@ -90,6 +94,7 @@
     <Compile Include="Caliper\CvsLineDetect.cs" />
     <Compile Include="Caliper\CvsLineDetectTool.cs" />
     <Compile Include="Caliper\CvsLineSetting.cs" />
+    <Compile Include="Controls\Customs\CircularPanel.cs" />
     <Compile Include="Controls\ZoomPanCon\AnimationHelper.cs" />
     <Compile Include="Controls\CvsDisplay.xaml.cs">
       <DependentUpon>CvsDisplay.xaml</DependentUpon>
@@ -120,6 +125,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Caliper\Controls\CircleSettingGraphic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Caliper\Controls\CornerDetectToolEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
