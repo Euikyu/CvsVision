@@ -15,30 +15,13 @@
     </UserControl.Resources>
     <ContentControl DataContext="{Binding ElementName=uc}">
         <Grid>
-            <!--<ItemsControl DataContext="{Binding ElementName=uc, Path=DataContext}" ItemsSource="{Binding Items}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="1"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <local:EdgeSettingGraphic IsGrouped="True"
-                                                  HorizontalAlignment="Center" 
-                                                  VerticalAlignment="Center" 
-                                                  Width="30" 
-                                                  Height="100"
-                                                  Rotation="{Binding}"
-                                                  SizeChanged="Edge_SizeChanged"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>-->
             <local:CircularEdgePanel StartAngle="{Binding StartAngle, Mode=OneWay}" 
                                      IntervalAngle="{Binding IntervalAngle, Mode=OneWay}" 
                                      Radius="{Binding Radius, Mode=OneWay}" 
                                      CaliperCount="{Binding CaliperCount, Mode=TwoWay}" 
                                      ProjectionLength="{Binding ProjectionLength, Mode=OneWay}" 
-                                     SearchLength="{Binding SearchLength, Mode=OneWay}"/>
+                                     SearchLength="{Binding SearchLength, Mode=OneWay}"
+                                     IsOutwardDirection="{Binding IsOutwardDirection, Mode=OneWay}"/>
             <Ellipse Name="Movable_Ellipse" Margin="-2" Stroke="#88000000" StrokeDashArray="2,2" StrokeThickness="4" Fill="#11FFFFFF" MouseEnter="Circle_MouseEnter" MouseLeave="Circle_MouseLeave" MouseDown="Circle_MouseDown" MouseMove="Circle_MouseMove" MouseUp="Circle_MouseUp"/>
             <Grid>
                 <Path Margin="-3" Stroke="{DynamicResource Circle_Stroke_Color}" StrokeThickness="6" Width="{Binding Diameter}" Height="{Binding Diameter}">

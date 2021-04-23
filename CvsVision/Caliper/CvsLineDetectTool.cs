@@ -53,7 +53,7 @@ namespace CvsVision.Caliper
                 {
                     m_LineDetect = m_Setting.GetToolParams();
                     m_Collection.SetParentPose(m_Setting.LinePose);
-                    m_Collection.SetWholeEdgeSetting(value.GetCaliperSettings());
+                    m_Collection.SetWholeEdgeSetting(m_Setting.GetCaliperSettings());
                 }
             }
         }

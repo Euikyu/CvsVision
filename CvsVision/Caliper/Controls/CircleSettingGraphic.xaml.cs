@@ -23,8 +23,6 @@ namespace CvsVision.Caliper.Controls
         private Point m_LastSizePoint;
         private Point m_StartPoint;
         private Point m_EndPoint;
-        private double m_StartRadian;
-        private double m_EndRadian;
         #endregion
 
         #region Properties
@@ -35,38 +33,36 @@ namespace CvsVision.Caliper.Controls
             if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
         }
         #region Common Properties
-
-        public ObservableCollection<double> Items { get; }
-        public Point StartPoint { get => m_StartPoint; set { m_StartPoint = value; this.RaisePropertyChanged(nameof(StartPoint)); } }
-        public Point EndPoint { get => m_EndPoint; set { m_EndPoint = value; this.RaisePropertyChanged(nameof(EndPoint)); } }
-        public double StartAngle
+        
+        public Point StartPoint
         {
-            get
+            get { return m_StartPoint; }
+            set
             {
-                return m_StartRadian * 180 / Math.PI;
+                m_StartPoint = value; this.RaisePropertyChanged(nameof(StartPoint));
             }
         }
-        public double EndAngle
+        public Point EndPoint
         {
-            get
+            get { return m_EndPoint; }
+            set
             {
-                return m_EndRadian * 180 / Math.PI;
+                m_EndPoint = value;
+                this.RaisePropertyChanged(nameof(EndPoint));
             }
-        }
+        }        
         public double SpanAngle
         {
             get
             {
-                if (m_EndRadian - m_StartRadian < 0) return (m_EndRadian - m_StartRadian) * 180 / Math.PI + 360;
-                else return (m_EndRadian - m_StartRadian) * 180 / Math.PI;
+                return (EndAngle - StartAngle + 360) % 360; 
             }
         }
         public double IntervalAngle
         {
             get
             {
-                if (Items != null && Items.Count > 1) return SpanAngle / (Items.Count - 1);
-                else return 0;
+                return this.SpanAngle / (this.CaliperCount - 1);
             }
         }
         #endregion
@@ -99,6 +95,11 @@ namespace CvsVision.Caliper.Controls
         /// </summary>
         public static readonly DependencyProperty OriginYProperty =
             DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(CircleSettingGraphic));
+        /// <summary>
+        /// CircularPanel.Radius 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
+        public static readonly DependencyProperty IsOutwardDirectionProperty =
+            DependencyProperty.Register(nameof(IsOutwardDirection), typeof(bool), typeof(CircleSettingGraphic));
 
         public static readonly DependencyProperty SearchLengthProperty =
                     DependencyProperty.Register(nameof(SearchLength), typeof(double), typeof(CircleSettingGraphic));
@@ -106,14 +107,47 @@ namespace CvsVision.Caliper.Controls
         public static readonly DependencyProperty ProjectionLengthProperty =
                     DependencyProperty.Register(nameof(ProjectionLength), typeof(double), typeof(CircleSettingGraphic));
 
+        public static readonly DependencyProperty StartAngleProperty =
+            DependencyProperty.Register(nameof(StartAngle), typeof(double), typeof(CircleSettingGraphic),
+                new PropertyMetadata(StartAngle_PropertyChanged));
+
+        private static void StartAngle_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CircleSettingGraphic control = (CircleSettingGraphic)o;
+            var v = control.GetPointByRotation(new Point(control.Radius, 0), (double)e.NewValue * Math.PI / 180, new Point()) - new Point(-control.Radius, -control.Radius);
+            control.StartPoint = new Point(v.X, v.Y);
+            control.UpdateCircle();
+        }
+
+        public static readonly DependencyProperty EndAngleProperty =
+            DependencyProperty.Register(nameof(EndAngle), typeof(double), typeof(CircleSettingGraphic),
+                new PropertyMetadata(EndAngle_PropertyChanged));
+
+        private static void EndAngle_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CircleSettingGraphic control = (CircleSettingGraphic)o;
+            var v = control.GetPointByRotation(new Point(control.Radius, 0), (double)e.NewValue * Math.PI / 180, new Point()) - new Point(-control.Radius, -control.Radius);
+            control.EndPoint = new Point(v.X, v.Y);
+            control.UpdateCircle();
+        }
+
         public static readonly DependencyProperty RadiusProperty =
             DependencyProperty.Register(nameof(Radius), typeof(double), typeof(CircleSettingGraphic),
-                new PropertyMetadata(Radius_PropertyChanged));
+                new PropertyMetadata(0.0, Radius_PropertyChanged));
 
         private static void Radius_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             CircleSettingGraphic control = (CircleSettingGraphic)o;
-            if (control.Diameter != (double)e.NewValue * 2) control.Diameter = (double)e.NewValue * 2;
+            var radius = (double)e.NewValue;
+            if (control.Diameter != radius * 2) control.Diameter = radius * 2;
+
+            
+            var startV = control.GetPointByRotation(new Point(radius, 0), control.StartAngle * Math.PI / 180, new Point()) - new Point(-radius, -radius);
+            var endV = control.GetPointByRotation(new Point(radius, 0), control.EndAngle * Math.PI / 180, new Point()) - new Point(-radius, -radius);
+
+            control.StartPoint = new Point(startV.X, startV.Y);
+            control.EndPoint = new Point(endV.X, endV.Y);
+            control.UpdateCircle();
         }
 
         public static readonly DependencyProperty DiameterProperty =
@@ -132,21 +166,7 @@ namespace CvsVision.Caliper.Controls
         private static void CaliperCount_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             CircleSettingGraphic control = (CircleSettingGraphic)o;
-
-            var newCount = (int)e.NewValue > 200 ? 200 : ((int)e.NewValue < 4 ? 4 : (int)e.NewValue);
-            if (control.Items.Count != newCount)
-            {
-                if (control.Width == double.NaN || control.Width == 0) return;
-                var interval = (control.SpanAngle < 0 ? control.SpanAngle + 360 : control.SpanAngle) / (newCount - 1);
-
-                control.Items.Clear();
-                var sAngle = control.StartAngle < 0 ? (control.StartAngle + 450) % 360 : control.StartAngle + 90;
-                control.Items.Add(sAngle);
-                for(int i = 1; i < newCount; i++)
-                {
-                    control.Items.Add((sAngle + interval * i) % 360);
-                }
-            }
+            control.RaisePropertyChanged(nameof(IntervalAngle));
         }
         private static object CaliperCount_CoerceValue(DependencyObject o, object baseValue)
         {
@@ -166,6 +186,11 @@ namespace CvsVision.Caliper.Controls
         {
             get { return (int)GetValue(CaliperCountProperty); }
             set { SetValue(CaliperCountProperty, value); }
+        }
+        public bool IsOutwardDirection
+        {
+            get { return (bool)GetValue(IsOutwardDirectionProperty); }
+            set { SetValue(IsOutwardDirectionProperty, value); }
         }
 
         /// <summary>
@@ -202,6 +227,16 @@ namespace CvsVision.Caliper.Controls
             set { SetValue(OriginYProperty, value); }
         }
 
+        public double StartAngle
+        {
+            get { return (double)GetValue(StartAngleProperty); }
+            set { SetValue(StartAngleProperty, value); }
+        }
+        public double EndAngle
+        {
+            get { return (double)GetValue(EndAngleProperty); }
+            set { SetValue(EndAngleProperty, value); }
+        }
         public double Radius
         {
             get { return (double)GetValue(RadiusProperty); }
@@ -221,19 +256,15 @@ namespace CvsVision.Caliper.Controls
         {
             InitializeComponent();
             DataContext = this;
-            Items = new ObservableCollection<double>();
         }
 
         #region Methods
         private void UpdateCircle()
         {
-            this.RaisePropertyChanged(nameof(StartAngle));
-            this.RaisePropertyChanged(nameof(EndAngle));
             this.RaisePropertyChanged(nameof(SpanAngle));
             this.RaisePropertyChanged(nameof(IntervalAngle));
             this.RaisePropertyChanged(nameof(ProjectionLength));
             this.RaisePropertyChanged(nameof(SearchLength));
-            this.RaisePropertyChanged(nameof(Items));
         }
         /// <summary>
         /// 현재 그래픽의 중심 좌표 반환하기.
@@ -260,12 +291,10 @@ namespace CvsVision.Caliper.Controls
 
         private void Circle_Loaded(object sender, RoutedEventArgs e)
         {
-            this.StartPoint = new Point(0, this.Radius);
-            this.EndPoint = new Point(this.Diameter, this.Radius);
-            m_StartRadian = Math.PI;
-            m_EndRadian = 0;
-            ProjectionLength = 50;
-            SearchLength = 200;
+            StartAngle = 180;
+            EndAngle = 0;
+            ProjectionLength = 30;
+            SearchLength = 100;
             CaliperCount = 10;
 
             this.UpdateCircle();
@@ -352,21 +381,13 @@ namespace CvsVision.Caliper.Controls
                             case "StartPoint_Grid":
                                 var startCenter = this.GetCenter();
                                 var startP = e.GetPosition(canvas);
-                                m_StartRadian = startP.X - startCenter.X == 0 ? (startCenter.Y > startP.Y ? -Math.PI / 2 : Math.PI / 2) : Math.Atan2(startP.Y - startCenter.Y, startP.X - startCenter.X);
-
-                                var tmpStartCircularVector = this.GetPointByRotation(new Point(this.Radius, 0), m_StartRadian, new Point()) - new Point(-Radius, -Radius);
-
-                                this.StartPoint = new Point(tmpStartCircularVector.X, tmpStartCircularVector.Y);
+                                this.StartAngle = startP.X - startCenter.X == 0 ? (startCenter.Y > startP.Y ? -90 : 90) : Math.Atan2(startP.Y - startCenter.Y, startP.X - startCenter.X) * 180 / Math.PI;                                
                                 break;
 
                             case "EndPoint_Grid":
                                 var endCenter = this.GetCenter();
                                 var endP = e.GetPosition(canvas);
-                                m_EndRadian = endP.X - endCenter.X == 0 ? (endCenter.Y > endP.Y ? -Math.PI / 2 : Math.PI / 2) : Math.Atan2(endP.Y - endCenter.Y, endP.X - endCenter.X);
-
-                                var tmpEndCircularVector = this.GetPointByRotation(new Point(this.Radius, 0), m_EndRadian, new Point()) - new Point(-Radius, -Radius);
-
-                                this.EndPoint = new Point(tmpEndCircularVector.X, tmpEndCircularVector.Y);
+                                this.EndAngle = endP.X - endCenter.X == 0 ? (endCenter.Y > endP.Y ? -90 : 90) : Math.Atan2(endP.Y - endCenter.Y, endP.X - endCenter.X) * 180 / Math.PI;                                
                                 break;
 
                             case "Movable_Ellipse":
@@ -396,15 +417,8 @@ namespace CvsVision.Caliper.Controls
                                     this.OriginY += 20 - (this.Radius - sizeOffset.Y);
                                     Radius = 20;
                                 }
-                                var tmpStart = this.GetPointByRotation(new Point(this.Radius, 0), m_StartRadian, new Point()) - new Point(-Radius, -Radius);
-                                var tmpEnd = this.GetPointByRotation(new Point(this.Radius, 0), m_EndRadian, new Point()) - new Point(-Radius, -Radius);
-
-                                this.StartPoint = new Point(tmpStart.X, tmpStart.Y);
-                                this.EndPoint = new Point(tmpEnd.X, tmpEnd.Y);
                                 break;
                         }
-
-                        this.UpdateCircle();
                     }
                 }
             }
@@ -413,7 +427,7 @@ namespace CvsVision.Caliper.Controls
         #endregion
     }
 
-    public class CircularEdgePanel : Panel
+    internal class CircularEdgePanel : Panel
     {
 
         /// <summary>
@@ -447,6 +461,19 @@ namespace CvsVision.Caliper.Controls
                 new PropertyMetadata(IntervalAngle_PropertyChanged));
 
         private static void IntervalAngle_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            CircularEdgePanel panel = (CircularEdgePanel)o;
+            panel.ArrangeOverride(panel.RenderSize);
+        }
+
+        /// <summary>
+        /// CircularPanel.Radius 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
+        public static readonly DependencyProperty IsOutwardDirectionProperty =
+            DependencyProperty.Register(nameof(IsOutwardDirection), typeof(bool), typeof(CircularEdgePanel),
+                new PropertyMetadata(false, IsOutwardDirection_PropertyChanged));
+
+        private static void IsOutwardDirection_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             CircularEdgePanel panel = (CircularEdgePanel)o;
             panel.ArrangeOverride(panel.RenderSize);
@@ -565,6 +592,11 @@ namespace CvsVision.Caliper.Controls
             get { return (double)GetValue(RadiusProperty); }
             set { SetValue(RadiusProperty, value); }
         }
+        public bool IsOutwardDirection
+        {
+            get { return (bool)GetValue(IsOutwardDirectionProperty); }
+            set { SetValue(IsOutwardDirectionProperty, value); }
+        }
 
         /// <summary>
         /// 지정된 중심축을 기준으로 회전 변환한 점을 반환하기.
@@ -598,7 +630,7 @@ namespace CvsVision.Caliper.Controls
                     var angle = this.StartAngle + i * this.IntervalAngle;
                     RotateTransform r = new RotateTransform
                     {
-                        Angle = angle + 90,
+                        Angle = angle + (IsOutwardDirection ? -90 : 90),
                         CenterX = element.Width / 2,
                         CenterY = element.Height / 2
                     };
@@ -616,7 +648,7 @@ namespace CvsVision.Caliper.Controls
     }
 
     #region Converters
-    public class PointToMarginConverter : IValueConverter
+    internal class PointToMarginConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -637,7 +669,7 @@ namespace CvsVision.Caliper.Controls
             throw new NotImplementedException();
         }
     }
-    public class DiameterToSizeConverter : IValueConverter
+    internal class DiameterToSizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -658,7 +690,7 @@ namespace CvsVision.Caliper.Controls
             throw new NotImplementedException();
         }
     }
-    public class AngleToBooleanConverter : IValueConverter
+    internal class AngleToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

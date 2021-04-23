@@ -8,21 +8,25 @@
         xmlns:con="clr-namespace:CvsVision.Controls;assembly=CvsVision"
         xmlns:graphic="clr-namespace:CvsVision.Graphic.Controls;assembly=CvsVision"
         mc:Ignorable="d" Name="main"
-        Title="MainWindow" Height="800" Width="800">
+        Title="MainWindow" Height="850" Width="800">
     <Grid Background="MintCream">
-        <Grid.ColumnDefinitions>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>-->
         <!--<cal:EdgeDetectToolEditor SubjectTool="{Binding Tool, Mode=OneWay, BindsDirectlyToSource=True}" Loaded="EdgeDetectToolEditor_Loaded"/>-->
         <!--<cal:CircleSettingGraphic Name="TEST" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>-->
         <!--<TextBox Grid.Column="1" Text="{Binding ElementName=TEST, Path=Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top"/>-->
         <!--<Button Grid.Column="1" Click="Button_Click"/>-->
 
         <!--<graphic:TextCreationToolEdltor/>-->
-        <Canvas>
+        <!--<Canvas>
             <cal:CircleSettingGraphic Canvas.Left="{Binding RelativeSource={RelativeSource Self}, Path=OriginX}" Canvas.Top="{Binding RelativeSource={RelativeSource Self}, Path=OriginY}" OriginX="50" OriginY="50" Radius="{Binding ElementName=main,Path=DataContext.TEXT, FallbackValue=100}"/>
         </Canvas>
-            <TextBox Grid.Column="1" Text="{Binding TEXT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox Grid.Column="1" Text="{Binding TEXT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top"/>-->
+
+
+
+        <cal:CircleDetectToolEditor/>
     </Grid>
 </Window>
