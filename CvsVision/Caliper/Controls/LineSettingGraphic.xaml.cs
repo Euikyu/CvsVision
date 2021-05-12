@@ -107,19 +107,11 @@ namespace CvsVision.Caliper.Controls
         {
             LineSettingGraphic control = (LineSettingGraphic)o;
 
-            var newCount = (int)e.NewValue > 200 ? 200 : ((int)e.NewValue < 3 ? 3 : (int)e.NewValue);
+            var newCount = (int)e.NewValue > 150 ? 150 : ((int)e.NewValue < 3 ? 3 : (int)e.NewValue);
             if (control.CaliperCollection.Count != newCount)
             {
-                if (control.Width == double.NaN || control.Width == 0) return;
-                var calCount = control.CaliperCollection.Count - newCount;
-                if(calCount > 0)
-                {
-                    for (int i = 0; i < calCount; i++) control.CaliperCollection.RemoveAt(0);
-                }
-                else
-                {
-                    for (int i = 0; i > calCount; i--) control.CaliperCollection.Add(true);
-                }
+                control.CaliperCollection.Clear();
+                for (int i = 0; i < newCount; i++) control.CaliperCollection.Add(true);
             }
         }
         private static object CaliperCount_CoerceValue(DependencyObject o, object baseValue)
@@ -128,7 +120,7 @@ namespace CvsVision.Caliper.Controls
             if (baseValue is int count)
             {
                 if (count < 3) return 3;
-                else if (count > 200) return 200;
+                else if (count > 150) return 150;
                 else return count;
             }
             else return 3;
@@ -427,7 +419,6 @@ namespace CvsVision.Caliper.Controls
             var xMargin = -ProjectionLength / 2;
             var yMargin = -SearchLength / 2;
             (sender as EdgeSettingGraphic).Margin = new Thickness(xMargin, yMargin, xMargin, yMargin);
-            if (this.Width != double.NaN || this.Width != 0) this.UpdateCaliper();
         }
         #endregion
 

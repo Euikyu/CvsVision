@@ -291,11 +291,11 @@ namespace CvsVision.Caliper.Controls
 
         private void Circle_Loaded(object sender, RoutedEventArgs e)
         {
-            StartAngle = 180;
-            EndAngle = 0;
-            ProjectionLength = 30;
-            SearchLength = 100;
-            CaliperCount = 10;
+            //StartAngle = 180;
+            //EndAngle = 0;
+            //ProjectionLength = 30;
+            //SearchLength = 100;
+            //CaliperCount = 10;
 
             this.UpdateCircle();
         }

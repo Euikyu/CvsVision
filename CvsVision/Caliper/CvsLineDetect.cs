@@ -69,7 +69,8 @@ namespace CvsVision.Caliper
             this.ScoringRANSACModel();
 
             //가장 정확도가 높은 모델을 선택
-            m_SelectedRANSAC = m_RANSAC_Models.First();
+            //m_SelectedRANSAC = m_RANSAC_Models.First();
+            m_SelectedRANSAC = this.CalcLeastSquare(m_RANSAC_Models.First().ConsensusPoints);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace CvsVision.Caliper
                 m_RANSAC_Models = new List<CvsLine>();
                 for (int i = 0; i < 12; i++)
                 {
-                    SelectLinePoint(InputPointList, m_Rand, out Point sPoint, out Point ePoint);                    
+                    SelectLinePoint(InputPointList, m_Rand, out Point sPoint, out Point ePoint);
                     this.m_RANSAC_Models.Add(CalcConsensusPoints(this.InputPointList, sPoint, ePoint, this.ConsensusThreshold));
                 }
             }
@@ -91,6 +92,53 @@ namespace CvsVision.Caliper
                 throw;
             }
         }
+
+        /// <summary>
+        /// 최소자승법으로 선 검색.
+        /// </summary>
+        /// <param name="points">선 찾을 점 집합.</param>
+        /// <returns></returns>
+        private CvsLine CalcLeastSquare(IEnumerable<Point> points)
+        {
+            double sum_x = 0, sum_y = 0;
+            foreach(var p in points)
+            {
+                sum_x += p.X;
+                sum_y += p.Y;
+            }
+
+            double sum_dx = 0, sum_dy = 0;
+            foreach(var p in points)
+            {
+                sum_dx = Math.Pow(p.X - sum_x / points.Count(), 2);
+                sum_dy = (p.Y - sum_y / points.Count()) * (p.X - sum_x / points.Count());
+            }
+
+            double gradient = sum_dx == 0 ? double.NaN : sum_dy / sum_dx;
+            double y_Intercept = sum_y / points.Count() - gradient * sum_x / points.Count();
+
+            return new CvsLine(new Point(0, y_Intercept), new Point(double.IsNaN(gradient) ? points.ElementAt(0).X : -y_Intercept / gradient, 0), gradient, y_Intercept, points is Point[] ? (Point[])points : points.ToArray());
+        }
+
+        //private double CalcConsensus(List<Point> points, CvsLine line)
+        //{
+        //    if (points == null || points.Count == 0) return 0;
+
+        //    double sum_dist = 0;
+        //    foreach (var p in points)
+        //    {
+        //        sum_dist += this.CalcDistance(p, line.StartPoint, line.Gradient, line.Y_Intercept);
+        //    }
+
+        //    double sigma = 0;
+        //    foreach (var p in points)
+        //    {
+        //        sigma += Math.Pow(this.CalcDistance(p, line.StartPoint, line.Gradient, line.Y_Intercept) - sum_dist / points.Count, 2);
+        //    }
+
+        //    return Math.Sqrt(sigma / points.Count);
+        //}
+
         
         /// <summary>
         /// 점 집합 내에서 무작위 두 점을 선택하기.
@@ -154,7 +202,36 @@ namespace CvsVision.Caliper
         {
             return p2.X - p1.X == 0 ? p2.X : (p2.X * p1.Y - p1.X * p2.Y) / (p2.X - p1.X);
         }
-        
+
+        /// <summary>
+        /// 직선에서 점까지의 거리 구하기.
+        /// </summary>
+        /// <param name="p0">거리를 구할 점.</param>
+        /// <param name="line_Point">직선의 한 점.</param>
+        /// <param name="gradient">직선의 기울기.</param>
+        /// <param name="y_Intercept">직선의 Y 절편.</param>
+        /// <returns></returns>
+        private double CalcDistance(Point p0, Point line_Point, double gradient, double y_Intercept)
+        {
+            if (double.IsNaN(gradient))
+            {
+                return Math.Abs(p0.X - line_Point.X);
+            }
+            else
+            {
+                // 점(x0,y0)를 지나는 직선의 방정식 : mx - y - (m * x0) + y0 = 0
+                // m은 기울기
+                // a = m,  b = -1,  c = y0 - m * x0 
+
+                // =====점(x1,y1)과 직선(ax+by+c=0)의 거리 구하는 공식====
+                //       | (a * x1) + (b * y1) + c |
+                // ------------------------------------------
+                // Math.Sqrt(Math.Pow(a, 2) + Math.Pow(b, 2))
+
+                return Math.Abs(p0.X * gradient + (-1 * p0.Y) + y_Intercept) / Math.Sqrt(Math.Pow(gradient, 2) + 1);
+            }
+        }
+
         /// <summary>
         /// 해당 선상에 존재하는 점 집합 구하기.
         /// </summary>
@@ -173,35 +250,13 @@ namespace CvsVision.Caliper
 
                 List<Point> consensusPointList = new List<Point>();
 
-                for (int i = 0; i < points.Count; i++)
+                foreach(var p in points)
                 {
-                    double x1 = points[i].X;
-                    double y1 = points[i].Y;
-                    
-                    if (endPoint.X == startPoint.X)
-                    {
-                        distance = Math.Abs(x1 - startPoint.X);
-                    }
-                    else if (endPoint.Y == startPoint.Y)
-                    {
-                        distance = Math.Abs(y1 - startPoint.Y);
-                    }
-                    else
-                    {
-                        // 점(ptOne.X,ptOne.Y)를 지나는 직선의 방정식 : mx-y-m*ptOne.X+ptOne.Y = 0
-
-                        // =====점(x1,y1)과 직선(ax+by+c=0)의 거리 구하는 공식====
-                        // |ax1+by1+c|
-                        // ------------
-                        // 루트(a제곱+b제곱)
-
-                        if (double.IsNaN(gradient)) distance = Math.Abs(x1 - startPoint.X);
-                        else distance = Math.Abs(x1 * gradient + (-1 * y1) + yIntercept) / Math.Sqrt(Math.Pow(gradient, 2) + 1);
-                    }
+                    distance = this.CalcDistance(p, startPoint, gradient, yIntercept);
 
                     if (distance < ConsensusThreshold)
                     {
-                        consensusPointList.Add(points[i]);
+                        consensusPointList.Add(p);
                     }
                 }
 

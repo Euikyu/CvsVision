@@ -170,7 +170,7 @@ namespace CvsVision.Caliper.Controls
                 if (m_Tool != null && m_Tool.Setting != null)
                 {
 
-                    m_Tool.Setting.CaliperCount = value > 200 ? 200 : (value < 3 ? 3 : value);
+                    m_Tool.Setting.CaliperCount = value > 150 ? 150 : (value < 3 ? 3 : value);
                     this.RaisePropertyChanged(nameof(CaliperCount));
                 }
             }

@@ -267,7 +267,7 @@ namespace CvsVision
 
                 // Data copy from DataSrc to ArraySrc[]
                 System.Runtime.InteropServices.Marshal.Copy(DataSrc.Scan0, arraySrc, 0, sizeSrc); //  Marshal.Copy로 memcopy마냥 쓸 수 있구먼
-
+                
                 // ArrayDst[] 채우기
                 for (int j = 0; j < bitmapDst.Height; j++)
                 {

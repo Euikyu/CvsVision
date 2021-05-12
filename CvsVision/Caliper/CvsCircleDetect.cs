@@ -7,6 +7,9 @@ using System.Windows;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 주어진 점 집합 내에서 원을 찾는 클래스입니다.
+    /// </summary>
     public class CvsCircleDetect : IDisposable
     {
         #region Fields
@@ -58,7 +61,9 @@ namespace CvsVision.Caliper
         }
 
         #region Methods
-
+        /// <summary>
+        /// 점 집합의 원을 검색합니다.
+        /// </summary>
         public void Detect()
         {
             //원 적합 구하기
@@ -67,12 +72,15 @@ namespace CvsVision.Caliper
             //2. 이 원을 가지고 다른 점들 비교
             //3. 이 과정을 여러번 실행
             //4. 동의하는 점이 가장 많은 모델 선정
+            //5. 그 모델의 최소자승법을 통한 원 모델 선정 -> 시간 많이 소요됨
+            //6. 최소외접원 찾는 알고리즘 응용하여 구현
 
             this.CalcModels();
 
             this.ScoringRANSACModel();
-
-            m_SelectedRANSAC = m_RANSAC_Models.First();
+            
+            //m_SelectedRANSAC = m_RANSAC_Models.First();
+            m_SelectedRANSAC = this.CalcMinimumCoveringCircle(m_RANSAC_Models.First().ConsensusPoints);
         }
 
         /// <summary>
@@ -95,7 +103,139 @@ namespace CvsVision.Caliper
                 throw;
             }
         }
+        /// <summary>
+        /// 최소자승법으로 원 찾기.
+        /// </summary>
+        /// <param name="points">점 집합.</param>
+        /// <returns></returns>
+        private CvsCircle CalcLeastSquare(IEnumerable<Point> points)
+        {
+            // 계산방법
+            // 1. 모든 수직이등분선의 교점을 구한다.
+            // 2. 교점의 평균 값을 구하여 원 중점으로 설정한다.
+            // 3. 중점에서 각 점 간의 거리를 구한다.
+            // 4. 거리의 평균을 반지름으로 설정한다.
 
+            double sum_x = 0, sum_y = 0;
+            int tmpCount = 0;
+            
+            //수직이등분선 구하기.
+            for (int i = 0; i < points.Count() - 2; i++)
+            {
+                for (int j = i + 1; j < points.Count() - 1; j++)
+                {
+                    m_CornerDetect.LineA = this.CalcBisector(points.ElementAt(i), points.ElementAt(j));
+                    for (int k = j + 1; k < points.Count(); k++)
+                    {
+                        m_CornerDetect.LineB = this.CalcBisector(points.ElementAt(i), points.ElementAt(k));
+                        m_CornerDetect.Detect();
+
+                        if(m_CornerDetect.Corner != null && m_CornerDetect.Corner.IntersectionAngle != 0)
+                        {
+                            sum_x += m_CornerDetect.Corner.Corner.X;
+                            sum_y += m_CornerDetect.Corner.Corner.Y;
+                            tmpCount++;
+                        }
+                    }
+                }
+            }
+
+            //중심점 구하기
+            var center = new Point(sum_x / tmpCount, sum_y / tmpCount);
+            
+            //중심점에서 거리 측정
+            double sum_r = 0;
+            foreach (var p in points)
+            {
+                sum_r += this.CalcRadius(center, p);
+            }
+
+            //반지름 구하기
+            var radius = sum_r / points.Count();
+
+            return new CvsCircle(center, radius, points is Point[] ? (Point[])points : points.ToArray());
+        }
+
+        /// <summary>
+        /// 최소외접원으로 점 찾기.
+        /// </summary>
+        /// <param name="points">점 집합.</param>
+        /// <returns></returns>
+        private CvsCircle CalcMinimumCoveringCircle(IEnumerable<Point> points)
+        {
+            // 계산방법
+            // 1. 각 점들의 수직이등분선을 구한다.
+            // 2. 수직이등분선들의 교점을 구한다.
+            // 3. 각 교점 간의 중심점을 구한다.
+            // 4. 중심점들의 평균값을 원 중점으로 설정한다.
+            // 5. 중점에서 각 점 간의 거리를 구한다.
+            // 6. 거리의 평균을 반지름으로 설정한다.
+
+            double sum_x = 0, sum_y = 0;
+            int tmpCount = points.Count() / 2;
+
+            List<CvsLine> lines = new List<CvsLine>();
+            
+            for(int i = 0; i < tmpCount; i++)
+            {
+                if (2 * i + 1 >= points.Count()) break;
+                lines.Add(this.CalcBisector(points.ElementAt(2 * i), points.ElementAt(2 * i + 1)));
+            }
+
+            lines.Sort((i1, i2) => double.IsNaN(i1.Gradient) ? 1 : (double.IsNaN(i2.Gradient) ? -1 : i1.Gradient.CompareTo(i2.Gradient)));
+
+            List<Point> centers = new List<Point>();
+
+            for (int i = 0; i < lines.Count / 2; i++)
+            {
+                m_CornerDetect.LineA = lines[i];
+                m_CornerDetect.LineB = lines[lines.Count - i - 1];
+                m_CornerDetect.Detect();
+
+                centers.Add(m_CornerDetect.Corner.Corner);
+            }
+            centers.Sort((i1, i2) => Math.Sqrt(Math.Pow(i1.X, 2) + Math.Pow(i1.Y, 2)).CompareTo(Math.Sqrt(Math.Pow(i2.X, 2) + Math.Pow(i2.Y, 2))));
+
+
+
+            List<Point> realCenters = new List<Point>();
+
+
+            for (int i = 0; i < centers.Count / 2; i++)
+            {
+                var p0 = centers[i];
+                var p1 = centers[centers.Count - i - 1];
+                realCenters.Add(new Point((p0.X + p1.X) / 2, (p0.Y + p1.Y) / 2));
+            }
+
+            foreach(var c in realCenters)
+            {
+                sum_x += c.X;
+                sum_y += c.Y;
+            }
+            
+            var center = new Point(sum_x / realCenters.Count, sum_y / realCenters.Count);
+            
+            double sum_r = 0;
+            foreach (var p in points)
+            {
+                sum_r += this.CalcRadius(center, p);
+            }
+
+            var radius = sum_r / points.Count();
+
+            return new CvsCircle(center, radius, points is Point[] ? (Point[])points : points.ToArray());
+        }
+        
+
+        /// <summary>
+        /// 점 집합 내에서 무작위 세 점 구하기
+        /// </summary>
+        /// <param name="points">점 집합.</param>
+        /// <param name="random">난수 변수.</param>
+        /// <param name="p0">첫 번째 점.</param>
+        /// <param name="p1">두 번째 점.</param>
+        /// <param name="p2">세 번째 점.</param>
         private void SelectCirclePoint(List<Point> points, Random random, out Point p0, out Point p1, out Point p2)
         {
             if (points.Count < 3)
@@ -132,6 +272,12 @@ namespace CvsVision.Caliper
             p2 = points[rand_num3];
         }
 
+        /// <summary>
+        /// 두 점의 수직 이등분 선 구하기.
+        /// </summary>
+        /// <param name="p0">첫 번째 점.</param>
+        /// <param name="p1">두 번째 점.</param>
+        /// <returns></returns>
         private CvsLine CalcBisector(Point p0, Point p1)
         {
             //수직 이등분 선의 방정식 (x1 - x0)(x - (x1 + x0) / 2) + (y1 - y0)(y - (y1 + y0) / 2) = 0;
@@ -145,11 +291,26 @@ namespace CvsVision.Caliper
             return new CvsLine(new Point(0, y_intercept), new Point(1, gradient + y_intercept), gradient, y_intercept, null);
         }
 
+        /// <summary>
+        /// 반지름 구하기.
+        /// </summary>
+        /// <param name="center">원의 중심점.</param>
+        /// <param name="p0">원 위의 한 점.</param>
+        /// <returns></returns>
         private double CalcRadius(Point center, Point p0)
         {
             return Math.Sqrt(Math.Pow(center.X - p0.X, 2) + Math.Pow(center.Y - p0.Y, 2));
         }
 
+        /// <summary>
+        /// 해당 원의 호 위에 존재하는 점 구하기.
+        /// </summary>
+        /// <param name="points">총 점 집합.</param>
+        /// <param name="p0">첫 번째 점.</param>
+        /// <param name="p1">두 번째 점.</param>
+        /// <param name="p2">세 번째 점.</param>
+        /// <param name="ConsensusThreshold">호 위에 </param>
+        /// <returns></returns>
         private CvsCircle CalcConsensusPoints(List<Point> points, Point p0, Point p1, Point p2, double ConsensusThreshold)
         {
             try

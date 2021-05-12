@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 원을 찾기 위한 설정 값 클래스입니다.
+    /// </summary>
     public class CvsCircleSetting
     {
         #region Fields
@@ -17,7 +20,7 @@ namespace CvsVision.Caliper
 
         #region Circle Settings
         /// <summary>
-        /// 선 상으로 인정되는 범위 값을 가져오거나 설정합니다.
+        /// 원으로 인정되는 범위 값을 가져오거나 설정합니다.
         /// </summary>
         public double ConsensusThreshold
         {
@@ -30,7 +33,7 @@ namespace CvsVision.Caliper
         }
         public CvsPose CirclePose { get; set; }
         /// <summary>
-        /// 선 모델의 원점 X 좌표를 가져오거나 설정합니다.
+        /// 원 모델의 원점 X 좌표를 가져오거나 설정합니다.
         /// </summary>
         public double OriginX
         {
@@ -42,7 +45,7 @@ namespace CvsVision.Caliper
             set { if (CirclePose != null) CirclePose.TranslateX = value; }
         }
         /// <summary>
-        /// 선 모델의 원점 Y 좌표를 가져오거나 설정합니다.
+        /// 원 모델의 원점 Y 좌표를 가져오거나 설정합니다.
         /// </summary>
         public double OriginY
         {
@@ -54,22 +57,24 @@ namespace CvsVision.Caliper
             set { if (CirclePose != null) CirclePose.TranslateY = value; }
         }
         /// <summary>
-        /// 선 모델의 캘리퍼 개수를 가져옵니다.
+        /// 원 모델의 캘리퍼 개수를 가져오거나 설정합니다.
         /// </summary>
         public int CaliperCount { get; set; }
         /// <summary>
-        /// 원 그래픽의 시작 각도를 가져옵니다.
+        /// 원 그래픽의 시작 각도를 가져오거나 설정합니다.
         /// </summary>
         public double StartAngle { get; set; }
         /// <summary>
-        /// 원 그래픽의 끝 각도를 가져옵니다.
+        /// 원 그래픽의 끝 각도를 가져오거나 설정합니다.
         /// </summary>
         public double EndAngle { get; set; }
         /// <summary>
-        /// 원 그래픽의 반지름 값을 가져옵니다.
+        /// 원 그래픽의 반지름 값을 가져오거나 설정합니다.
         /// </summary>
         public double Radius { get; set; }
-
+        /// <summary>
+        /// 원 모델의 검색 방향을 바깥 방향으로 검사할 것인지의 여부를 가져오거나 설정합니다.
+        /// </summary>
         public bool IsOutwardDirection { get; set; }
         #endregion
 

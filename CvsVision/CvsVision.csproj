@@ -99,7 +99,6 @@
     <Compile Include="Caliper\CvsLineDetect.cs" />
     <Compile Include="Caliper\CvsLineDetectTool.cs" />
     <Compile Include="Caliper\CvsLineSetting.cs" />
-    <Compile Include="Controls\Customs\CircularPanel.cs" />
     <Compile Include="Controls\ZoomPanCon\AnimationHelper.cs" />
     <Compile Include="Controls\CvsDisplay.xaml.cs">
       <DependentUpon>CvsDisplay.xaml</DependentUpon>
