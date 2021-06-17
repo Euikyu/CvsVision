@@ -267,8 +267,9 @@ namespace CvsVision
 
                 // Data copy from DataSrc to ArraySrc[]
                 System.Runtime.InteropServices.Marshal.Copy(DataSrc.Scan0, arraySrc, 0, sizeSrc); //  Marshal.Copy로 memcopy마냥 쓸 수 있구먼
-                
+
                 // ArrayDst[] 채우기
+                int? outOfFirstIndex = null;
                 for (int j = 0; j < bitmapDst.Height; j++)
                 {
                     for (int i = 0; i < bitmapDst.Width; i++)
@@ -282,7 +283,24 @@ namespace CvsVision
                         var dstRange = i + j * DataDst.Stride;
                         // srcx와 srcy가 소스 밖의 점이면 0으로 넣자
                         if (srcRange < sizeSrc && srcRange >= 0 && dstRange < sizeDst)
-                            arrayDst[i + j * DataDst.Stride] = arraySrc[srcx + srcy * DataSrc.Stride];
+                        {
+                            if (outOfFirstIndex is int idx)
+                            {
+                                for (int k = idx; k < i + j * DataDst.Stride; k++)
+                                {
+                                    arrayDst[k] = arraySrc[srcx + srcy * DataSrc.Stride];
+                                }
+                                outOfFirstIndex = null;
+                            }
+                            else
+                            {
+                                arrayDst[i + j * DataDst.Stride] = arraySrc[srcx + srcy * DataSrc.Stride];
+                            }
+                        }
+                        else if(!outOfFirstIndex.HasValue)
+                        {
+                            outOfFirstIndex = i + j * DataDst.Stride;
+                        }
                     }
                 }
 
