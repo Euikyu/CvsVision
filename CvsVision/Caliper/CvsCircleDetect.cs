@@ -78,9 +78,10 @@ namespace CvsVision.Caliper
             this.CalcModels();
 
             this.ScoringRANSACModel();
-            
+
             //m_SelectedRANSAC = m_RANSAC_Models.First();
-            m_SelectedRANSAC = this.CalcMinimumCoveringCircle(m_RANSAC_Models.First().ConsensusPoints);
+            if (m_RANSAC_Models.First().ConsensusPoints.Length < 51) m_SelectedRANSAC = this.CalcLeastSquare(m_RANSAC_Models.First().ConsensusPoints);
+            else m_SelectedRANSAC = this.CalcMinimumCoveringCircle(m_RANSAC_Models.First().ConsensusPoints);
         }
 
         /// <summary>
@@ -164,19 +165,66 @@ namespace CvsVision.Caliper
         private CvsCircle CalcMinimumCoveringCircle(IEnumerable<Point> points)
         {
             // 계산방법
-            // 1. 각 점들의 수직이등분선을 구한다.
+            // 1. 각 점들을 쌍으로 묶어 수직이등분선을 구한다.
             // 2. 수직이등분선들의 교점을 구한다.
             // 3. 각 교점 간의 중심점을 구한다.
             // 4. 중심점들의 평균값을 원 중점으로 설정한다.
             // 5. 중점에서 각 점 간의 거리를 구한다.
             // 6. 거리의 평균을 반지름으로 설정한다.
 
+            //Point center = new Point();
+            //double radius = 0;
+            //int count = points.Count();
+
+            //for (int i = 0; i < count; i++)
+            //{
+            //    // 현재 설정된 반지름 바깥에 점 존재하는지 확인
+            //    if (this.CalcRadius(center, points.ElementAt(i)) > radius)
+            //    {
+            //        //중심점, 반지름 재설정하고 두 번째 점 검색
+            //        center = points.ElementAt(i);
+            //        radius = 0;
+
+            //        for (int j = 0; j < i; j++)
+            //        {
+            //            // 현재 설정된 반지름 바깥에 점 존재하는지 확인
+            //            if (this.CalcRadius(center, points.ElementAt(j)) > radius)
+            //            {
+            //                //중심점, 반지름 재설정하고 세 번째 점 검색
+            //                center = this.CalcCenterByTwoPoints(points.ElementAt(i), points.ElementAt(j));
+            //                radius = this.CalcRadius(center, points.ElementAt(i));
+
+            //                for (int k = 0; k < j; k++)
+            //                {
+            //                    // 현재 설정된 반지름 바깥에 점 존재하는지 확인
+            //                    if (this.CalcRadius(center, points.ElementAt(k)) > radius)
+            //                    {
+            //                        //세 점으로 이루어지는 원의 중점 & 반지름으로 설정
+            //                        m_CornerDetect.LineA = this.CalcBisector(points.ElementAt(i), points.ElementAt(j));
+            //                        m_CornerDetect.LineB = this.CalcBisector(points.ElementAt(i), points.ElementAt(k));
+            //                        m_CornerDetect.Detect();
+
+            //                        if (m_CornerDetect.Corner != null && m_CornerDetect.Corner.IntersectionAngle != 0)
+            //                        {
+            //                            center = m_CornerDetect.Corner.Corner;
+            //                            radius = this.CalcRadius(center, points.ElementAt(k));
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return new CvsCircle(center, radius, points is Point[] ? (Point[])points : points.ToArray());
+
+            
             double sum_x = 0, sum_y = 0;
             int tmpCount = points.Count() / 2;
 
             List<CvsLine> lines = new List<CvsLine>();
-            
-            for(int i = 0; i < tmpCount; i++)
+
+            for (int i = 0; i < tmpCount; i++)
             {
                 if (2 * i + 1 >= points.Count()) break;
                 lines.Add(this.CalcBisector(points.ElementAt(2 * i), points.ElementAt(2 * i + 1)));
@@ -184,7 +232,7 @@ namespace CvsVision.Caliper
 
             lines.Sort((i1, i2) => double.IsNaN(i1.Gradient) ? 1 : (double.IsNaN(i2.Gradient) ? -1 : i1.Gradient.CompareTo(i2.Gradient)));
 
-            List<Point> centers = new List<Point>();
+            List<Point> corners = new List<Point>();
 
             for (int i = 0; i < lines.Count / 2; i++)
             {
@@ -192,30 +240,35 @@ namespace CvsVision.Caliper
                 m_CornerDetect.LineB = lines[lines.Count - i - 1];
                 m_CornerDetect.Detect();
 
-                centers.Add(m_CornerDetect.Corner.Corner);
+                corners.Add(m_CornerDetect.Corner.Corner);
             }
+            corners.Sort((i1, i2) => Math.Sqrt(Math.Pow(i1.X, 2) + Math.Pow(i1.Y, 2)).CompareTo(Math.Sqrt(Math.Pow(i2.X, 2) + Math.Pow(i2.Y, 2))));
+
+            List<Point> centers = new List<Point>();
+
+
+            for (int i = 0; i < corners.Count / 2; i++)
+            {
+                if (corners.Count - i - 1 == i) continue;
+                var p0 = corners[i];
+                var p1 = corners[corners.Count - i - 1];
+                centers.Add(this.CalcCenterByTwoPoints(p0, p1));
+            }
+
             centers.Sort((i1, i2) => Math.Sqrt(Math.Pow(i1.X, 2) + Math.Pow(i1.Y, 2)).CompareTo(Math.Sqrt(Math.Pow(i2.X, 2) + Math.Pow(i2.Y, 2))));
 
+            var sortingCount = centers.Count / 2 > 10 ? 10 : centers.Count / 2;
 
-
-            List<Point> realCenters = new List<Point>();
-
-
-            for (int i = 0; i < centers.Count / 2; i++)
+            for (int i = 0; i < sortingCount; i++)
             {
-                var p0 = centers[i];
-                var p1 = centers[centers.Count - i - 1];
-                realCenters.Add(new Point((p0.X + p1.X) / 2, (p0.Y + p1.Y) / 2));
+                sum_x += centers[centers.Count / 2 - i - 1].X;
+                sum_y += centers[centers.Count / 2 - i - 1].Y;
+                sum_x += centers[centers.Count / 2 + i - 1].X;
+                sum_y += centers[centers.Count / 2 + i - 1].Y;
             }
 
-            foreach(var c in realCenters)
-            {
-                sum_x += c.X;
-                sum_y += c.Y;
-            }
-            
-            var center = new Point(sum_x / realCenters.Count, sum_y / realCenters.Count);
-            
+            var center = new Point(sum_x / (sortingCount * 2), sum_y / (sortingCount * 2));
+
             double sum_r = 0;
             foreach (var p in points)
             {
@@ -226,7 +279,7 @@ namespace CvsVision.Caliper
 
             return new CvsCircle(center, radius, points is Point[] ? (Point[])points : points.ToArray());
         }
-        
+
 
         /// <summary>
         /// 점 집합 내에서 무작위 세 점 구하기
@@ -300,6 +353,11 @@ namespace CvsVision.Caliper
         private double CalcRadius(Point center, Point p0)
         {
             return Math.Sqrt(Math.Pow(center.X - p0.X, 2) + Math.Pow(center.Y - p0.Y, 2));
+        }
+
+        private Point CalcCenterByTwoPoints(Point p0, Point p1)
+        {
+            return new Point((p0.X + p1.X) / 2, (p0.Y + p1.Y) / 2);
         }
 
         /// <summary>

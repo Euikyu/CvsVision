@@ -8,19 +8,7 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
-    /// <summary>
-    /// 에지 감지할 방향.
-    /// </summary>
-    public enum EDirection
-    {
-        Any,
-        LightToDark,
-        DarkToLight
-    }
-    /// <summary>
-    /// 주어진 이미지 내에서 에지를 찾는 클래스입니다.
-    /// </summary>
-    public class CvsEdgeDetect: IDisposable
+    public class CvsBreadthDetect
     {
         #region Fields
         private float[] m_SubPixelArray;
@@ -32,6 +20,7 @@ namespace CvsVision.Caliper
         private int m_Height;
 
         private List<CvsEdge> m_EdgeList;
+        private List<CvsBreadth> m_BreadthList;
         private uint m_HalfPixelCount;
         #endregion
 
@@ -101,26 +90,23 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값을 가져오거나 설정합니다. 
         /// </summary>
-        public uint ContrastThreshold
-        {
-            get; set;
-        }
+        public uint ContrastThreshold { get; set; }
         /// <summary>
         /// 에지를 감지할 방향을 가져오거나 설정합니다.
         /// </summary>
-        public EDirection EdgeDirection
-        {
-            get; set;
-        }
-
+        public EDirection Edge0Direction { get; set; }
         /// <summary>
-        /// 에지 결과들 중 가장 정확도가 높은 에지를 가져옵니다.
+        /// 에지를 감지할 방향을 가져오거나 설정합니다.
         /// </summary>
-        public CvsEdge Edge
+        public EDirection Edge1Direction { get; set; }
+
+        public double TargetBreadth { get; set; }
+        
+        public CvsBreadth Breadth
         {
             get
             {
-                if (m_EdgeList != null && m_EdgeList.Count > 0) return m_EdgeList.First();
+                if (m_BreadthList != null && m_BreadthList.Count > 0) return m_BreadthList.First();
                 else return null;
             }
         }
@@ -128,10 +114,11 @@ namespace CvsVision.Caliper
         /// <summary>
         /// 에지를 찾는 클래스를 생성합니다.
         /// </summary>
-        public CvsEdgeDetect()
+        public CvsBreadthDetect()
         {
             //초기 설정값
-            EdgeDirection = EDirection.Any;
+            Edge0Direction = EDirection.Any;
+            Edge1Direction = EDirection.Any;
             ContrastThreshold = 5;
             HalfPixelCount = 2;
             m_EdgeList = new List<CvsEdge>();
@@ -149,6 +136,7 @@ namespace CvsVision.Caliper
             m_SubPixelArray = null;
         }
 
+        
         #region Methods
         /// <summary>
         /// 이미지를 1차원으로 투사합니다.
@@ -310,27 +298,37 @@ namespace CvsVision.Caliper
                 if (Math.Abs(m_SubPixelArray[i]) > Math.Abs(lastMaxValue)) lastMaxValue = m_SubPixelArray[i];
             }
 
-            //반복문이 끝나고 규칙(현재는 대비값만 존재)에 따라 스코어를 매긴 후 리스트 정렬
-            this.ScoringAndSortEdgeList();
+            this.SelectEdge();
+            this.ScoringAndSortBreadthList();
         }
         
-        /// <summary>
-        /// 에지 점수 비교하여 정렬하는 함수.
-        /// </summary>
-        private void ScoringAndSortEdgeList()
+
+        private void SelectEdge()
         {
-            //현재는 대비값 1개로만 스코어링하지만 추후에는 좀 더 기능을 추가할 예정
-            if (true)
+            m_BreadthList = new List<CvsBreadth>();
+
+            for(int i = 0; i < m_EdgeList.Count - 1; i++)
             {
-                m_EdgeList.Sort((i1, i2) => Math.Abs(i2.Sum).CompareTo(Math.Abs(i1.Sum)));
+                if (Edge0Direction == EDirection.DarkToLight && m_EdgeList[i].Sum > 0) continue;
+                if (Edge0Direction == EDirection.LightToDark && m_EdgeList[i].Sum < 0) continue;
+                for (int j = i + 1; j < m_EdgeList.Count; j++)
+                {
+                    if (Edge1Direction == EDirection.DarkToLight && m_EdgeList[j].Sum > 0) continue;
+                    if (Edge1Direction == EDirection.LightToDark && m_EdgeList[j].Sum < 0) continue;
+                    var dist = Math.Abs(m_EdgeList[i].Y - m_EdgeList[j].Y);
+                    m_BreadthList.Add(new CvsBreadth(m_EdgeList[i], m_EdgeList[j], dist));
+                }
             }
-            ////포지션 기준으로 정렬
-            //else if (true)
-            //{
-            //    m_EdgeList.Sort((i1, i2) => Math.Abs(i1.Y - m_Height / 2).CompareTo(Math.Abs(i2.Y - m_Height / 2)));
-            //}
         }
 
+        /// <summary>
+        /// 폭 점수 비교하여 정렬하는 함수.
+        /// </summary>
+        private void ScoringAndSortBreadthList()
+        {
+            if (TargetBreadth < 0) m_BreadthList.Sort((i1, i2) => (Math.Abs(i2.Edge0.Sum) + Math.Abs(i2.Edge1.Sum)).CompareTo(Math.Abs(i1.Edge0.Sum) + Math.Abs(i1.Edge1.Sum)));
+            else m_BreadthList.Sort((i1, i2) => Math.Abs(i1.Distance - TargetBreadth).CompareTo(Math.Abs(i2.Distance - TargetBreadth)));
+        }
         /// <summary>
         /// 에지 방향 결정하는 함수.
         /// </summary>
@@ -341,58 +339,29 @@ namespace CvsVision.Caliper
         {
             //반환값이 null일 경우 에지 추가 안함
             if (sum_dx == 0) return null;
-            var res = sum_y_mul_dx / sum_dx - 0.5F;
-            switch (EdgeDirection)
-            {
-                case EDirection.DarkToLight:
-                    if (sum_dx > 0) return null;
-                    else return res;
-                case EDirection.LightToDark:
-                    if (sum_dx < 0) return null;
-                    else return res;
-                case EDirection.Any:
-                default:
-                    return res;
-            }
+            return sum_y_mul_dx / sum_dx - 0.5F;
+           
         }
         #endregion
     }
-    /// <summary>
-    /// 에지 클래스입니다.
-    /// </summary>
-    public class CvsEdge
+
+    public class CvsBreadth
     {
-        #region Properties
-        /// <summary>
-        /// 에지의 X 좌표를 가져옵니다.
-        /// </summary>
-        public float X { get; }
-        /// <summary>
-        /// 에지의 Y 좌표를 가져옵니다.
-        /// </summary>
-        public float Y { get; }
-        /// <summary>
-        /// 해당 에지의 최대 대비 값을 가져옵니다.
-        /// </summary>
-        public float Contrast { get; }
-        /// <summary>
-        /// 해당 에지의 적분 값을 가져옵니다.
-        /// </summary>
-        public float Sum { get; }
+        #region Fields
+
         #endregion
-        /// <summary>
-        /// 에지를 생성합니다.
-        /// </summary>
-        /// <param name="x">에지의 X 좌표.</param>
-        /// <param name="y">에지의 Y 좌표.</param>
-        /// <param name="contrast">해당 에지의 최대 대비 값.</param>
-        /// <param name="sum">해당 에지의 적분 값.</param>
-        public CvsEdge(float x, float y, float contrast, float sum)
+
+        #region Properties
+        public CvsEdge Edge0 { get; }
+        public CvsEdge Edge1 { get; }
+        public double Distance { get; }
+        #endregion
+
+        public CvsBreadth(CvsEdge edge0, CvsEdge edge1, double dist)
         {
-            this.X = x;
-            this.Y = y;
-            this.Contrast = contrast;
-            this.Sum = sum;
+            this.Edge0 = edge0;
+            this.Edge1 = edge1;
+            this.Distance = dist;
         }
     }
 }

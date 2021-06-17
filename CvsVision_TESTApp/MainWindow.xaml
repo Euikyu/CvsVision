@@ -26,6 +26,6 @@
             <TextBox Grid.Column="1" Text="{Binding TEXT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top"/>-->
 
 
-        <cal:CircleDetectToolEditor/>
+        <cal:BreadthDetectToolEditor/>
     </Grid>
 </Window>
