@@ -12,6 +12,9 @@ using Pen = System.Windows.Media.Pen;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 이미지를 통해 에지 쌍의 너비를 찾을 수 있는 도구 클래스입니다.
+    /// </summary>
     public class CvsBreadthDetectTool : ICvsTool
     {
         #region Fields
@@ -78,7 +81,9 @@ namespace CvsVision.Caliper
             };
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (InputImage != null) InputImage.Dispose();
             if (m_BreadthDetect != null) m_BreadthDetect.Dispose();

@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 두 직선의 교점을 찾기 위한 설정 값 클래스입니다.
+    /// </summary>
     public class CvsCornerSetting
     {
         #region Fields
@@ -16,6 +19,9 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Line A에 대한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsLineSetting LineASetting
         {
             get { return m_LineASetting; }
@@ -25,6 +31,9 @@ namespace CvsVision.Caliper
                 if(value != null) m_Detect.LineA = m_LineASetting.GetToolParams().Line;
             }
         }
+        /// <summary>
+        /// Line B에 대한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsLineSetting LineBSetting
         {
             get { return m_LineBSetting; }
@@ -46,7 +55,7 @@ namespace CvsVision.Caliper
         }
         #region Methods
         /// <summary>
-        /// 현재 설정을 가진 코너 검색 클래스를 반환합니다.
+        /// 현재 설정을 가진 교점 검색 클래스를 반환합니다.
         /// </summary>
         /// <returns></returns>
         public CvsCornerDetect GetToolParams()

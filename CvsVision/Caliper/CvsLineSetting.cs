@@ -32,6 +32,9 @@ namespace CvsVision.Caliper
             }
             set { if (m_LineDetect != null) m_LineDetect.ConsensusThreshold = value; }
         }
+        /// <summary>
+        /// 선에 대한 Pose 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsPose LinePose { get; set; }
         /// <summary>
         /// 선 모델의 원점 X 좌표를 가져오거나 설정합니다.

@@ -26,14 +26,22 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChanged(string propName)
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #region Common Properties
-        
+        /// <summary>
+        /// 호의 시작점을 가져오거나 설정합니다.
+        /// </summary>
         public Point StartPoint
         {
             get { return m_StartPoint; }
@@ -42,6 +50,9 @@ namespace CvsVision.Caliper.Controls
                 m_StartPoint = value; this.RaisePropertyChanged(nameof(StartPoint));
             }
         }
+        /// <summary>
+        /// 호의 끝점을 가져오거나 설정합니다.
+        /// </summary>
         public Point EndPoint
         {
             get { return m_EndPoint; }
@@ -51,6 +62,9 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(EndPoint));
             }
         }        
+        /// <summary>
+        /// 호의 각도를 가져옵니다.
+        /// </summary>
         public double SpanAngle
         {
             get
@@ -58,6 +72,9 @@ namespace CvsVision.Caliper.Controls
                 return (EndAngle - StartAngle + 360) % 360; 
             }
         }
+        /// <summary>
+        /// 에지의 간격 각도를 가져옵니다.
+        /// </summary>
         public double IntervalAngle
         {
             get
@@ -96,17 +113,23 @@ namespace CvsVision.Caliper.Controls
         public static readonly DependencyProperty OriginYProperty =
             DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(CircleSettingGraphic));
         /// <summary>
-        /// CircularPanel.Radius 에 대한 종속성 속성을 식별합니다.
+        /// CircleSettingGraphic.IsOutwardDirection 에 대한 종속성 속성을 식별합니다.
         /// </summary>
         public static readonly DependencyProperty IsOutwardDirectionProperty =
             DependencyProperty.Register(nameof(IsOutwardDirection), typeof(bool), typeof(CircleSettingGraphic));
-
+        /// <summary>
+        /// CircleSettingGraphic.SearchLength 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty SearchLengthProperty =
                     DependencyProperty.Register(nameof(SearchLength), typeof(double), typeof(CircleSettingGraphic));
-
+        /// <summary>
+        /// CircleSettingGraphic.ProjectionLength 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ProjectionLengthProperty =
                     DependencyProperty.Register(nameof(ProjectionLength), typeof(double), typeof(CircleSettingGraphic));
-
+        /// <summary>
+        /// CircleSettingGraphic.StartAngle 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty StartAngleProperty =
             DependencyProperty.Register(nameof(StartAngle), typeof(double), typeof(CircleSettingGraphic),
                 new PropertyMetadata(StartAngle_PropertyChanged));
@@ -118,7 +141,9 @@ namespace CvsVision.Caliper.Controls
             control.StartPoint = new Point(v.X, v.Y);
             control.UpdateCircle();
         }
-
+        /// <summary>
+        /// CircleSettingGraphic.EndAngle 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty EndAngleProperty =
             DependencyProperty.Register(nameof(EndAngle), typeof(double), typeof(CircleSettingGraphic),
                 new PropertyMetadata(EndAngle_PropertyChanged));
@@ -130,7 +155,9 @@ namespace CvsVision.Caliper.Controls
             control.EndPoint = new Point(v.X, v.Y);
             control.UpdateCircle();
         }
-
+        /// <summary>
+        /// CircleSettingGraphic.Radius 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty RadiusProperty =
             DependencyProperty.Register(nameof(Radius), typeof(double), typeof(CircleSettingGraphic),
                 new PropertyMetadata(0.0, Radius_PropertyChanged));
@@ -149,7 +176,9 @@ namespace CvsVision.Caliper.Controls
             control.EndPoint = new Point(endV.X, endV.Y);
             control.UpdateCircle();
         }
-
+        /// <summary>
+        /// CircleSettingGraphic.Diameter 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty DiameterProperty =
             DependencyProperty.Register(nameof(Diameter), typeof(double), typeof(CircleSettingGraphic),
                 new PropertyMetadata(Diameter_PropertyChanged));
@@ -159,7 +188,9 @@ namespace CvsVision.Caliper.Controls
             CircleSettingGraphic control = (CircleSettingGraphic)o;
             if (control.Radius != (double)e.NewValue / 2) control.Radius = (double)e.NewValue / 2;
         }
-
+        /// <summary>
+        /// CircleSettingGraphic.CaliperCount 에 대한 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty CaliperCountProperty =
                     DependencyProperty.Register(nameof(CaliperCount), typeof(int), typeof(CircleSettingGraphic),
                         new PropertyMetadata(3, CaliperCount_PropertyChanged, CaliperCount_CoerceValue));
@@ -187,6 +218,9 @@ namespace CvsVision.Caliper.Controls
             get { return (int)GetValue(CaliperCountProperty); }
             set { SetValue(CaliperCountProperty, value); }
         }
+        /// <summary>
+        /// 호의 각이 180도보다 큰 지 여부에 대한 값을 가져오거나 설정합니다.
+        /// </summary>
         public bool IsOutwardDirection
         {
             get { return (bool)GetValue(IsOutwardDirectionProperty); }
@@ -226,23 +260,33 @@ namespace CvsVision.Caliper.Controls
             get { return (double)GetValue(OriginYProperty); }
             set { SetValue(OriginYProperty, value); }
         }
-
+        /// <summary>
+        /// 호의 시작 각도를 가져오거나 설정합니다.
+        /// </summary>
         public double StartAngle
         {
             get { return (double)GetValue(StartAngleProperty); }
             set { SetValue(StartAngleProperty, value); }
         }
+        /// <summary>
+        /// 호의 끝 각도를 가져오거나 설정합니다.
+        /// </summary>
         public double EndAngle
         {
             get { return (double)GetValue(EndAngleProperty); }
             set { SetValue(EndAngleProperty, value); }
         }
+        /// <summary>
+        /// 호의 반지름을 가져오거나 설정합니다.
+        /// </summary>
         public double Radius
         {
             get { return (double)GetValue(RadiusProperty); }
             set { SetValue(RadiusProperty, value); }
         }
-
+        /// <summary>
+        /// 호의 지름을 가져오거나 설정합니다.
+        /// </summary>
         public double Diameter
         {
             get { return (double)GetValue(DiameterProperty); }
@@ -251,7 +295,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// CircleSettingGraphic 을 생성합니다.
+        /// </summary>
         public CircleSettingGraphic()
         {
             InitializeComponent();
@@ -259,6 +305,9 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Methods
+        /// <summary>
+        /// 그래픽 정보 업데이트하기.
+        /// </summary>
         private void UpdateCircle()
         {
             this.RaisePropertyChanged(nameof(SpanAngle));

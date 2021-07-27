@@ -30,9 +30,14 @@ namespace CvsVision.Graphic.Controls
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -193,6 +198,9 @@ namespace CvsVision.Graphic.Controls
                 }
             }
         }
+        /// <summary>
+        /// 화면에 출력할 폰트의 크기를 가져오거나 설정합니다.
+        /// </summary>
         public double OverlayFontSize
         {
             get
@@ -209,6 +217,9 @@ namespace CvsVision.Graphic.Controls
                 }
             }
         }
+        /// <summary>
+        /// 화면에 출력할 폰트의 색상을 가져오거나 설정합니다.
+        /// </summary>
         public Brush FontBrush
         {
             get
@@ -262,7 +273,9 @@ namespace CvsVision.Graphic.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// TextCreationToolEdltor 를 생성합니다.
+        /// </summary>
         public TextCreationToolEdltor()
         {
             InitializeComponent();

@@ -55,7 +55,9 @@ namespace CvsVision.Caliper
             this.ConsensusThreshold = 6;
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (InputPointList != null) InputPointList.Clear();
         }
@@ -407,6 +409,9 @@ namespace CvsVision.Caliper
         #endregion
     }
 
+    /// <summary>
+    /// 원 클래스입니다.
+    /// </summary>
     public class CvsCircle
     {
         #region Properties
@@ -423,7 +428,12 @@ namespace CvsVision.Caliper
         /// </summary>
         public Point[] ConsensusPoints { get; }
         #endregion
-        
+        /// <summary>
+        /// 점 집합이 그리는 원 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="center">원의 중심점.</param>
+        /// <param name="radius">원의 반지름</param>
+        /// <param name="consensusPoints">원을 이루는 점 집합.</param>
         public CvsCircle(Point center, double radius, Point[] consensusPoints)
         {
             this.Center = center;

@@ -106,7 +106,9 @@ namespace CvsVision.Caliper
             m_Collection.SetParentPose(m_Setting.CirclePose);
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (InputImage != null) InputImage.Dispose();
         }

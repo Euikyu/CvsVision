@@ -38,7 +38,9 @@ namespace CvsVision.Caliper
 
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
 
         }
@@ -98,6 +100,9 @@ namespace CvsVision.Caliper
         #endregion
     }
 
+    /// <summary>
+    /// 두 직선의 교점 클래스입니다.
+    /// </summary>
     public class CvsCorner
     {
         #region Fields
@@ -105,10 +110,20 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 교점을 가져옵니다.
+        /// </summary>
         public Point Corner { get; }
+        /// <summary>
+        /// 두 직선의 사이각을 가져옵니다.
+        /// </summary>
         public double IntersectionAngle { get; }
         #endregion
-        
+        /// <summary>
+        /// 두 직선의 교점 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="corner">두 직선의 교점.</param>
+        /// <param name="angle">두 직선의 사이각.</param>
         public CvsCorner(Point corner, double angle)
         {
             Corner = corner;

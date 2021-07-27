@@ -13,32 +13,26 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZoomPanCon;
 
-namespace CvsVision.Caliper.Controls
+namespace CvsVision.ImageProcessing.Control
 {
     /// <summary>
-    /// EdgeDetectToolEditor.xaml에 대한 상호 작용 논리
+    /// CropImageToolEditor.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class EdgeDetectToolEditor : UserControl, INotifyPropertyChanged
+    public partial class CropImageToolEditor : UserControl, INotifyPropertyChanged
     {
         #region Fields
         private bool m_IsEditing;
         private System.Drawing.Bitmap m_CurrentBitmap;
         private BitmapSource m_OriginSource;
-        private CvsEdgeDetectTool m_Tool;
+        private CvsCropImageTool m_Tool;
 
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Property 값이 변경될 경우에 발생시킵니다.
-        /// </summary>
+
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
-        /// </summary>
-        /// <param name="propertyName"></param>
+
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -69,19 +63,19 @@ namespace CvsVision.Caliper.Controls
         /// 에지 그래픽의 투사 길이를 가져오거나 설정합니다. 
         /// (영역의 너비입니다.)
         /// </summary>
-        public double ProjectionLength
+        public double CropWidth
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ProjectionLength;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.CropWidth;
                 else return 0;
             }
             set
             {
                 if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.ProjectionLength = value;
-                    this.RaisePropertyChanged(nameof(ProjectionLength));
+                    m_Tool.Setting.CropWidth = value;
+                    this.RaisePropertyChanged(nameof(CropWidth));
                 }
             }
         }
@@ -89,19 +83,19 @@ namespace CvsVision.Caliper.Controls
         /// 에지 그래픽의 검색 길이를 가져오거나 설정합니다.
         /// (영역의 높이입니다.)
         /// </summary>
-        public double SearchLength
+        public double CropHeight
         {
             get
             {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.SearchLength;
+                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.CropHeight;
                 else return 0;
             }
             set
             {
                 if (m_Tool != null && m_Tool.Setting != null)
                 {
-                    m_Tool.Setting.SearchLength = value;
-                    this.RaisePropertyChanged(nameof(SearchLength));
+                    m_Tool.Setting.CropHeight = value;
+                    this.RaisePropertyChanged(nameof(CropHeight));
                 }
             }
         }
@@ -178,64 +172,7 @@ namespace CvsVision.Caliper.Controls
 
             }
         }
-
-        /// <summary>
-        /// 특정 이상의 변화량을 에지로 판단하기 위한 임계값을 가져오거나 설정합니다. 
-        /// </summary>
-        public uint ContrastThreshold
-        {
-            get
-            {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.ContrastThreshold;
-                else return 0;
-            }
-            set
-            {
-                if (m_Tool != null && m_Tool.Setting != null)
-                {
-                    m_Tool.Setting.ContrastThreshold = value;
-                    this.RaisePropertyChanged(nameof(ContrastThreshold));
-                }
-            }
-        }
-        /// <summary>
-        /// 에지로 인식할 절반 픽셀 개수를 가져오거나 설정합니다.
-        /// </summary>
-        public uint HalfPixelCount
-        {
-            get
-            {
-                if (m_Tool != null && m_Tool.Setting != null) return m_Tool.Setting.HalfPixelCount;
-                else return 0;
-            }
-            set
-            {
-                if (m_Tool != null && m_Tool.Setting != null)
-                {
-                    m_Tool.Setting.HalfPixelCount = value;
-                    this.RaisePropertyChanged(nameof(HalfPixelCount));
-                }
-            }
-        }
-        /// <summary>
-        /// 에지를 감지할 방향을 가져오거나 설정합니다.
-        /// </summary>
-        public int SelectedEdgeDirection
-        {
-            get
-            {
-                if (m_Tool != null && m_Tool.Setting != null) return (int)m_Tool.Setting.EdgeDirection;
-                else return -1;
-            }
-            set
-            {
-                if (m_Tool != null && m_Tool.Setting != null)
-                {
-                    m_Tool.Setting.EdgeDirection = (EDirection)value;
-                    this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
-                }
-            }
-        }
+        
         /// <summary>
         /// 화면에 출력할 원본 이미지를 가져오거나 설정합니다.
         /// </summary>
@@ -253,6 +190,7 @@ namespace CvsVision.Caliper.Controls
                 this.RaisePropertyChanged(nameof(ImageHeight));
             }
         }
+
         /// <summary>
         /// 화면에 출력할 결과 오버레이를 가져옵니다.
         /// </summary>
@@ -264,6 +202,7 @@ namespace CvsVision.Caliper.Controls
                 else return null;
             }
         }
+
         /// <summary>
         /// 결과를 반영하는 메세지를 가져옵니다.
         /// </summary>
@@ -277,6 +216,7 @@ namespace CvsVision.Caliper.Controls
                 else return "Success.";
             }
         }
+
         /// <summary>
         /// 원본 이미지의 너비를 가져옵니다.
         /// </summary>
@@ -292,15 +232,15 @@ namespace CvsVision.Caliper.Controls
         /// EdgeDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
         /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
-            DependencyProperty.Register(nameof(SubjectTool), typeof(CvsEdgeDetectTool), typeof(EdgeDetectToolEditor),
-                new PropertyMetadata(new CvsEdgeDetectTool()));
+            DependencyProperty.Register(nameof(SubjectTool), typeof(CvsCropImageTool), typeof(CropImageToolEditor),
+                new PropertyMetadata(new CvsCropImageTool()));
 
         /// <summary>
         /// 현재 에디터의 주체가 되는 검사 도구를 가져옵니다.
         /// </summary>
-        public CvsEdgeDetectTool SubjectTool
+        public CvsCropImageTool SubjectTool
         {
-            get { return GetValue(SubjectToolProperty) as CvsEdgeDetectTool; }
+            get { return GetValue(SubjectToolProperty) as CvsCropImageTool; }
             set
             {
                 SetValue(SubjectToolProperty, value);
@@ -311,10 +251,8 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-        /// <summary>
-        /// EdgeDetectToolEditor 를 생성합니다.
-        /// </summary>
-        public EdgeDetectToolEditor()
+
+        public CropImageToolEditor()
         {
             InitializeComponent();
             DataContext = this;
@@ -333,20 +271,17 @@ namespace CvsVision.Caliper.Controls
         {
             m_Tool = SubjectTool;
 
-            this.RaisePropertyChanged(nameof(ProjectionLength));
-            this.RaisePropertyChanged(nameof(SearchLength));
+            this.RaisePropertyChanged(nameof(CropWidth));
+            this.RaisePropertyChanged(nameof(CropHeight));
             this.RaisePropertyChanged(nameof(OriginX));
             this.RaisePropertyChanged(nameof(OriginY));
             this.RaisePropertyChanged(nameof(Radian));
             this.RaisePropertyChanged(nameof(Rotation));
-            this.RaisePropertyChanged(nameof(ContrastThreshold));
-            this.RaisePropertyChanged(nameof(HalfPixelCount));
-            this.RaisePropertyChanged(nameof(SelectedEdgeDirection));
 
             this.RaisePropertyChanged(nameof(Overlay));
             this.RaisePropertyChanged(nameof(Message));
         }
-        
+
         #region Events
         // 이미지 불러오는 콜백
         private void LoadImageBtn_Click(object sender, RoutedEventArgs e)
@@ -426,3 +361,4 @@ namespace CvsVision.Caliper.Controls
 
     }
 }
+

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 주어진 이미지 내에서 에지 쌍을 찾는 클래스입니다.
+    /// </summary>
     public class CvsBreadthDetect
     {
         #region Fields
@@ -99,9 +102,13 @@ namespace CvsVision.Caliper
         /// 에지를 감지할 방향을 가져오거나 설정합니다.
         /// </summary>
         public EDirection Edge1Direction { get; set; }
-
+        /// <summary>
+        /// 에지 쌍의 목표 너비를 가져오거나 설정합니다.
+        /// </summary>
         public double TargetBreadth { get; set; }
-        
+        /// <summary>
+        /// 검색한 에지 쌍을 가져옵니다.
+        /// </summary>
         public CvsBreadth Breadth
         {
             get
@@ -124,7 +131,9 @@ namespace CvsVision.Caliper
             m_EdgeList = new List<CvsEdge>();
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (m_DetectImage != null)
             {
@@ -344,7 +353,9 @@ namespace CvsVision.Caliper
         }
         #endregion
     }
-
+    /// <summary>
+    /// 에지 쌍 클래스입니다.
+    /// </summary>
     public class CvsBreadth
     {
         #region Fields
@@ -352,11 +363,26 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 에지 0에 대한 데이터를 가져옵니다.
+        /// </summary>
         public CvsEdge Edge0 { get; }
+        /// <summary>
+        /// 에지 1에 대한 데이터를 가져옵니다.
+        /// </summary>
         public CvsEdge Edge1 { get; }
+        /// <summary>
+        /// 두 에지의 거리를 가져옵니다.
+        /// </summary>
         public double Distance { get; }
         #endregion
 
+        /// <summary>
+        /// 에지 쌍 클래스를 생성합니다.
+        /// </summary>
+        /// <param name="edge0">에지 0 데이터.</param>
+        /// <param name="edge1">에지 1 데이터.</param>
+        /// <param name="dist">두 에지의 거리.</param>
         public CvsBreadth(CvsEdge edge0, CvsEdge edge1, double dist)
         {
             this.Edge0 = edge0;

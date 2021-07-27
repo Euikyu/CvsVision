@@ -14,6 +14,9 @@ using Point = System.Windows.Point;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 이미지를 통해 두 점의 교점을 찾을 수 있는 도구 클래스입니다.
+    /// </summary>
     public class CvsCornerDetectTool : ICvsTool
     {
         #region Fields
@@ -26,6 +29,9 @@ namespace CvsVision.Caliper
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 입력 이미지를 가져오거나 설정합니다.
+        /// </summary>
         public Bitmap InputImage
         {
             get { return m_InputImage; }
@@ -35,6 +41,9 @@ namespace CvsVision.Caliper
                 Overlay = null;
             }
         }
+        /// <summary>
+        /// 교점 검색을 위한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsCornerSetting Setting
         {
             get { return m_Setting; }
@@ -50,11 +59,24 @@ namespace CvsVision.Caliper
                 }
             }
         }
+        /// <summary>
+        /// 결과 교점을 가져옵니다.
+        /// </summary>
         public CvsCorner Corner { get; private set; }
+        /// <summary>
+        /// 결과 오버레이를 가져옵니다.
+        /// </summary>
         public DrawingGroup Overlay { get; private set; }
 
+        /// <summary>
+        /// 해당 도구 사용 시 발생하는 예외를 가져옵니다. 
+        /// (Null 값 일 경우, 정상적으로 동작한 것입니다.)
+        /// </summary>
         public Exception Exception { get; private set; }
         #endregion
+        /// <summary>
+        /// 두 직선의 교점을 찾는 도구를 생성합니다.
+        /// </summary>
         public CvsCornerDetectTool()
         {
             m_LineATool = new CvsLineDetectTool();
@@ -77,7 +99,9 @@ namespace CvsVision.Caliper
         }
 
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (m_InputImage != null) InputImage.Dispose();
             if (m_LineATool != null) m_LineATool.Dispose();
@@ -85,6 +109,10 @@ namespace CvsVision.Caliper
         }
 
         #region Methods
+        /// <summary>
+        /// 파일 형태로 저장된 설정 값들을 불러옵니다.
+        /// </summary>
+        /// <param name="path">저장된 설정 파일 경로.</param>
         public void Load(string path)
         {
             try
@@ -112,6 +140,10 @@ namespace CvsVision.Caliper
                 Exception = err;
             }
         }
+        /// <summary>
+        /// 현재 설정 값들을 파일 형태로 저장합니다.
+        /// </summary>
+        /// <param name="path">저장할 파일 경로.</param>
         public void Save(string path)
         {
             try
@@ -129,7 +161,9 @@ namespace CvsVision.Caliper
                 Exception = err;
             }
         }
-
+        /// <summary>
+        /// 교점 검색을 시작합니다.
+        /// </summary>
         public void Run()
         {
             try

@@ -31,6 +31,9 @@ namespace CvsVision.Caliper
             }
             set { if (m_CircleDetect != null) m_CircleDetect.ConsensusThreshold = value; }
         }
+        /// <summary>
+        /// 원의 Pose 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsPose CirclePose { get; set; }
         /// <summary>
         /// 원 모델의 원점 X 좌표를 가져오거나 설정합니다.

@@ -29,8 +29,14 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -115,6 +121,10 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 검색을 시작할 각도 값을 가져오거나 설정합니다.
+        /// (0 ~ 360 사이의 값을 가집니다.)
+        /// </summary>
         public double StartAngle
         {
             get
@@ -131,6 +141,10 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 검색을 마칠 각도를 가져오거나 설정합니다.
+        /// (0 ~ 360 사이의 값을 가집니다.)
+        /// </summary>
         public double EndAngle
         {
             get
@@ -147,6 +161,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 호의 각이 180도보다 큰 지 여부에 대한 값을 가져오거나 설정합니다.
+        /// </summary>
         public bool IsOutwardDirection
         {
             get
@@ -356,7 +373,7 @@ namespace CvsVision.Caliper.Controls
 
         #region Dependency Properties
         /// <summary>
-        /// LineDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
+        /// CircleDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
         /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
             DependencyProperty.Register(nameof(SubjectTool), typeof(CvsCircleDetectTool), typeof(CircleDetectToolEditor),
@@ -379,7 +396,9 @@ namespace CvsVision.Caliper.Controls
 
 
         #endregion
-
+        /// <summary>
+        /// CircleDetectToolEditor 를 생성합니다.
+        /// </summary>
         public CircleDetectToolEditor()
         {
             InitializeComponent();

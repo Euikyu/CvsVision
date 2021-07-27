@@ -30,11 +30,17 @@ namespace CvsVision.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChanged(string propName)
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region Common Properties
@@ -136,6 +142,9 @@ namespace CvsVision.Controls
         //    else return null;
         //}
 
+        /// <summary>
+        /// CvsDisplay.OriginSource 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OriginSourceProperty =
            DependencyProperty.Register(nameof(OriginSource), typeof(ImageSource), typeof(CvsDisplay),
                new PropertyMetadata(OriginSource_PropertyChanged));
@@ -150,6 +159,9 @@ namespace CvsVision.Controls
             }
         }
 
+        /// <summary>
+        /// CvsDisplay.Overlay 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OverlayProperty =
             DependencyProperty.Register(nameof(Overlay), typeof(DrawingGroup), typeof(CvsDisplay),
                 new PropertyMetadata(Overlay_PropertyChanged));
@@ -165,16 +177,27 @@ namespace CvsVision.Controls
             }
         }
 
-
+        /// <summary>
+        /// CvsDisplay.ContentOffsetX 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ContentOffsetXProperty =
             DependencyProperty.Register(nameof(ContentOffsetX), typeof(double), typeof(CvsDisplay));
 
+        /// <summary>
+        /// CvsDisplay.ContentOffsetY 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ContentOffsetYProperty =
             DependencyProperty.Register(nameof(ContentOffsetY), typeof(double), typeof(CvsDisplay));
 
+        /// <summary>
+        /// CvsDisplay.ContentScale 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ContentScaleProperty =
             DependencyProperty.Register(nameof(ContentScale), typeof(double), typeof(CvsDisplay));
 
+        /// <summary>
+        /// CvsDisplay.Children 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ChildrenProperty =
             DependencyProperty.Register(nameof(Children), typeof(UIElementCollection), typeof(CvsDisplay));
 
@@ -186,29 +209,41 @@ namespace CvsVision.Controls
             get { return (BitmapSource)GetValue(OriginSourceProperty); }
             set { SetValue(OriginSourceProperty, value); }
         }
-
+        /// <summary>
+        /// 화면에 출력할 오버레이를 가져오거나 설정합니다.
+        /// </summary>
         public DrawingGroup Overlay
         {
             get { return (DrawingGroup)GetValue(OverlayProperty); }
             set { SetValue(OverlayProperty, value); }
         }
-
+        /// <summary>
+        /// 디스플레이 내부에 들어갈 UIElement 묶음을 가져오거나 설정합니다.
+        /// </summary>
         public UIElementCollection Children
         {
             get { return (UIElementCollection)GetValue(ChildrenProperty); }
             set { SetValue(ChildrenProperty, value); }
         }
-
+        /// <summary>
+        /// 화면의 배율을 가져오거나 설정합니다.
+        /// </summary>
         public double ContentScale
         {
             get { return (double)GetValue(ContentScaleProperty); }
             set { SetValue(ContentScaleProperty, value); }
         }
+        /// <summary>
+        /// 화면의 offset X 값을 가져오거나 설정합니다.
+        /// </summary>
         public double ContentOffsetX
         {
             get { return (double)GetValue(ContentOffsetXProperty); }
             set { SetValue(ContentOffsetXProperty, value); }
         }
+        /// <summary>
+        /// 화면의 offset Y 값을 가져오거나 설정합니다.
+        /// </summary>
         public double ContentOffsetY
         {
             get { return (double)GetValue(ContentOffsetYProperty); }
@@ -217,7 +252,9 @@ namespace CvsVision.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// 크래비스 디스플레이 클래스를 생성합니다.
+        /// </summary>
         public CvsDisplay()
         {
             InitializeComponent();

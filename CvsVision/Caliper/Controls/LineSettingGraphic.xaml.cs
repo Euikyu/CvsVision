@@ -40,11 +40,17 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChanged(string propName)
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #region Common Properties
         /// <summary>
@@ -67,18 +73,33 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Dependency Properties
+        /// <summary>
+        /// LineSettingGraphic.OriginX 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OriginXProperty =
                     DependencyProperty.Register(nameof(OriginX), typeof(double), typeof(LineSettingGraphic));
 
+        /// <summary>
+        /// LineSettingGraphic.OriginY 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty OriginYProperty =
                     DependencyProperty.Register(nameof(OriginY), typeof(double), typeof(LineSettingGraphic));
-        
+
+        /// <summary>
+        /// LineSettingGraphic.SearchLength 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty SearchLengthProperty =
                     DependencyProperty.Register(nameof(SearchLength), typeof(double), typeof(LineSettingGraphic));
 
+        /// <summary>
+        /// LineSettingGraphic.ProjectionLength 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty ProjectionLengthProperty =
                     DependencyProperty.Register(nameof(ProjectionLength), typeof(double), typeof(LineSettingGraphic));
 
+        /// <summary>
+        /// LineSettingGraphic.Rotation 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty RotationProperty =
                     DependencyProperty.Register(nameof(Rotation), typeof(double), typeof(LineSettingGraphic),
                         new PropertyMetadata(Rotation_PropertyChanged));
@@ -89,7 +110,10 @@ namespace CvsVision.Caliper.Controls
             control.LineRotateTransform.Angle = (double)e.NewValue;
             if (control.Radian != ((double)e.NewValue) * Math.PI / 180) control.Radian = ((double)e.NewValue) * Math.PI / 180;
         }
-        
+
+        /// <summary>
+        /// LineSettingGraphic.Radian 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty RadianProperty =
                     DependencyProperty.Register(nameof(Radian), typeof(double), typeof(LineSettingGraphic),
                         new PropertyMetadata(Radian_PropertyChanged));
@@ -100,6 +124,9 @@ namespace CvsVision.Caliper.Controls
             if (control.Rotation != (double)e.NewValue * 180 / Math.PI) control.Rotation = (double)e.NewValue * 180 / Math.PI;
         }
 
+        /// <summary>
+        /// LineSettingGraphic.CaliperCount 종속성 속성을 식별합니다.
+        /// </summary>
         public static readonly DependencyProperty CaliperCountProperty =
                     DependencyProperty.Register(nameof(CaliperCount), typeof(int), typeof(LineSettingGraphic),
                         new PropertyMetadata(2, CaliperCount_PropertyChanged, CaliperCount_CoerceValue));

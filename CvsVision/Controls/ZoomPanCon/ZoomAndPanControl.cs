@@ -22,55 +22,90 @@ namespace ZoomPanCon
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ZoomAndPanControl), new FrameworkPropertyMetadata(typeof(ZoomAndPanControl)));
         }
-        
+
         /*
          * *Dependency properdy
          */
-        
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentScale.
+        /// </summary>
         public static readonly DependencyProperty ContentScaleProperty =
                 DependencyProperty.Register("ContentScale", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(1.0, ContentScale_PropertyChanged, ContentScale_Coerce));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.MinContentScale.
+        /// </summary>
         public static readonly DependencyProperty MinContentScaleProperty =
                 DependencyProperty.Register("MinContentScale", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.01, MinOrMaxContentScale_PropertyChanged));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.MaxContentScale.
+        /// </summary>
         public static readonly DependencyProperty MaxContentScaleProperty =
                 DependencyProperty.Register("MaxContentScale", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(500.0, MinOrMaxContentScale_PropertyChanged));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentOffsetX.
+        /// </summary>
         public static readonly DependencyProperty ContentOffsetXProperty =
                 DependencyProperty.Register("ContentOffsetX", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0, ContentOffsetX_PropertyChanged, ContentOffsetX_Coerce));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentOffsetY.
+        /// </summary>
         public static readonly DependencyProperty ContentOffsetYProperty =
                 DependencyProperty.Register("ContentOffsetY", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0, ContentOffsetY_PropertyChanged, ContentOffsetY_Coerce));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ViewportZoomFocusX.
+        /// </summary>
         public static readonly DependencyProperty ViewportZoomFocusXProperty =
                 DependencyProperty.Register("ViewportZoomFocusX", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
-        
+
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ViewportZoomFocusY.
+        /// </summary>
         public static readonly DependencyProperty ViewportZoomFocusYProperty =
                 DependencyProperty.Register("ViewportZoomFocusY", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentZoomFocusX.
+        /// </summary>
         public static readonly DependencyProperty ContentZoomFocusXProperty =
                 DependencyProperty.Register("ContentZoomFocusX", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentViewportWidth.
+        /// </summary>
         public static readonly DependencyProperty ContentViewportWidthProperty =
                 DependencyProperty.Register("ContentViewportWidth", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentZoomFocusY.
+        /// </summary>
         public static readonly DependencyProperty ContentZoomFocusYProperty =
                 DependencyProperty.Register("ContentZoomFocusY", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.ContentViewportHeight.
+        /// </summary>
         public static readonly DependencyProperty ContentViewportHeightProperty =
                 DependencyProperty.Register("ContentViewportHeight", typeof(double), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(0.0));
 
+        /// <summary>
+        /// Define dependency property ZoomAndPanControl.IsMouseWheelScrollingEnabled.
+        /// </summary>
         public static readonly DependencyProperty IsMouseWheelScrollingEnabledProperty =
                 DependencyProperty.Register("IsMouseWheelScrollingEnabled", typeof(bool), typeof(ZoomAndPanControl),
                                             new FrameworkPropertyMetadata(false));
@@ -379,7 +414,11 @@ namespace ZoomPanCon
             value = Math.Min(Math.Max(value, minOffsetX), maxOffsetX);
             return value;
         }
-
+        /// <summary>
+        /// Zooming in/out by specific point.
+        /// </summary>
+        /// <param name="newContentScale">Current content scale.</param>
+        /// <param name="contentZoomFocus">Target point.</param>
         public void ZoomAboutPoint(double newContentScale, Point contentZoomFocus)
         {
             // ktk1010911

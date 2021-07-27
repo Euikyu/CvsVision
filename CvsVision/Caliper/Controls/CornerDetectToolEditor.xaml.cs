@@ -32,9 +32,14 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -43,6 +48,9 @@ namespace CvsVision.Caliper.Controls
         #region Common Properties
 
         #region LineA Settings
+        /// <summary>
+        /// Line A 에 대한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsLineSetting LineASetting
         {
             get
@@ -59,7 +67,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
-        
+        /// <summary>
+        /// Line A의 각도를 가져오거나 설정합니다.
+        /// </summary>
         public double LineARotation
         {
             get
@@ -79,6 +89,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region LineB Settings
+        /// <summary>
+        /// Line B 에 대한 설정 값을 가져오거나 설정합니다.
+        /// </summary>
         public CvsLineSetting LineBSetting
         {
             get
@@ -95,6 +108,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// Line B에 대한 각도를 가져오거나 설정합니다.
+        /// </summary>
         public double LineBRotation
         {
             get
@@ -114,6 +130,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Caliper Settings
+        /// <summary>
+        /// 에지를 검색할 캘리퍼의 개수를 가져오거나 설정합니다.
+        /// </summary>
         public int CaliperCount
         {
             get
@@ -332,7 +351,7 @@ namespace CvsVision.Caliper.Controls
 
         #region Dependency Properties
         /// <summary>
-        /// LineDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
+        /// CornerDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
         /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
             DependencyProperty.Register(nameof(SubjectTool), typeof(CvsCornerDetectTool), typeof(CornerDetectToolEditor),
@@ -353,7 +372,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// CornerDetectToolEditor 를 생성합니다.
+        /// </summary>
         public CornerDetectToolEditor()
         {
             InitializeComponent();

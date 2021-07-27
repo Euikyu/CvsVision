@@ -13,8 +13,17 @@ namespace CvsVision.Caliper
     /// </summary>
     public enum EDirection
     {
+        /// <summary>
+        /// 아무 극성이나 탐지합니다.
+        /// </summary>
         Any,
+        /// <summary>
+        /// 밝은 쪽에서 어두워지는 극성만 탐색합니다.
+        /// </summary>
         LightToDark,
+        /// <summary>
+        /// 어두운 쪽에서 밝아지는 극성만 탐색합니다.
+        /// </summary>
         DarkToLight
     }
     /// <summary>
@@ -137,7 +146,9 @@ namespace CvsVision.Caliper
             m_EdgeList = new List<CvsEdge>();
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (m_DetectImage != null)
             {

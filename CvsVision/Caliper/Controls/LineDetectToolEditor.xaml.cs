@@ -33,9 +33,14 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -369,7 +374,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// LineDetectToolEditor 를 생성합니다.
+        /// </summary>
         public LineDetectToolEditor()
         {
             InitializeComponent();

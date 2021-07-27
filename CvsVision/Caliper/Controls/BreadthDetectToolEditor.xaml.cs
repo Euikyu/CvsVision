@@ -30,9 +30,14 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -249,6 +254,9 @@ namespace CvsVision.Caliper.Controls
                 }
             }
         }
+        /// <summary>
+        /// 찾고자 하는 에지 쌍의 목표 너비를 가져오거나 설정합니다.
+        /// </summary>
         public double TargetBreadth
         {
             get
@@ -318,7 +326,7 @@ namespace CvsVision.Caliper.Controls
 
         #region Dependency Properties
         /// <summary>
-        /// EdgeDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
+        /// BreadthDetectToolEditor.SubjectTool의 종속성 속성을 식별합니다.
         /// </summary>
         public static readonly DependencyProperty SubjectToolProperty =
             DependencyProperty.Register(nameof(SubjectTool), typeof(CvsBreadthDetectTool), typeof(BreadthDetectToolEditor),
@@ -340,7 +348,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// BreadthDetectToolEditor 를 생성합니다.
+        /// </summary>
         public BreadthDetectToolEditor()
         {
             InitializeComponent();
@@ -349,6 +359,7 @@ namespace CvsVision.Caliper.Controls
         }
 
         #region Methods
+        //첫 로드시 호출
         private void Editor_Loaded(object sender, RoutedEventArgs e)
         {
             this.UpdateToolData();

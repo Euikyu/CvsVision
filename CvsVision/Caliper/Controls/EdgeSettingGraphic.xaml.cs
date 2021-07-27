@@ -42,11 +42,17 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Property 값이 변경될 경우에 발생시킵니다.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChanged(string propName)
+        /// <summary>
+        /// UI에 해당 이름을 가진 Property 가 변경되었음을 알립니다.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #region Common Properties
         /// <summary>
@@ -162,7 +168,9 @@ namespace CvsVision.Caliper.Controls
         #endregion
 
         #endregion
-
+        /// <summary>
+        /// EdgeSettingGraphic 을 생성합니다.
+        /// </summary>
         public EdgeSettingGraphic()
         {
             InitializeComponent();

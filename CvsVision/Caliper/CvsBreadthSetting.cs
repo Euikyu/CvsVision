@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CvsVision.Caliper
 {
+    /// <summary>
+    /// 에지 쌍의 너비를 찾기 위한 설정 값 클래스입니다.
+    /// </summary>
     public class CvsBreadthSetting
     {
         #region Fields
@@ -78,6 +81,9 @@ namespace CvsVision.Caliper
                 if (m_BreadthDetect != null) m_BreadthDetect.Edge1Direction = value;
             }
         }
+        /// <summary>
+        /// 에지 쌍의 목표 너비를 가져오거나 설정합니다.
+        /// </summary>
         public double TargetBreadth
         {
             get
@@ -194,6 +200,11 @@ namespace CvsVision.Caliper
             }
         }
         #endregion
+
+        /// <summary>
+        /// 에지 쌍의 너비를 찾기 위한 설정 값 클래스를 생성합니다.
+        /// </summary>
+        public CvsBreadthSetting() { }
 
         #region Methods
         /// <summary>

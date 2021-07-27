@@ -52,7 +52,9 @@ namespace CvsVision.Caliper
             this.ConsensusThreshold = 6;
         }
 
+#pragma warning disable CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         public void Dispose()
+#pragma warning restore CS1591 // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
         {
             if (InputPointList != null) InputPointList.Clear();
         }
